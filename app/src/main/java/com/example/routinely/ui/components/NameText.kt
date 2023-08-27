@@ -17,7 +17,7 @@ import androidx.compose.ui.text.TextStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginTextField(onEmailChange: (String) -> Unit) {
+fun NameText(onEmailChange: (String) -> Unit) {
     var text by rememberSaveable { mutableStateOf("") }
     OutlinedTextField(
         value = text,
@@ -26,7 +26,7 @@ fun LoginTextField(onEmailChange: (String) -> Unit) {
             onEmailChange(it)},
         label = {
             Text(
-                text = "E-mail",
+                text = "Nome",
                 style = TextStyle(color = Color.Black) // Definindo a cor do texto como branco
             )
         },

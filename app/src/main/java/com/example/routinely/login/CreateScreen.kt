@@ -4,7 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,18 +25,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.routinely.R
-import com.example.routinely.ui.components.ForgotPasswordText
+import com.example.routinely.ui.components.CreateBottonText
 import com.example.routinely.ui.components.LoginButton
-import com.example.routinely.ui.components.LoginHeaderText
 import com.example.routinely.ui.components.LoginTextField
+import com.example.routinely.ui.components.NameText
 import com.example.routinely.ui.components.PasswordTextField
-import com.example.routinely.ui.components.RememberCheckbox
-import com.example.routinely.ui.components.SignUpButton
+import com.example.routinely.ui.components.TermsCheckbox
 import com.example.routinely.ui.components.isPasswordValid
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 @Composable
-fun LoginScreen() {
+fun CreateScreen() {
     var isPasswordFilled by remember { mutableStateOf(false) }
     var isEmailFilled by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(true) }
@@ -47,7 +46,7 @@ fun LoginScreen() {
         .fillMaxHeight(),
         content = {
             Column(modifier = Modifier
-                .weight(0.3f)
+                .weight(0.16f)
                 .fillMaxWidth()
                 .fillMaxHeight(), content = {
                 Image(
@@ -57,8 +56,6 @@ fun LoginScreen() {
                         .size(height = 150.dp, width = 250.dp)
                         .align(Alignment.CenterHorizontally)
                 )
-
-                LoginHeaderText()
             })
             Column(modifier = Modifier
                 .clip(MaterialTheme.shapes.medium)
@@ -72,8 +69,9 @@ fun LoginScreen() {
                         modifier = Modifier.padding(top = 1.dp)
                     ) {
                         Text(
-                            text = "Acessar conta", color = Color.Black, fontSize = 25.sp
+                            text = "Criar conta", color = Color.Black, fontSize = 25.sp
                         )
+                        NameText(onEmailChange = {})
 
                         LoginTextField(onEmailChange = { email ->
                             isEmailFilled = email.isNotBlank()
@@ -85,32 +83,36 @@ fun LoginScreen() {
                             isPasswordValid = isPasswordValid(password)
                         }, "Senha")
 
-                        Row() {
-                            RememberCheckbox()
-                            ForgotPasswordText()
-                        }
+                        PasswordTextField(onPasswordChange = { password ->
+                            isPasswordFilled = password.isNotBlank()
+                            isPasswordValid = isPasswordValid(password)
+                        }, "Repetir senha")
 
-                        LoginButton(
-                            onLoginClick = {
-                                // Ação executada quando o botão de login é clicado
-                                // Você pode verificar o estado do campo de senha aqui novamente, se necessário
-                            },
-                            emailPreenchido = isEmailFilled,
-                            senhaPreenchida = isPasswordFilled,
-                            isEmailValid = isEmailValid,
-                            isPasswordValid = isPasswordValid
-                        )
-                        SignUpButton()
+                        TermsCheckbox()
+
                     }
                 })
-            Column(modifier = Modifier.weight(0.05f)) {}
+            //Espaço no final
+            Column(modifier = Modifier.weight(0.15f)) {
+                LoginButton(
+                    onLoginClick = {
+                        // Ação executada quando o botão de login é clicado
+                        // Você pode verificar o estado do campo de senha aqui novamente, se necessário
+                    },
+                    emailPreenchido = isEmailFilled,
+                    senhaPreenchida = isPasswordFilled,
+                    isEmailValid = isEmailValid,
+                    isPasswordValid = isPasswordValid
+                )
+                Spacer(Modifier.size(10.dp))
+                CreateBottonText()
+            }
         })
 }
-
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
+fun CreateScreenPreview() {
     RoutinelyTheme {
-        LoginScreen()
+        CreateScreen()
     }
 }
