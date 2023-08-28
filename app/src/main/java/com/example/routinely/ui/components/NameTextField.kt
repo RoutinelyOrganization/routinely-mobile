@@ -36,6 +36,7 @@ fun NameTextField(onNameChange: (String) -> Unit) {
             focusedBorderColor = Color.Gray,
             unfocusedBorderColor = Color.Gray
         ),
+        singleLine = true,
         modifier = Modifier
             .fillMaxWidth() // Preencher toda a largura disponível no Row
     )

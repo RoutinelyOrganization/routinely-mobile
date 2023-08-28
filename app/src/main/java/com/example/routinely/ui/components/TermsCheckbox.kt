@@ -8,8 +8,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -22,17 +21,17 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TermsCheckbox() {
-    val checkboxState = remember { mutableStateOf(false) }
+fun TermsCheckbox(checkBoxState: MutableState<Boolean>) {
+    //val checkboxState = remember { mutableStateOf(false) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
-            .clickable {checkboxState.value = !checkboxState.value }
+            .clickable {checkBoxState.value = !checkBoxState.value }
     )
     {
         Checkbox(
-            checked = checkboxState.value, onCheckedChange = null,
+            checked = checkBoxState.value, onCheckedChange = null,
             colors = CheckboxDefaults.colors(
                 checkedColor = Color(0xff8f8ce7),
                 uncheckedColor = Color.Black,
@@ -76,9 +75,4 @@ fun TermsCheckbox() {
             }
         }
     }
-
-}
-
-fun textTerms(){
-
 }

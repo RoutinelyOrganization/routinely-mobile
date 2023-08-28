@@ -25,8 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.routinely.R
-import com.example.routinely.ui.components.CreateBottonText
-import com.example.routinely.ui.components.LoginButton
+import com.example.routinely.ui.components.CreateAccountButton
+import com.example.routinely.ui.components.CreateBottomText
 import com.example.routinely.ui.components.LoginTextField
 import com.example.routinely.ui.components.NameTextField
 import com.example.routinely.ui.components.PasswordTextField
@@ -35,12 +35,17 @@ import com.example.routinely.ui.components.isPasswordValid
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 @Composable
-fun CreateScreen() {
+fun CreateAccountScreen() {
     var isPasswordFilled by remember { mutableStateOf(false) }
     var isEmailFilled by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(true) }
     var isNameFilled by remember { mutableStateOf(false) }
     var isPasswordValid by remember { mutableStateOf(false) }
+    var password by remember { mutableStateOf("") }
+    var repeatedPassword by remember { mutableStateOf("") }
+    var arePasswordsMatching by remember { mutableStateOf(false) }
+    val checkboxTermsState = remember { mutableStateOf(false) }
+
     Column(modifier = Modifier
         .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
         .fillMaxWidth()
@@ -73,30 +78,38 @@ fun CreateScreen() {
                             text = "Criar conta", color = Color.Black, fontSize = 25.sp
                         )
                         NameTextField(onNameChange = {name ->
-                            isNameFilled = name.isNotBlank()})
+                            isNameFilled = name.isNotBlank() && name.length >= 3})
 
                         LoginTextField(onEmailChange = { email ->
                             isEmailFilled = email.isNotBlank()
                             isEmailValid = isValidEmailFormat(email)
                         })
 
-                        PasswordTextField(onPasswordChange = { password ->
-                            isPasswordFilled = password.isNotBlank()
-                            isPasswordValid = isPasswordValid(password)
-                        }, "Senha")
+                        PasswordTextField(
+                            onPasswordChange = { newPassword ->
+                                password = newPassword
+                                isPasswordFilled = password.isNotBlank()
+                                isPasswordValid = isPasswordValid(password)
+                                arePasswordsMatching = password == repeatedPassword
+                            },
+                            text = "Senha"
+                        )
 
-                        PasswordTextField(onPasswordChange = { password ->
-                            isPasswordFilled = password.isNotBlank()
-                            isPasswordValid = isPasswordValid(password)
-                        }, "Repetir senha")
+                        PasswordTextField(
+                            onPasswordChange = { newRepeatedPassword ->
+                                repeatedPassword = newRepeatedPassword
+                                arePasswordsMatching = password == repeatedPassword
+                            },
+                            text = "Repetir Senha"
+                        )
 
-                        TermsCheckbox()
+                        TermsCheckbox(checkboxTermsState)
 
                     }
                 })
             //Espaço no final
             Column(modifier = Modifier.weight(0.15f)) {
-                LoginButton(
+                CreateAccountButton(
                     onLoginClick = {
                         // Ação executada quando o botão de login é clicado
                         // Você pode verificar o estado do campo de senha aqui novamente, se necessário
@@ -104,10 +117,13 @@ fun CreateScreen() {
                     emailPreenchido = isEmailFilled,
                     senhaPreenchida = isPasswordFilled,
                     isEmailValid = isEmailValid,
-                    isPasswordValid = isPasswordValid
+                    isNameFilled = isNameFilled,
+                    isPasswordValid = isPasswordValid,
+                    isPasswordsMatch = arePasswordsMatching,
+                    isCheckBoxChecked = checkboxTermsState.value
                 )
                 Spacer(Modifier.size(10.dp))
-                CreateBottonText()
+                CreateBottomText()
             }
         })
 }
@@ -115,6 +131,6 @@ fun CreateScreen() {
 @Composable
 fun CreateScreenPreview() {
     RoutinelyTheme {
-        CreateScreen()
+        CreateAccountScreen()
     }
 }

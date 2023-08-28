@@ -60,6 +60,7 @@ fun PasswordTextField(onPasswordChange: (String) -> Unit, text: String) {
             focusedBorderColor = Color.Gray,
             unfocusedBorderColor = Color.Gray
         ),
+        singleLine = true,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         modifier = Modifier.fillMaxWidth() // Preencher toda a largura disponível no Row
