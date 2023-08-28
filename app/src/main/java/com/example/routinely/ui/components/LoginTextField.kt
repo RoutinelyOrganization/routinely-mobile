@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import com.example.routinely.ui.theme.Gray80
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -31,6 +32,7 @@ fun LoginTextField(onEmailChange: (String) -> Unit) {
             )
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor = Gray80,
             focusedBorderColor = Color.Gray,
             unfocusedBorderColor = Color.Gray
         ),

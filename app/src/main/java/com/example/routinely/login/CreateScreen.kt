@@ -28,7 +28,7 @@ import com.example.routinely.R
 import com.example.routinely.ui.components.CreateBottonText
 import com.example.routinely.ui.components.LoginButton
 import com.example.routinely.ui.components.LoginTextField
-import com.example.routinely.ui.components.NameText
+import com.example.routinely.ui.components.NameTextField
 import com.example.routinely.ui.components.PasswordTextField
 import com.example.routinely.ui.components.TermsCheckbox
 import com.example.routinely.ui.components.isPasswordValid
@@ -39,6 +39,7 @@ fun CreateScreen() {
     var isPasswordFilled by remember { mutableStateOf(false) }
     var isEmailFilled by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(true) }
+    var isNameFilled by remember { mutableStateOf(false) }
     var isPasswordValid by remember { mutableStateOf(false) }
     Column(modifier = Modifier
         .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
@@ -71,7 +72,8 @@ fun CreateScreen() {
                         Text(
                             text = "Criar conta", color = Color.Black, fontSize = 25.sp
                         )
-                        NameText(onEmailChange = {})
+                        NameTextField(onNameChange = {name ->
+                            isNameFilled = name.isNotBlank()})
 
                         LoginTextField(onEmailChange = { email ->
                             isEmailFilled = email.isNotBlank()
