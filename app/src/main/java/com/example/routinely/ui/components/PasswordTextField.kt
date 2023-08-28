@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.routinely.ui.theme.Gray80
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +56,7 @@ fun PasswordTextField(onPasswordChange: (String) -> Unit, text: String) {
             }
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor = Gray80,
             focusedBorderColor = Color.Gray,
             unfocusedBorderColor = Color.Gray
         ),
