@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ForgotPasswordText() {
+fun ForgotPasswordText(onLoginClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -30,7 +30,7 @@ fun ForgotPasswordText() {
             text = "Esqueci minha senha",
             color = Color.Black,
             modifier = Modifier
-                .clickable { /* Ação ao clicar no link */ }
+                .clickable { onLoginClick() }
                 .drawBehind {
                     drawLine(
                         color = Color.Gray,
