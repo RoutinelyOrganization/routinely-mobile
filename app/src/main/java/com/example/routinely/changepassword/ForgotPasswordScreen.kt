@@ -36,26 +36,26 @@ fun ForgotPasswordScreen(navController: NavHostController) {
     var isEmailFilled by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(true) }
     Column(modifier = Modifier
-        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp, top = 16.dp)
         .fillMaxWidth()
         .fillMaxHeight(),
         content = {
             Column(modifier = Modifier
-                .weight(0.16f)
+                .weight(0.20f)
                 .fillMaxWidth()
                 .fillMaxHeight(), content = {
                 Image(
                     painter = painterResource(R.drawable.logo_horizontal),
                     contentDescription = "Image",
                     modifier = Modifier
-                        .size(height = 150.dp, width = 250.dp)
+                        .size(height = 148.dp, width = 136.dp)
                         .align(Alignment.CenterHorizontally)
                 )
             })
             Column(modifier = Modifier
                 .clip(MaterialTheme.shapes.medium)
                 .background(Color.Transparent)
-                .weight(0.65f)
+                .weight(0.70f)
                 .fillMaxWidth()
                 .fillMaxHeight(),
                 content = {
@@ -81,7 +81,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                     }
                 })
             //Espaço no final
-            Column(modifier = Modifier.weight(0.15f)) {
+            Column(modifier = Modifier.weight(0.10f)) {
                 ResetPasswordButton(
                     onLoginClick = {
                         navController.navigate("createnewpassword")

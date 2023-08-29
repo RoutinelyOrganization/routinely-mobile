@@ -52,19 +52,19 @@ fun LoginScreen(navController: NavHostController) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     Column(modifier = Modifier
-        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp, top = 16.dp)
         .fillMaxWidth()
         .fillMaxHeight(),
         content = {
             Column(modifier = Modifier
-                .weight(0.3f)
+                .weight(0.20f)
                 .fillMaxWidth()
                 .fillMaxHeight(), content = {
                 Image(
                     painter = painterResource(R.drawable.logo_horizontal),
                     contentDescription = "Image",
                     modifier = Modifier
-                        .size(height = 150.dp, width = 250.dp)
+                        .size(height = 148.dp, width = 136.dp)
                         .align(Alignment.CenterHorizontally)
                 )
 
@@ -73,7 +73,7 @@ fun LoginScreen(navController: NavHostController) {
             Column(modifier = Modifier
                 .clip(MaterialTheme.shapes.medium)
                 .background(Color.Transparent)
-                .weight(0.65f)
+                .weight(0.70f)
                 .fillMaxWidth()
                 .fillMaxHeight(),
                 content = {
@@ -122,7 +122,7 @@ fun LoginScreen(navController: NavHostController) {
                         })
                     }
                 })
-            Column(modifier = Modifier.weight(0.05f)) {}
+            Column(modifier = Modifier.weight(0.10f)) {}
         })
 }
 fun showToast(context: Context, message: String) {
