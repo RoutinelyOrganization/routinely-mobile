@@ -41,6 +41,7 @@ fun LoginScreen() {
     var isEmailFilled by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(true) }
     var isPasswordValid by remember { mutableStateOf(false) }
+    var password by remember { mutableStateOf("") }
     Column(modifier = Modifier
         .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
         .fillMaxWidth()
@@ -80,10 +81,14 @@ fun LoginScreen() {
                             isEmailValid = isValidEmailFormat(email)
                         })
 
-                        PasswordTextField(onPasswordChange = { password ->
-                            isPasswordFilled = password.isNotBlank()
-                            isPasswordValid = isPasswordValid(password)
-                        }, "Senha")
+                        PasswordTextField(
+                            onPasswordChange = { newPassword ->
+                                password = newPassword
+                                isPasswordFilled = password.isNotBlank()
+                                isPasswordValid = isPasswordValid(password)
+                            },
+                            text = "Senha"
+                        )
 
                         Row() {
                             RememberCheckbox()

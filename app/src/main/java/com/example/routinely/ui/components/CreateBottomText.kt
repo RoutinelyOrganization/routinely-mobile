@@ -13,7 +13,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CreateBottonText() {
+fun CreateBottomText() {
     Row() {
         Text(
             text = buildAnnotatedString {
