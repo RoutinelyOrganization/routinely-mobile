@@ -13,7 +13,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CreateBottomText() {
+fun CreateBottomText(onLoginClick: () -> Unit) {
     Row() {
         Text(
             text = buildAnnotatedString {
@@ -36,8 +36,7 @@ fun CreateBottomText() {
                     )
                 ) { append("Entrar") }
             },
-            modifier = Modifier
-                .clickable { /* Ação ao clicar no link */ }
+            modifier = Modifier.clickable { onLoginClick() }
         )
     }
 }

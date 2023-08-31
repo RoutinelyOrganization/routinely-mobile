@@ -13,10 +13,10 @@ import androidx.compose.ui.unit.dp
 import com.example.routinely.ui.theme.BlueRoutinely
 
 @Composable
-fun SignUpButton() {
+fun SignUpButton(onLoginClick: () -> Unit) {
     OutlinedButton(
         colors = ButtonDefaults.buttonColors(Color.Transparent),
-        onClick = { /* Ação ao clicar no botão */ },
+        onClick = onLoginClick,
         modifier = Modifier
             .fillMaxWidth()
             .padding(0.dp),

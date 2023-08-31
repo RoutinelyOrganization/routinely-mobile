@@ -1,10 +1,9 @@
-package com.example.routinely.login
+package com.example.routinely.changepassword
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,27 +26,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.routinely.R
-import com.example.routinely.ui.components.CreateAccountButton
-import com.example.routinely.ui.components.CreateBottomText
+import com.example.routinely.login.isValidEmailFormat
 import com.example.routinely.ui.components.LoginTextField
-import com.example.routinely.ui.components.NameTextField
-import com.example.routinely.ui.components.PasswordTextField
-import com.example.routinely.ui.components.TermsCheckbox
-import com.example.routinely.ui.components.isPasswordValid
+import com.example.routinely.ui.components.ResetPasswordButton
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 @Composable
-fun CreateAccountScreen(navController: NavHostController) {
-    var isPasswordFilled by remember { mutableStateOf(false) }
+fun ForgotPasswordScreen(navController: NavHostController) {
     var isEmailFilled by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(true) }
-    var isNameFilled by remember { mutableStateOf(false) }
-    var isPasswordValid by remember { mutableStateOf(false) }
-    var password by remember { mutableStateOf("") }
-    var repeatedPassword by remember { mutableStateOf("") }
-    var arePasswordsMatching by remember { mutableStateOf(false) }
-    val checkboxTermsState = remember { mutableStateOf(false) }
-
     Column(modifier = Modifier
         .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
         .fillMaxWidth()
@@ -77,63 +64,38 @@ fun CreateAccountScreen(navController: NavHostController) {
                         modifier = Modifier.padding(top = 1.dp)
                     ) {
                         Text(
-                            text = "Criar conta", color = Color.Black, fontSize = 25.sp
+                            text = "Esqueceu sua senha?", color = Color.Black, fontSize = 25.sp
                         )
-                        NameTextField(onNameChange = {name ->
-                            isNameFilled = name.isNotBlank() && name.length >= 3})
-
+                        Text(
+                            text = "Digite o e-mail cadastrado na sua conta Routinely",
+                            fontSize = 14.sp
+                        )
                         LoginTextField(onEmailChange = { email ->
                             isEmailFilled = email.isNotBlank()
                             isEmailValid = isValidEmailFormat(email)
                         })
-
-                        PasswordTextField(
-                            onPasswordChange = { newPassword ->
-                                password = newPassword
-                                isPasswordFilled = password.isNotBlank()
-                                isPasswordValid = isPasswordValid(password)
-                                arePasswordsMatching = password == repeatedPassword
-                            },
-                            text = "Senha"
+                        Text(
+                            text = "Você receberá um código de verificação no seu email",
+                            fontSize = 12.sp
                         )
-
-                        PasswordTextField(
-                            onPasswordChange = { newRepeatedPassword ->
-                                repeatedPassword = newRepeatedPassword
-                                arePasswordsMatching = password == repeatedPassword
-                            },
-                            text = "Repetir Senha"
-                        )
-
-                        TermsCheckbox(checkboxTermsState)
-
                     }
                 })
             //Espaço no final
             Column(modifier = Modifier.weight(0.15f)) {
-                CreateAccountButton(
+                ResetPasswordButton(
                     onLoginClick = {
-                        navController.navigate("login")
+                        navController.navigate("createnewpassword")
                     },
                     emailPreenchido = isEmailFilled,
-                    senhaPreenchida = isPasswordFilled,
                     isEmailValid = isEmailValid,
-                    isNameFilled = isNameFilled,
-                    isPasswordValid = isPasswordValid,
-                    isPasswordsMatch = arePasswordsMatching,
-                    isCheckBoxChecked = checkboxTermsState.value
                 )
-                Spacer(Modifier.size(10.dp))
-                CreateBottomText(onLoginClick = {
-                    navController.navigate("login")
-                })
             }
         })
 }
 @Preview(showBackground = true)
 @Composable
-fun CreateScreenPreview() {
+fun ForgotPasswordScreenPreview() {
     RoutinelyTheme {
-        CreateAccountScreen(rememberNavController())
+        ForgotPasswordScreen(rememberNavController())
     }
 }
