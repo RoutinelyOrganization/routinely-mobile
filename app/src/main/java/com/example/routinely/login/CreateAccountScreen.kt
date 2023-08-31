@@ -1,15 +1,12 @@
 package com.example.routinely.login
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,87 +44,85 @@ fun CreateAccountScreen(navController: NavHostController) {
     var arePasswordsMatching by remember { mutableStateOf(false) }
     val checkboxTermsState = remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier
-        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp, top = 16.dp)
-        .fillMaxWidth()
-        .fillMaxHeight(),
-        content = {
-            Column(modifier = Modifier
-                .weight(0.20f)
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize(),
+    ){
+        Column(
+            modifier = Modifier
+                .weight(0.15f)
                 .fillMaxWidth()
-                .fillMaxHeight(), content = {
-                Image(
-                    painter = painterResource(R.drawable.logo_horizontal),
-                    contentDescription = "Image",
-                    modifier = Modifier
-                        .size(height = 148.dp, width = 136.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
-            })
-            Column(modifier = Modifier
-                .clip(MaterialTheme.shapes.medium)
-                .background(Color.Transparent)
+        ){
+            Image(
+                painter = painterResource(R.drawable.logo_horizontal),
+                contentDescription = "Image",
+                modifier = Modifier
+                    .size(224.dp)
+                    .align(Alignment.CenterHorizontally)
+            )
+        }
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
                 .weight(0.70f)
-                .fillMaxWidth()
-                .fillMaxHeight(),
-                content = {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.padding(top = 1.dp)
-                    ) {
-                        Text(
-                            text = "Criar conta", color = Color.Black, fontSize = 25.sp
-                        )
-                        NameTextField(onNameChange = {name ->
-                            isNameFilled = name.isNotBlank() && name.length >= 3})
+                .fillMaxWidth(),
+        ){
+            Text(
+                text = "Criar conta", color = Color.Black, fontSize = 25.sp
+            )
+            NameTextField(onNameChange = {name ->
+                isNameFilled = name.isNotBlank() && name.length >= 3})
 
-                        LoginTextField(onEmailChange = { email ->
-                            isEmailFilled = email.isNotBlank()
-                            isEmailValid = isValidEmailFormat(email)
-                        })
+            LoginTextField(onEmailChange = { email ->
+                isEmailFilled = email.isNotBlank()
+                isEmailValid = isValidEmailFormat(email)
+            })
 
-                        PasswordTextField(
-                            onPasswordChange = { newPassword ->
-                                password = newPassword
-                                isPasswordFilled = password.isNotBlank()
-                                isPasswordValid = isPasswordValid(password)
-                                arePasswordsMatching = password == repeatedPassword
-                            },
-                            text = "Senha"
-                        )
+            PasswordTextField(
+                onPasswordChange = { newPassword ->
+                    password = newPassword
+                    isPasswordFilled = password.isNotBlank()
+                    isPasswordValid = isPasswordValid(password)
+                    arePasswordsMatching = password == repeatedPassword
+                },
+                text = "Senha"
+            )
 
-                        PasswordTextField(
-                            onPasswordChange = { newRepeatedPassword ->
-                                repeatedPassword = newRepeatedPassword
-                                arePasswordsMatching = password == repeatedPassword
-                            },
-                            text = "Repetir Senha"
-                        )
+            PasswordTextField(
+                onPasswordChange = { newRepeatedPassword ->
+                    repeatedPassword = newRepeatedPassword
+                    arePasswordsMatching = password == repeatedPassword
+                },
+                text = "Repetir senha"
+            )
 
-                        TermsCheckbox(checkboxTermsState)
+            TermsCheckbox(checkboxTermsState)
 
-                    }
-                })
-            //Espaço no final
-            Column(modifier = Modifier.weight(0.10f)) {
-                CreateAccountButton(
-                    onLoginClick = {
-                        navController.navigate("login")
-                    },
-                    emailPreenchido = isEmailFilled,
-                    senhaPreenchida = isPasswordFilled,
-                    isEmailValid = isEmailValid,
-                    isNameFilled = isNameFilled,
-                    isPasswordValid = isPasswordValid,
-                    isPasswordsMatch = arePasswordsMatching,
-                    isCheckBoxChecked = checkboxTermsState.value
-                )
-                Spacer(Modifier.size(10.dp))
-                CreateBottomText(onLoginClick = {
+        }
+        //Espaço no final
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.weight(0.15f)
+        ) {
+            CreateAccountButton(
+                onLoginClick = {
                     navController.navigate("login")
-                })
-            }
-        })
+                },
+                emailPreenchido = isEmailFilled,
+                senhaPreenchida = isPasswordFilled,
+                isEmailValid = isEmailValid,
+                isNameFilled = isNameFilled,
+                isPasswordValid = isPasswordValid,
+                isPasswordsMatch = arePasswordsMatching,
+                isCheckBoxChecked = checkboxTermsState.value
+            )
+            CreateBottomText(onLoginClick = {
+                navController.navigate("login")
+            })
+        }
+    }
 }
 @Preview(showBackground = true)
 @Composable

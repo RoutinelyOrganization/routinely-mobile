@@ -11,26 +11,20 @@ import androidx.compose.ui.graphics.Color
 import com.example.routinely.ui.theme.BlueRoutinely
 
 @Composable
-fun LoginButton(
+fun VerificationCodeButton(
     onLoginClick: () -> Unit,
-    emailPreenchido: Boolean,
-    senhaPreenchida: Boolean,
-    isEmailValid: Boolean,
-    isPasswordValid: Boolean
+    isCodeFilled: Boolean
 ) {
-    val isButtonEnabled = senhaPreenchida && emailPreenchido && isEmailValid && isPasswordValid;
     Button(
-        enabled = isButtonEnabled,
+        enabled = isCodeFilled,
         onClick = onLoginClick,
         modifier = Modifier
             .fillMaxWidth(),
-        colors = if(isButtonEnabled)
-                    ButtonDefaults.buttonColors(BlueRoutinely)
-                else ButtonDefaults.buttonColors(Color.Blue),
+        colors = ButtonDefaults.buttonColors(BlueRoutinely),
         shape = MaterialTheme.shapes.small,
     ) {
         Text(
-            text = "Fazer login", color = Color.White
+            text = "Confirmar", color = Color.White
         )
     }
 }

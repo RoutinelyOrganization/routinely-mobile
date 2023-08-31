@@ -27,5 +27,8 @@ fun NavGraph(
         composable("createnewpassword") {
             ForgotPasswordScreen(navController)
         }
+        composable("verificationcodescreen") {
+            ForgotPasswordScreen(navController)
+        }
     }
 }
