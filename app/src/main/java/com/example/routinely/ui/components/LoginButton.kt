@@ -24,9 +24,7 @@ fun LoginButton(
         onClick = onLoginClick,
         modifier = Modifier
             .fillMaxWidth(),
-        colors = if(isButtonEnabled)
-                    ButtonDefaults.buttonColors(BlueRoutinely)
-                else ButtonDefaults.buttonColors(Color.Blue),
+        colors = ButtonDefaults.buttonColors(BlueRoutinely),
         shape = MaterialTheme.shapes.small,
     ) {
         Text(
