@@ -10,6 +10,7 @@ import com.example.routinely.login.LoginScreen
 
 @Composable
 //essa função ainda não é utilizada, toda a navegação será aprimorada em breve
+
 fun NavGraph(
     navController: NavHostController
 ) {
