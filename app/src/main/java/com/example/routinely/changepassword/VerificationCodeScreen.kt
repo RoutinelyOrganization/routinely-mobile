@@ -17,34 +17,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.routinely.R
-import com.example.routinely.ui.components.PasswordTextField
-import com.example.routinely.ui.components.UpdatePasswordButton
-import com.example.routinely.ui.components.isPasswordValid
+import com.example.routinely.ui.components.VerificationCodeButton
+import com.example.routinely.ui.components.VerificationCodeTextField
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 @Composable
-fun CreateNewPasswordScreen(navController: NavHostController) {
-    var isPasswordFilled by remember { mutableStateOf(false) }
-    var isPasswordValid by remember { mutableStateOf(false) }
-    var password by remember { mutableStateOf("") }
-    var repeatedPassword by remember { mutableStateOf("") }
-    var arePasswordsMatching by remember { mutableStateOf(false) }
+fun VerificationCodeScreen(navController: NavHostController) {
+    var isCodeFilled by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxSize(),
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .weight(0.25f)
                 .fillMaxWidth()
-        ){
+        ) {
             Image(
                 painter = painterResource(R.drawable.logo_vertical),
                 contentDescription = "Image",
@@ -58,52 +57,52 @@ fun CreateNewPasswordScreen(navController: NavHostController) {
             modifier = Modifier
                 .weight(0.60f)
                 .fillMaxWidth(),
-        ){
+        ) {
             Text(
-                text = "Criar nova senha",
-                color = Color.Black, fontSize = 25.sp
+                text = "Redefinir senha", color = Color.Black, fontSize = 25.sp
             )
             Text(
-                text = "Escolha uma nova senha abaixo ela precisa ser diferente da senha anterior",
+                text = "Insira o código de verificação enviado no e-mail",
                 fontSize = 14.sp
             )
-            PasswordTextField(
-                onPasswordChange = { newPassword ->
-                    password = newPassword
-                    isPasswordFilled = password.isNotBlank()
-                    isPasswordValid = isPasswordValid(password)
-                    arePasswordsMatching = password == repeatedPassword
-                },
-                text = "Senha"
-            )
-
-            PasswordTextField(
-                onPasswordChange = { newRepeatedPassword ->
-                    repeatedPassword = newRepeatedPassword
-                    arePasswordsMatching = password == repeatedPassword
-                },
-                text = "Repetir Senha"
+            VerificationCodeTextField(onCodeChange = { code ->
+                isCodeFilled = code.isNotBlank() && code.length >= 4
+            })
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color(0xff171a21), fontSize = 12.sp
+                        )
+                    ) { append("Não recebeu? ") }
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color(0xff171a21),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    ) { append(" Enviar novamente") }
+                }
             )
         }
-
+        //Espaço no final
         Column(
             modifier = Modifier
-                .weight(0.15f)) {
-            UpdatePasswordButton(
+                .weight(0.15f)
+        ) {
+            VerificationCodeButton(
                 onLoginClick = {
-                    navController.navigate("login")
+                    navController.navigate("createnewpassword")
                 },
-                isPasswordFilled = isPasswordFilled,
-                isPasswordValid = isPasswordValid,
-                isPasswordsMatch = arePasswordsMatching
+                isCodeFilled = isCodeFilled,
             )
         }
     }
 }
 @Preview(showBackground = true)
 @Composable
-fun CreateNewPasswordScreenPreview() {
+fun VerificationCodeScreen() {
     RoutinelyTheme {
-        CreateNewPasswordScreen(rememberNavController())
+        VerificationCodeScreen(rememberNavController())
     }
 }
