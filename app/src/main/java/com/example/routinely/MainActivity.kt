@@ -12,6 +12,7 @@ import com.example.routinely.changepassword.ForgotPasswordScreen
 import com.example.routinely.changepassword.VerificationCodeScreen
 import com.example.routinely.login.CreateAccountScreen
 import com.example.routinely.login.LoginScreen
+import com.example.routinely.navigation.NavGraph
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,24 +25,27 @@ class MainActivity : ComponentActivity() {
             RoutinelyTheme {
                 // Configure a navegação aqui, se estiver usando a biblioteca de navegação
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "login") {
-                    composable("login") {
-                        LoginScreen(navController)
-                    }
-                    composable("createaccount") {
-                        CreateAccountScreen(navController)
-                    }
-                    composable("forgotpassword") {
-                        ForgotPasswordScreen(navController)
-                    }
-                    composable("createnewpassword") {
-                        CreateNewPasswordScreen(navController)
-                    }
-                    composable("verificationcodescreen") {
-                        VerificationCodeScreen(navController)
-                    }
-                    // Defina outras rotas aqui, se necessário
-                }
+                NavGraph(
+                    navController = navController,
+                )
+//                NavHost(navController = navController, startDestination = "login") {
+//                    composable("login") {
+//                        LoginScreen()
+//                    }
+//                    composable("createaccount") {
+//                        CreateAccountScreen(navController)
+//                    }
+//                    composable("forgotpassword") {
+//                        ForgotPasswordScreen(navController)
+//                    }
+//                    composable("createnewpassword") {
+//                        CreateNewPasswordScreen(navController)
+//                    }
+//                    composable("verificationcodescreen") {
+//                        VerificationCodeScreen(navController)
+//                    }
+//                    // Defina outras rotas aqui, se necessário
+//                }
             }
         }
     }
