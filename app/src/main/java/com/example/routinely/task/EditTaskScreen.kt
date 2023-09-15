@@ -36,7 +36,7 @@ import com.example.routinely.ui.theme.RoutinelyTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTask() {
+fun EditTaskScreen() {
     // Cria uma estrutura básica para a tela
     Scaffold(
         modifier = Modifier.padding(PaddingValues(all = 0.dp)),
@@ -127,11 +127,10 @@ fun AddTask() {
         },
     )
 }
-
 @Preview(showBackground = true)
 @Composable
-fun AddTaskPreview() {
+fun EditTaskScreenPreview() {
     RoutinelyTheme {
-        AddTask()
+        EditTaskScreen()
     }
 }
