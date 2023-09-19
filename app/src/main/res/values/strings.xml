@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Routinely</string>
+
+    <string name="desc_back_button">Botão Voltar</string>
+    <string name="desc_notification_button">Botão de notificação</string>
+    <string name="desc_menu_button">Botão de menu</string>
+    <string name="desc_home_navigation_button">Botão Home de Navegação</string>
+
+    <string name="label_home_navigation_button">Início</string>
+    <string name="label_new_task_navigation_button">Nova tarefa</string>
+    <string name="desc_top_bar">Top Bar</string>
 </resources>
