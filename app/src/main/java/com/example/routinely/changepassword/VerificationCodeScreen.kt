@@ -101,7 +101,7 @@ fun VerificationCodeScreen(navController: NavHostController) {
 }
 @Preview(showBackground = true)
 @Composable
-fun VerificationCodeScreen() {
+fun VerificationCodeScreenPreview() {
     RoutinelyTheme {
         VerificationCodeScreen(rememberNavController())
     }

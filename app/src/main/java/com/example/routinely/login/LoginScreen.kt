@@ -1,6 +1,7 @@
 package com.example.routinely.login
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,13 +22,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.routinely.R
 import com.example.routinely.ui.components.ForgotPasswordText
 import com.example.routinely.ui.components.LoginButton
@@ -40,13 +39,19 @@ import com.example.routinely.ui.theme.RoutinelyTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    authenticated: Boolean,
+    navigateToHomeScreen: () -> Unit,
+    navigateToCreateAccountScreen: () -> Unit,
+    navigateToForgotPasswordScreen: () -> Unit,
+) {
     var isPasswordFilled by remember { mutableStateOf(false) }
     var isEmailFilled by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(true) }
     var isPasswordValid by remember { mutableStateOf(false) }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -81,9 +86,10 @@ fun LoginScreen(navController: NavHostController) {
                 fontSize = 25.sp
             )
 
-            LoginTextField(onEmailChange = { email ->
-                isEmailFilled = email.isNotBlank()
-                isEmailValid = isValidEmailFormat(email)
+            LoginTextField(onEmailChange = { newEmail ->
+                email = newEmail
+                isEmailFilled = newEmail.isNotBlank()
+                isEmailValid = isValidEmailFormat(newEmail)
             })
 
             PasswordTextField(
@@ -104,14 +110,14 @@ fun LoginScreen(navController: NavHostController) {
             ) {
                 RememberCheckbox()
                 ForgotPasswordText(onLoginClick = {
-                    navController.navigate("forgotpassword")
+                    navigateToForgotPasswordScreen()
                 })
             }
 
             LoginButton(
                 onLoginClick = {
                     coroutineScope.launch {
-                        showToast(context, "Login ainda não funciona :)")
+                        viewModel.loginWithEmailAndPassword(email = email, password = password)
                     }
                 },
                 emailPreenchido = isEmailFilled,
@@ -121,7 +127,7 @@ fun LoginScreen(navController: NavHostController) {
             )
 
             SignUpButton(onLoginClick = {
-                navController.navigate("createaccount")
+                navigateToCreateAccountScreen()
             })
         }
 
@@ -130,6 +136,14 @@ fun LoginScreen(navController: NavHostController) {
                 .weight(0.15f)
         ) {
 
+        }
+
+        LaunchedEffect(key1 = authenticated) {
+            Log.d("LoginScreen", "Authenticated value changed")
+            if(authenticated) {
+                Log.d("LoginScreen", "Authenticated = true")
+                navigateToHomeScreen()
+            }
         }
     }
 }
@@ -140,6 +154,12 @@ fun showToast(context: Context, message: String) {
 @Composable
 fun LoginScreenPreview() {
     RoutinelyTheme {
-        LoginScreen(rememberNavController()) // Não passe um NavHostController aqui
+        LoginScreen(
+            viewModel = LoginViewModel(),
+            authenticated = false,
+            navigateToHomeScreen = {},
+            navigateToCreateAccountScreen = {},
+            navigateToForgotPasswordScreen = {},
+            )
     }
 }

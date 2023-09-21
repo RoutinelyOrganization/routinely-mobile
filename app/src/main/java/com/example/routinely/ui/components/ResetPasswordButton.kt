@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.example.routinely.ui.theme.BlueRoutinely
-
 @Composable
 fun ResetPasswordButton(
     onLoginClick: () -> Unit,
