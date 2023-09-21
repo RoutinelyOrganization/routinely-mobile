@@ -56,7 +56,8 @@ fun PasswordTextField(onPasswordChange: (String) -> Unit, text: String) {
             }
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            textColor = Gray80,
+            focusedTextColor = Gray80,
+            unfocusedTextColor = Gray80,
             focusedBorderColor = Color.Gray,
             unfocusedBorderColor = Color.Gray
         ),

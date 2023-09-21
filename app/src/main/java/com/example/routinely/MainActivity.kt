@@ -12,6 +12,7 @@ import com.example.routinely.changepassword.ForgotPasswordScreen
 import com.example.routinely.changepassword.VerificationCodeScreen
 import com.example.routinely.login.CreateAccountScreen
 import com.example.routinely.login.LoginScreen
+import com.example.routinely.task.AddTask
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,9 +25,9 @@ class MainActivity : ComponentActivity() {
             RoutinelyTheme {
                 // Configure a navegação aqui, se estiver usando a biblioteca de navegação
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "login") {
-                    composable("login") {
-                        LoginScreen(navController)
+                NavHost(navController = navController, startDestination = "addtask") {
+                    composable("addtask") {
+                        AddTask(navController)
                     }
                     composable("createaccount") {
                         CreateAccountScreen(navController)

@@ -17,16 +17,16 @@ import com.example.routinely.ui.theme.Gray80
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VerificationCodeTextField(onCodeChange: (String) -> Unit) {
-    var code by rememberSaveable { mutableStateOf("") }
+fun DescriptionTextField(onDescriptionChange: (String) -> Unit) {
+    var text by rememberSaveable { mutableStateOf("") }
     OutlinedTextField(
-        value = code,
+        value = text,
         onValueChange = {
-            code = it
-            onCodeChange(it)},
+            text = it
+            onDescriptionChange(it)},
         label = {
             Text(
-                text = "Código de verificação",
+                text = "Descrição",
                 style = TextStyle(color = Color.Black) // Definindo a cor do texto como branco
             )
         },
@@ -36,8 +36,10 @@ fun VerificationCodeTextField(onCodeChange: (String) -> Unit) {
             focusedBorderColor = Color.Gray,
             unfocusedBorderColor = Color.Gray
         ),
-        singleLine = true,
+        singleLine = false,
+        minLines = 3,
+        maxLines = 4,
         modifier = Modifier
-            .fillMaxWidth() // Preencher toda a largura disponível no Row
+            .fillMaxWidth() //Preencher toda a largura disponível no Row
     )
 }

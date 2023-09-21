@@ -1,5 +1,3 @@
-package com.example.routinely.ui.components
-
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
@@ -17,16 +15,16 @@ import com.example.routinely.ui.theme.Gray80
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VerificationCodeTextField(onCodeChange: (String) -> Unit) {
-    var code by rememberSaveable { mutableStateOf("") }
+fun TaskNameTextField(onTaskNameChange: (String) -> Unit) {
+    var text by rememberSaveable { mutableStateOf("") }
     OutlinedTextField(
-        value = code,
+        value = text,
         onValueChange = {
-            code = it
-            onCodeChange(it)},
+            text = it
+            onTaskNameChange(it)},
         label = {
             Text(
-                text = "Código de verificação",
+                text = "Nome da tarefa",
                 style = TextStyle(color = Color.Black) // Definindo a cor do texto como branco
             )
         },
