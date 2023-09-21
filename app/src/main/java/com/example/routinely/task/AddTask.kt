@@ -1,4 +1,6 @@
 package com.example.routinely.task
+
+import TaskNameTextField
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -27,14 +29,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.routinely.R
+import com.example.routinely.ui.components.AddTaskButton
+import com.example.routinely.ui.components.DatePickerDiag
+import com.example.routinely.ui.components.DescriptionTextField
+import com.example.routinely.ui.components.DropdownRoutinely
+import com.example.routinely.ui.components.TimePickerDiag
 import com.example.routinely.ui.theme.BlueRoutinely
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTask() {
+fun AddTask(navController: NavHostController) {
+    var expanded by remember { mutableStateOf(true) }
     // Cria uma estrutura básica para a tela
     Scaffold(
         modifier = Modifier.padding(PaddingValues(all = 0.dp)),
@@ -114,28 +124,65 @@ fun AddTask() {
         },
         content = { padding ->
             Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(70.dp)
+                    .padding(start = 30.dp, end = 30.dp, bottom = 80.dp, top = 80.dp)
             ) {
                 // O conteúdo da tela
                 Text(
-                    text = "Este é o conteúdo da tela",
+                    color = BlueRoutinely,
+                    text = "Adicionar tarefa",
                     style = TextStyle(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     )
                 )
+                TaskNameTextField(
+                    onTaskNameChange = {
+
+                    }
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    DatePickerDiag(
+                        label = "Data",
+                        modifier = Modifier.weight(1f)
+                    )
+                    TimePickerDiag(
+                        label = "Hora",
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                DropdownRoutinely(
+                    label = "Prioridade",
+                    list = listOf("Baixa", "Alta", "Muito alta")
+                )
+                DropdownRoutinely(
+                    label = "Categorias",
+                    list = listOf("Baixa", "Alta", "Muito alta")
+                )
+                DropdownRoutinely(
+                    label = "Tags",
+                    list = listOf("Baixa", "Alta", "Muito alta")
+                )
+                DescriptionTextField(
+                    onDescriptionChange ={}
+                )
+                AddTaskButton(
+                    onAddTaskClick = {}
+                )
             }
         },
-
-        )
-
+    )
 }
-@Preview(showBackground = true)
+@Preview(showBackground = false)
 @Composable
 fun AddTaskPreview() {
     RoutinelyTheme {
-        AddTask()
+        AddTask(rememberNavController())
     }
 }
