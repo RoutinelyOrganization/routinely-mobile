@@ -3,10 +3,11 @@ package com.example.routinely.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.routinely.ui.theme.Gray80
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordTextField(onPasswordChange: (String) -> Unit, text: String) {
     var password by rememberSaveable { mutableStateOf("") }
@@ -53,16 +55,16 @@ fun PasswordTextField(onPasswordChange: (String) -> Unit, text: String) {
                 )
             }
         },
-        colors = OutlinedTextFieldDefaults.colors(
+        colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedTextColor = Gray80,
             unfocusedTextColor = Gray80,
             focusedBorderColor = Color.Gray,
-            unfocusedBorderColor = Color.Gray,
+            unfocusedBorderColor = Color.Gray
         ),
         singleLine = true,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth() // Preencher toda a largura disponível no Row
     )
 }
 
