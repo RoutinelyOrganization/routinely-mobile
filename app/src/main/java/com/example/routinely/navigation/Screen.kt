@@ -8,4 +8,5 @@ sealed class Screen(val route: String) {
     object VerificationCodeScreen: Screen("verification_code_screen")
     object HomeScreen: Screen("home_screen")
     object AddTaskScreen: Screen("add_task_screen")
+    object SplashScreen: Screen("splash_screen")
 }

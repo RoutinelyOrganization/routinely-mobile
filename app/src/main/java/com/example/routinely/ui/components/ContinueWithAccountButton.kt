@@ -1,9 +1,7 @@
 package com.example.routinely.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -16,10 +14,10 @@ import com.example.routinely.ui.theme.BlueRoutinely
 
 @Composable
 fun ContinueWithAccountButton(
-    onClick: () -> Unit
+    onButtonClicked: () -> Unit
 ) {
     Button(
-        onClick = onClick,
+        onClick = onButtonClicked,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp),

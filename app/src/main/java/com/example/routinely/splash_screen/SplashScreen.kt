@@ -28,7 +28,9 @@ import com.example.routinely.ui.components.GoogleLoginButton
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen() {
+fun SplashScreen(
+    onEmailLoginClicked: () -> Unit
+) {
     val isLogoVisible = remember {
         mutableStateOf(false)
     }
@@ -79,7 +81,7 @@ fun SplashScreen() {
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Bottom
             ) {
-                ContinueWithAccountButton(onClick = {})
+                ContinueWithAccountButton(onButtonClicked = { onEmailLoginClicked() })
                 GoogleLoginButton()
             }
         }
@@ -99,6 +101,6 @@ fun SplashScreen() {
 @Composable
 fun SplashScreenPreview() {
     SplashScreen(
-
+        onEmailLoginClicked = { }
     )
 }
