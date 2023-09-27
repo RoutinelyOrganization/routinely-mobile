@@ -1,6 +1,5 @@
 package com.example.routinely.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,7 +28,6 @@ fun TimeTextField(
     modifier: Modifier = Modifier
 ) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue("00:00")) }
-    var hasBeenEdited by remember { mutableStateOf(false) }
     OutlinedTextField(
         value = textFieldValue,
         onValueChange = { newValue ->
@@ -53,7 +51,6 @@ fun TimeTextField(
                 selection = TextRange(cursorPosition)
             )
             onTimeChange(formattedValue)
-            hasBeenEdited = true
 
         },
         label = {
@@ -67,7 +64,7 @@ fun TimeTextField(
             if (!isValidTime(textFieldValue.text)) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Formato inválido! Ex.: (12:30)",
+                    text = "Formato inválido!",
                     color = MaterialTheme.colorScheme.error
                 )
             }
@@ -82,8 +79,7 @@ fun TimeTextField(
         singleLine = true,
         modifier = modifier
             .onFocusEvent { state ->
-                if (state.isFocused && !hasBeenEdited) {
-                    // Limpar o campo apenas se o usuário ainda não editou
+                if (state.isFocused) {
                     textFieldValue = TextFieldValue("")
                 }
             }

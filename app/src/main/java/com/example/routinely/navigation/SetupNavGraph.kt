@@ -13,6 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.routinely.home.HomeScreen
 import com.example.routinely.login.LoginScreen
 import com.example.routinely.login.LoginViewModel
+import com.example.routinely.task.AddTask
 
 @Composable
 fun SetupNavGraph(
@@ -20,7 +21,7 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        startDestination = Screen.AddTaskScreen.route
     ) {
         loginRoute(
             navigateToHomeScreen = {
@@ -44,6 +45,9 @@ fun SetupNavGraph(
             onNewTaskClicked = {
 //                navController.navigate()
             },
+        )
+        addTaskScreenRoute(
+
         )
     }
 }
@@ -99,6 +103,13 @@ fun NavGraphBuilder.homeScreenRoute(
             onNotificationClicked = { onNotificationClicked() },
             onNewTaskClicked = { onNewTaskClicked() },
         )
+    }
+}
+
+fun NavGraphBuilder.addTaskScreenRoute(
+) {
+    composable(route = Screen.AddTaskScreen.route) {
+        AddTask()
     }
 }
 
