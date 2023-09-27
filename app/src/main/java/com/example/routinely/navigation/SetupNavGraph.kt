@@ -45,6 +45,9 @@ fun SetupNavGraph(
 //                navController.navigate()
             },
         )
+        addTaskScreenRoute(
+
+        )
     }
 }
 
@@ -99,6 +102,13 @@ fun NavGraphBuilder.homeScreenRoute(
             onNotificationClicked = { onNotificationClicked() },
             onNewTaskClicked = { onNewTaskClicked() },
         )
+    }
+}
+
+fun NavGraphBuilder.addTaskScreenRoute(
+) {
+    composable(route = Screen.AddTaskScreen.route) {
+        // AddTask()
     }
 }
 
