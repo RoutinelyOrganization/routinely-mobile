@@ -13,6 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.routinely.home.HomeScreen
 import com.example.routinely.login.LoginScreen
 import com.example.routinely.login.LoginViewModel
+import com.example.routinely.splash_screen.SplashScreen
 import com.example.routinely.task.AddTask
 
 @Composable
@@ -21,11 +22,11 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        startDestination = Screen.SplashScreen.route
     ) {
         loginRoute(
             navigateToHomeScreen = {
-                navController.popBackStack()
+                navController.popBackStack(route = Screen.SplashScreen.route, inclusive = true)
                 navController.navigate(Screen.HomeScreen.route)
             },
             navigateToCreateAccountScreen = {
@@ -53,6 +54,11 @@ fun SetupNavGraph(
             onHomeButtonPressed = {
                 navController.popBackStack()
                 navController.navigate(Screen.HomeScreen.route)
+            }
+        )
+        splashScreenRoute(
+            onEmailLoginClicked = {
+                navController.navigate(Screen.Login.route)
             }
         )
     }
@@ -120,6 +126,20 @@ fun NavGraphBuilder.addTaskScreenRoute(
         AddTask(
             onBackButtonPressed = { onBackButtonPressed() },
             onHomeButtonPressed = { onHomeButtonPressed() },
+        )
+        AddTask(
+            onBackButtonPressed = { onBackButtonPressed() },
+            onHomeButtonPressed = { onHomeButtonPressed() },
+        )
+    }
+}
+
+fun NavGraphBuilder.splashScreenRoute(
+    onEmailLoginClicked: () -> Unit,
+) {
+    composable(route = Screen.SplashScreen.route) {
+        SplashScreen(
+            onEmailLoginClicked = { onEmailLoginClicked() }
         )
     }
 }
