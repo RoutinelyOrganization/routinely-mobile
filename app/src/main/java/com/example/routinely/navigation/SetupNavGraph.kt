@@ -21,7 +21,7 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.AddTaskScreen.route
+        startDestination = Screen.Login.route
     ) {
         loginRoute(
             navigateToHomeScreen = {
