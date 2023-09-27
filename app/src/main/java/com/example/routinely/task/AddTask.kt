@@ -6,11 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,7 +40,10 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTask() {
+fun AddTask(
+    onBackButtonPressed: () -> Unit,
+    onHomeButtonPressed: () -> Unit,
+) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     //var selectedHour by remember { mutableStateOf(0) }
@@ -70,13 +73,13 @@ fun AddTask() {
                 onMenuClick = {  },
                 onNotificationClick = {  },
                 showBackButton = true,
-                onBackButtonClicked = { }
+                onBackButtonClicked = { onBackButtonPressed() }
             )
         },
         bottomBar = {
             BottomAppBarRoutinely(
                 bottomBarItems = bottomBarItems,
-                onClick = {  },
+                onClick = { onHomeButtonPressed() },
             )
         },
         content = { padding ->
@@ -211,6 +214,6 @@ fun AddTask() {
 @Composable
 fun AddTaskPreview() {
     RoutinelyTheme {
-        AddTask()
+        AddTask(onBackButtonPressed = { }, onHomeButtonPressed = { })
     }
 }

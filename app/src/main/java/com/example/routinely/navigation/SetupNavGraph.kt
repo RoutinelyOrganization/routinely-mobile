@@ -13,6 +13,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.routinely.home.HomeScreen
 import com.example.routinely.login.LoginScreen
 import com.example.routinely.login.LoginViewModel
+import com.example.routinely.task.AddTask
 
 @Composable
 fun SetupNavGraph(
@@ -42,11 +43,17 @@ fun SetupNavGraph(
 //                navController.navigate()
             },
             onNewTaskClicked = {
-//                navController.navigate()
+                navController.navigate(Screen.AddTaskScreen.route)
             },
         )
         addTaskScreenRoute(
-
+            onBackButtonPressed = {
+                navController.popBackStack()
+            },
+            onHomeButtonPressed = {
+                navController.popBackStack()
+                navController.navigate(Screen.HomeScreen.route)
+            }
         )
     }
 }
@@ -106,9 +113,14 @@ fun NavGraphBuilder.homeScreenRoute(
 }
 
 fun NavGraphBuilder.addTaskScreenRoute(
+    onBackButtonPressed: () -> Unit,
+    onHomeButtonPressed: () -> Unit
 ) {
     composable(route = Screen.AddTaskScreen.route) {
-        // AddTask()
+        AddTask(
+            onBackButtonPressed = { onBackButtonPressed() },
+            onHomeButtonPressed = { onHomeButtonPressed() },
+        )
     }
 }
 
