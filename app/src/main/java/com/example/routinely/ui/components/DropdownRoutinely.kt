@@ -29,15 +29,15 @@ fun DropdownRoutinely(
     label: String,
     list: List<String>
 ) {
-    //val options = listOf("Option 1", "Option 2", "Option 3", "Option 4", "Option 5")
     var expanded by remember { mutableStateOf(false) }
+    val list = listOf(label) + list
     var selectedOptionText by remember { mutableStateOf(list[0]) }
 
-    Box(
+    /*Box(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentSize(Alignment.TopStart)
-    ) {
+            .wrapContentSize(Alignment.BottomEnd)
+    ) {*/
         ExposedDropdownMenuBox(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -45,7 +45,6 @@ fun DropdownRoutinely(
             onExpandedChange = { expanded = !expanded },
         ) {
             OutlinedTextField(
-                // The `menuAnchor` modifier must be passed to the text field for correctness.
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth(),
@@ -60,28 +59,34 @@ fun DropdownRoutinely(
                     focusedBorderColor = Color.Gray,
                     unfocusedBorderColor = Color.Gray),
             )
-            Box(
+            /*Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.Transparent),
-            ) {
+            ) {*/
                 ExposedDropdownMenu(
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
                 ) {
-                    list.forEach { selectionOption ->
+                    list.forEachIndexed { index, selectionOption ->
+                        val isGrayedOut = index == 0 // Primeiro item é cinza
                         DropdownMenuItem(
-                            text = { Text(selectionOption) },
+                            text = { Text(selectionOption, color = if (isGrayedOut) Color.Gray else Color.Black) },
                             onClick = {
-                                selectedOptionText = selectionOption
+                                if (!isGrayedOut) {
+                                    selectedOptionText = selectionOption
+                                }
                                 expanded = false
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                            enabled = !isGrayedOut, // Desativa o primeiro item
                         )
                     }
                 }
-            }
-        }
+            //}
+        //}
     }
 }
 @Preview(showBackground = false)
