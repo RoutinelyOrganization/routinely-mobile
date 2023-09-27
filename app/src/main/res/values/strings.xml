@@ -9,4 +9,11 @@
     <string name="label_home_navigation_button">Início</string>
     <string name="label_new_task_navigation_button">Nova tarefa</string>
     <string name="desc_top_bar">Top Bar</string>
+
+    <string name="desc_urgent_priority">Prioridade urgente</string>
+    <string name="desc_high_priority">Alta prioridade</string>
+    <string name="desc_medium_priority">Média prioridade</string>
+    <string name="desc_low_priority">Baixa prioridade</string>
+    <string name="label_tasks_viewer">Tasks Viewer</string>
+    <string name="label_completed_tasks">Completed Tasks</string>
 </resources>
