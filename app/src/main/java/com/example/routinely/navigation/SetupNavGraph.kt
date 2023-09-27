@@ -127,6 +127,10 @@ fun NavGraphBuilder.addTaskScreenRoute(
             onBackButtonPressed = { onBackButtonPressed() },
             onHomeButtonPressed = { onHomeButtonPressed() },
         )
+        AddTask(
+            onBackButtonPressed = { onBackButtonPressed() },
+            onHomeButtonPressed = { onHomeButtonPressed() },
+        )
     }
 }
 
