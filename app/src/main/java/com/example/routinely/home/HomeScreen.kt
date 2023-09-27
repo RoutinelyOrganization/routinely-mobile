@@ -10,7 +10,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.routinely.R
 import com.example.routinely.ui.components.BottomAppBarRoutinely
 import com.example.routinely.ui.components.DatePickerRoutinely
 import com.example.routinely.ui.components.TasksViewerRoutinely
@@ -18,6 +17,7 @@ import com.example.routinely.ui.components.TopAppBarRoutinely
 import com.example.routinely.ui.components.datePickerState
 import com.example.routinely.util.ActionItem
 import com.example.routinely.util.BottomNavItems
+import com.example.routinely.util.Categories
 import com.example.routinely.util.TaskItems
 import com.example.routinely.util.TaskPriority
 
@@ -72,52 +72,69 @@ private fun taskItemsDumb(): List<TaskItems> {
     return listOf(
         TaskItems(
             nameOfTask = "Enviar email cv para Jean",
-            categoryName = "Carreira",
+            category = Categories.Career,
             taskPriority = TaskPriority.Urgent,
             listOfActions = listOf(
-                ActionItem(
-                    onClick = { },
-                    imageVectorId = R.drawable.ic_edit,
-                    contentDescriptionId = R.string.desc_high_priority,
+                ActionItem.Edit(
+                    onClick = {
+
+                    }
                 ),
-                ActionItem(
-                    onClick = { },
-                    imageVectorId = R.drawable.ic_trash,
-                    contentDescriptionId = R.string.desc_high_priority,
+                ActionItem.Exclude(
+                    onClick = {
+
+                    }
                 )
             )
         ),
         TaskItems(
             nameOfTask = "Ir ao médico",
-            categoryName = "Saúde",
+            category = Categories.Health,
             taskPriority = TaskPriority.Low,
             listOfActions = listOf(
-                ActionItem(
-                    onClick = { },
-                    imageVectorId = R.drawable.ic_edit,
-                    contentDescriptionId = R.string.desc_high_priority,
+                ActionItem.Edit(
+                    onClick = {
+
+                    }
                 ),
-                ActionItem(
-                    onClick = { },
-                    imageVectorId = R.drawable.ic_trash,
-                    contentDescriptionId = R.string.desc_high_priority,
+                ActionItem.Exclude(
+                    onClick = {
+
+                    }
                 )
             )
         ),
         TaskItems(
             nameOfTask = "Pagar luz",
-            categoryName = "Finanças",
+            category = Categories.Finances,
             taskPriority = TaskPriority.High,
             listOfActions = listOf(
-                ActionItem(
-                    onClick = { },
-                    imageVectorId = R.drawable.ic_edit,
-                    contentDescriptionId = R.string.desc_high_priority,
+                ActionItem.Edit(
+                    onClick = {
+
+                    }
                 ),
-                ActionItem(
-                    onClick = { },
-                    imageVectorId = R.drawable.ic_trash,
-                    contentDescriptionId = R.string.desc_high_priority,
+                ActionItem.Exclude(
+                    onClick = {
+
+                    }
+                )
+            )
+        ),
+        TaskItems(
+            nameOfTask = "Estudar Inglês",
+            category = Categories.Studies,
+            taskPriority = TaskPriority.High,
+            listOfActions = listOf(
+                ActionItem.Edit(
+                    onClick = {
+
+                    }
+                ),
+                ActionItem.Exclude(
+                    onClick = {
+
+                    }
                 )
             )
         )
@@ -128,19 +145,19 @@ fun concludedTaskItemsDumb(): List<TaskItems> {
     return listOf(
         TaskItems(
             nameOfTask = "Enviar email cv para Jean",
-            categoryName = "Carreira",
+            category = Categories.Career,
             taskPriority = TaskPriority.Urgent,
             listOfActions = emptyList()
         ),
         TaskItems(
             nameOfTask = "Ir ao médico",
-            categoryName = "Saúde",
+            category = Categories.Health,
             taskPriority = TaskPriority.Low,
             listOfActions = emptyList()
         ),
         TaskItems(
             nameOfTask = "Pagar luz",
-            categoryName = "Finanças",
+            category = Categories.Finances,
             taskPriority = TaskPriority.High,
             listOfActions = emptyList()
         )

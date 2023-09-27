@@ -46,6 +46,7 @@ import com.example.routinely.R
 import com.example.routinely.ui.theme.BlueRoutinely
 import com.example.routinely.ui.theme.SecondaryYellowRoutinely
 import com.example.routinely.util.ActionItem
+import com.example.routinely.util.Categories
 import com.example.routinely.util.TaskItems
 
 @Composable
@@ -143,7 +144,7 @@ private fun TaskItem(
         TextWithMarquee(taskItem.nameOfTask, focusRequester)
 
         Row{
-            CategoryItem(taskItem.categoryName)
+            CategoryItem(taskItem.category)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
@@ -198,7 +199,7 @@ private fun ConcludedTaskItem(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ){
-            CategoryItem(categoryName = taskItem.categoryName)
+            CategoryItem(category = taskItem.category)
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -221,7 +222,7 @@ private fun ConcludedTaskItem(
 }
 
 @Composable
-private fun CategoryItem(categoryName: String) {
+private fun CategoryItem(category: Categories) {
     Column(
         modifier = Modifier
             .padding(start = 12.dp, end = 6.dp)
@@ -230,7 +231,7 @@ private fun CategoryItem(categoryName: String) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = categoryName,
+            text = stringResource(category.nameId),
             modifier = Modifier
                 .padding(horizontal = 6.dp, vertical = 8.dp),
             textAlign = TextAlign.Center

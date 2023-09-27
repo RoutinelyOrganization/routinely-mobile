@@ -16,4 +16,8 @@
     <string name="desc_low_priority">Baixa prioridade</string>
     <string name="label_tasks_viewer">Tasks Viewer</string>
     <string name="label_completed_tasks">Completed Tasks</string>
+    <string name="category_career_text">Career</string>
+    <string name="category_health_text">Health</string>
+    <string name="category_finances_text">Finances</string>
+    <string name="category_studies_text">Studies</string>
 </resources>
