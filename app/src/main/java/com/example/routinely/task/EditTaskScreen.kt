@@ -3,13 +3,11 @@ package com.example.routinely.task
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -74,143 +72,147 @@ fun EditTaskScreen(
                 onClick = { onHomeButtonPressed() },
             )
         },
-        content = { padding ->
+        content = { innerPadding ->
+            val contentPadding = PaddingValues(
+                top = innerPadding.calculateTopPadding() + 32.dp, // Adicione padding na parte superior
+                start = 16.dp,
+                end = 16.dp,
+                bottom = innerPadding.calculateBottomPadding()
+            )
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
+                verticalArrangement = Arrangement.spacedBy(0.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding)
             ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(0.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 30.dp, end = 30.dp, bottom = 70.dp, top = 70.dp)
-                ) {
-                    // O conteúdo da tela
-                    Text(
-                        color = PurpleRoutinely,
-                        text = "Editar tarefa",
-                        style = TextStyle(
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                // O conteúdo da tela
+                Text(
+                    color = PurpleRoutinely,
+                    text = "Editar tarefa",
+                    style = TextStyle(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
                     )
-                    TaskNameTextField(
-                        onTaskNameChange = {
+                )
+                TaskNameTextField(
+                    onTaskNameChange = {
 
-                        }
+                    }
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    DatePickerDiag(
+                        label = "Data",
+                        modifier = Modifier.weight(1f)
+                    )
+                    TimeTextField(
+                        onTimeChange = {},
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+
+                    DropdownRoutinely(
+                        label = "Prioridade",
+                        list = listOf("Urgente", "Alta", "Média", "Baixa"),
+                        optionColors = mapOf(
+                            "Baixa" to LowPriority,
+                            "Média" to MediumPriority,
+                            "Alta" to HighPriority,
+                            "Urgente" to UrgentPriority
+                        )
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        DatePickerDiag(
-                            label = "Data",
-                            modifier = Modifier.weight(1f)
-                        )
-                        TimeTextField(
-                            onTimeChange = {},
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-
-                        DropdownRoutinely(
-                            label = "Prioridade",
-                            list = listOf("Urgente", "Alta", "Média", "Baixa"),
-                            optionColors = mapOf(
-                                "Baixa" to LowPriority,
-                                "Média" to MediumPriority,
-                                "Alta" to HighPriority,
-                                "Urgente" to UrgentPriority
-                            )
-                        )
                         DropdownRoutinely(
                             label = "Categorias",
-                            list = listOf("Pessoal", "Estudos", "Finanças", "Carreira", "Saúde")
+                            list = listOf("Pessoal", "Estudos", "Finanças", "Carreira", "Saúde"),
+                            modifier = Modifier.weight(1f)
                         )
                         DropdownRoutinely(
                             label = "Tags",
-                            list = listOf(
-                                "Candidatura",
-                                "Conta",
-                                "Exercicio",
-                                "Beleza",
-                                "Literatura"
-                            )
+                            list = listOf("Candidatura", "Conta", "Exercicio", "Beleza", "Literatura"),
+                            modifier = Modifier.weight(1f)
                         )
-                        DescriptionTextField(
-                            onDescriptionChange = {}
-                        )
+                    }
+                    DescriptionTextField(
+                        onDescriptionChange = {}
+                    )
+                    RoutinelyTaskButton(
+                        textRes = R.string.save_changes,
+                        textColor = Color.White,
+                        buttonColor = ButtonDefaults.buttonColors(PurpleRoutinely),
+                        onClick = { },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        borderStroke = BorderStroke(1.dp, PurpleRoutinely)
+                    )
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         RoutinelyTaskButton(
-                            textRes = R.string.save_changes,
-                            textColor = Color.White,
-                            buttonColor = ButtonDefaults.buttonColors(PurpleRoutinely),
-                            onClick = { },
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            borderStroke = BorderStroke(1.dp, PurpleRoutinely)
+                            textRes = R.string.delete_task,
+                            textColor = RedRoutinely,
+                            buttonColor = ButtonDefaults.outlinedButtonColors(
+                                containerColor = Color.Transparent
+                            ),
+                            onClick = { showDialog = true },
+                            modifier = Modifier.weight(1f),
+                            borderStroke = BorderStroke(1.dp, Color.Gray)
                         )
 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            RoutinelyTaskButton(
-                                textRes = R.string.delete_task,
-                                textColor = RedRoutinely,
-                                buttonColor = ButtonDefaults.outlinedButtonColors(
-                                    containerColor = Color.Transparent
-                                ),
-                                onClick = { showDialog = true },
-                                modifier = Modifier.weight(1f),
-                                borderStroke = BorderStroke(1.dp, Color.Gray)
+                        if (showDialog) {
+                            TaskAlertDialog(
+                                textRes = R.string.delete_task_confirmation,
+                                onConfirm = {
+
+                                    showDialog = false
+                                },
+                                onCancel = {
+                                    showDialog = false
+                                },
+                                onDismissRequest = {
+                                    showDialog = false
+                                }
                             )
+                        }
 
-                            if (showDialog) {
-                                TaskAlertDialog(
-                                    textRes = R.string.delete_task_confirmation,
-                                    onConfirm = {
+                        RoutinelyTaskButton(
+                            textRes = R.string.duplicate_task,
+                            textColor = PurpleRoutinely,
+                            buttonColor = ButtonDefaults.outlinedButtonColors(
+                                containerColor = Color.Transparent
+                            ),
+                            onClick = { showDuplicateDialog = true },
+                            modifier = Modifier.weight(1f),
+                            borderStroke = BorderStroke(1.dp, Color.Gray)
+                        )
 
-                                        showDialog = false
-                                    },
-                                    onCancel = {
-                                        showDialog = false
-                                    },
-                                    onDismissRequest = {
-                                        showDialog = false
-                                    }
-                                )
-                            }
+                        if (showDuplicateDialog) {
+                            TaskAlertDialog(
+                                textRes = R.string.duplicate_task_confirmation,
+                                onConfirm = {
 
-                            RoutinelyTaskButton(
-                                textRes = R.string.duplicate_task,
-                                textColor = PurpleRoutinely,
-                                buttonColor = ButtonDefaults.outlinedButtonColors(
-                                    containerColor = Color.Transparent
-                                ),
-                                onClick = { showDuplicateDialog = true },
-                                modifier = Modifier.weight(1f),
-                                borderStroke = BorderStroke(1.dp, Color.Gray)
+                                    showDuplicateDialog = false
+                                },
+                                onCancel = {
+                                    showDuplicateDialog = false
+                                },
+                                onDismissRequest = {
+                                    showDuplicateDialog = false
+                                }
                             )
-
-                            if (showDuplicateDialog) {
-                                TaskAlertDialog(
-                                    textRes = R.string.duplicate_task_confirmation,
-                                    onConfirm = {
-
-                                        showDuplicateDialog = false
-                                    },
-                                    onCancel = {
-                                        showDuplicateDialog = false
-                                    },
-                                    onDismissRequest = {
-                                        showDuplicateDialog = false
-                                    }
-                                )
-                            }
                         }
                     }
                 }
