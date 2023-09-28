@@ -32,7 +32,9 @@ import com.example.routinely.ui.components.VerificationCodeTextField
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 @Composable
-fun VerificationCodeScreen(navController: NavHostController) {
+fun VerificationCodeScreen(
+    onConfirmResetPasswordClicked: () -> Unit
+) {
     var isCodeFilled by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -91,8 +93,8 @@ fun VerificationCodeScreen(navController: NavHostController) {
                 .weight(0.15f)
         ) {
             VerificationCodeButton(
-                onLoginClick = {
-                    navController.navigate("createnewpassword")
+                onConfirmCodeClick = {
+                    onConfirmResetPasswordClicked()
                 },
                 isCodeFilled = isCodeFilled,
             )
@@ -103,6 +105,6 @@ fun VerificationCodeScreen(navController: NavHostController) {
 @Composable
 fun VerificationCodeScreenPreview() {
     RoutinelyTheme {
-        VerificationCodeScreen(rememberNavController())
+        VerificationCodeScreen(onConfirmResetPasswordClicked = {})
     }
 }

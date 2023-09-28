@@ -33,7 +33,10 @@ import com.example.routinely.ui.components.isPasswordValid
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 @Composable
-fun CreateAccountScreen(navController: NavHostController) {
+fun CreateAccountScreen(
+    onCreateAccountClicked: () -> Unit,
+    onAlreadyHaveAnAccountClicked: () -> Unit
+) {
     var isPasswordFilled by remember { mutableStateOf(false) }
     var isEmailFilled by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(true) }
@@ -64,7 +67,7 @@ fun CreateAccountScreen(navController: NavHostController) {
         }
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            //verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .weight(0.70f)
                 .fillMaxWidth(),
@@ -107,11 +110,11 @@ fun CreateAccountScreen(navController: NavHostController) {
             modifier = Modifier.weight(0.15f)
         ) {
             CreateAccountButton(
-                onLoginClick = {
-                    navController.navigate("login")
+                onCreateAccountClick = {
+                    onCreateAccountClicked()
                 },
-                emailPreenchido = isEmailFilled,
-                senhaPreenchida = isPasswordFilled,
+                isEmailFilled = isEmailFilled,
+                isPasswordFilled = isPasswordFilled,
                 isEmailValid = isEmailValid,
                 isNameFilled = isNameFilled,
                 isPasswordValid = isPasswordValid,
@@ -119,7 +122,7 @@ fun CreateAccountScreen(navController: NavHostController) {
                 isCheckBoxChecked = checkboxTermsState.value
             )
             CreateBottomText(onLoginClick = {
-                navController.navigate("login")
+                onAlreadyHaveAnAccountClicked()
             })
         }
     }
@@ -128,6 +131,9 @@ fun CreateAccountScreen(navController: NavHostController) {
 @Composable
 fun CreateScreenPreview() {
     RoutinelyTheme {
-        CreateAccountScreen(rememberNavController())
+        CreateAccountScreen(
+            onCreateAccountClicked = {},
+            onAlreadyHaveAnAccountClicked = {}
+        )
     }
 }

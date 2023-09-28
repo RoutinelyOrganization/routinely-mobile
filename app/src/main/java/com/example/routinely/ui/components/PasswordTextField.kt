@@ -3,6 +3,7 @@ package com.example.routinely.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -28,17 +29,30 @@ import com.example.routinely.ui.theme.Gray80
 fun PasswordTextField(onPasswordChange: (String) -> Unit, text: String) {
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var isPasswordValid by remember { mutableStateOf(true) }
+
     OutlinedTextField(
         value = password,
         onValueChange = {
             password = it
             onPasswordChange(it)
-            !isPasswordValid(it)},
+            isPasswordValid = isPasswordValid(it) // Atualizamos isPasswordValid
+        },
         label = {
             Text(
                 text = text,
-                style = TextStyle(color = Color.Black) // Definindo a cor do texto como branco
+                style = TextStyle(color = Color.Black)
             )
+        },
+        isError = !isPasswordValid,
+        supportingText = {
+            if (!isPasswordValid) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "Senha inválida!",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         },
         trailingIcon = {
             TextButton(

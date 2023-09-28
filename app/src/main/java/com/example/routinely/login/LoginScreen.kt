@@ -7,8 +7,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -74,18 +76,19 @@ fun LoginScreen(
         }
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            //verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
-                .weight(0.70f)
+                .weight(0.85f)
                 .fillMaxWidth()
         ) {
             LoginHeaderText()
+            Spacer(modifier = Modifier.height(42.dp))
             Text(
                 text = "Acessar conta",
                 color = Color.Black,
                 fontSize = 25.sp
             )
-
+            Spacer(modifier = Modifier.height(16.dp))
             LoginTextField(onEmailChange = { newEmail ->
                 email = newEmail
                 isEmailFilled = newEmail.isNotBlank()
@@ -113,28 +116,24 @@ fun LoginScreen(
                     navigateToForgotPasswordScreen()
                 })
             }
-
-            LoginButton(
-                onLoginClick = {
-                    coroutineScope.launch {
-                        viewModel.loginWithEmailAndPassword(email = email, password = password)
-                    }
-                },
-                emailPreenchido = isEmailFilled,
-                senhaPreenchida = isPasswordFilled,
-                isEmailValid = isEmailValid,
-                isPasswordValid = isPasswordValid
-            )
-
-            SignUpButton(onLoginClick = {
-                navigateToCreateAccountScreen()
-            })
-        }
-
-        Column(
-            modifier = Modifier
-                .weight(0.15f)
-        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                LoginButton(
+                    onLoginClick = {
+                        coroutineScope.launch {
+                            viewModel.loginWithEmailAndPassword(email = email, password = password)
+                        }
+                    },
+                    emailPreenchido = isEmailFilled,
+                    senhaPreenchida = isPasswordFilled,
+                    isEmailValid = isEmailValid,
+                    isPasswordValid = isPasswordValid
+                )
+                SignUpButton(onLoginClick = {
+                    navigateToCreateAccountScreen()
+                })
+            }
 
         }
 

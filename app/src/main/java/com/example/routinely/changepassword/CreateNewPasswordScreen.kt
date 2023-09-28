@@ -29,7 +29,9 @@ import com.example.routinely.ui.components.isPasswordValid
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 @Composable
-fun CreateNewPasswordScreen(navController: NavHostController) {
+fun CreateNewPasswordScreen(
+    onUpdatePasswordClicked: () -> Unit
+) {
     var isPasswordFilled by remember { mutableStateOf(false) }
     var isPasswordValid by remember { mutableStateOf(false) }
     var password by remember { mutableStateOf("") }
@@ -91,7 +93,7 @@ fun CreateNewPasswordScreen(navController: NavHostController) {
                 .weight(0.15f)) {
             UpdatePasswordButton(
                 onLoginClick = {
-                    navController.navigate("login")
+                    onUpdatePasswordClicked()
                 },
                 isPasswordFilled = isPasswordFilled,
                 isPasswordValid = isPasswordValid,
@@ -104,6 +106,6 @@ fun CreateNewPasswordScreen(navController: NavHostController) {
 @Composable
 fun CreateNewPasswordScreenPreview() {
     RoutinelyTheme {
-        CreateNewPasswordScreen(rememberNavController())
+        CreateNewPasswordScreen(onUpdatePasswordClicked = {})
     }
 }

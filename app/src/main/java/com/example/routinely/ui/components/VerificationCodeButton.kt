@@ -12,12 +12,12 @@ import com.example.routinely.ui.theme.BlueRoutinely
 
 @Composable
 fun VerificationCodeButton(
-    onLoginClick: () -> Unit,
+    onConfirmCodeClick: () -> Unit,
     isCodeFilled: Boolean
 ) {
     Button(
         enabled = isCodeFilled,
-        onClick = onLoginClick,
+        onClick = onConfirmCodeClick,
         modifier = Modifier
             .fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(BlueRoutinely),
