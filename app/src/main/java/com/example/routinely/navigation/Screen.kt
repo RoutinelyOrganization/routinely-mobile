@@ -1,9 +1,5 @@
 package com.example.routinely.navigation
 
-import com.example.routinely.changepassword.ForgotPasswordScreen
-import com.example.routinely.login.CreateAccountScreen
-import com.example.routinely.login.LoginScreen
-
 sealed class Screen(val route: String) {
     object Login: Screen("login_screen")
     object CreateAccount: Screen("create_account_screen")
@@ -11,4 +7,7 @@ sealed class Screen(val route: String) {
     object ForgotPasswordScreen: Screen("forgot_password_screen")
     object VerificationCodeScreen: Screen("verification_code_screen")
     object HomeScreen: Screen("home_screen")
+    object AddTaskScreen: Screen("add_task_screen")
+    object SplashScreen: Screen("splash_screen")
+    object EditTaskScreen: Screen("edit_task_screen")
 }

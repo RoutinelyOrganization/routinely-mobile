@@ -9,6 +9,19 @@
     <string name="label_home_navigation_button">Início</string>
     <string name="label_new_task_navigation_button">Nova tarefa</string>
     <string name="desc_top_bar">Top Bar</string>
+
+    <string name="desc_urgent_priority">Prioridade urgente</string>
+    <string name="desc_high_priority">Alta prioridade</string>
+    <string name="desc_medium_priority">Média prioridade</string>
+    <string name="desc_low_priority">Baixa prioridade</string>
+    <string name="label_tasks_viewer">Tasks Viewer</string>
+    <string name="label_completed_tasks">Completed Tasks</string>
+    <string name="category_career_text">Career</string>
+    <string name="category_health_text">Health</string>
+    <string name="category_finances_text">Finances</string>
+    <string name="category_studies_text">Studies</string>
+    <string name="app_description_splash_screen">Gerencie suas tarefas, organize sua rotina e aproveite seu tempo com o que desejar.</string>
+
     <string name="save_changes">Save changes</string>
     <string name="delete_task">Delete task</string>
     <string name="duplicate_task">Duplicate task</string>
