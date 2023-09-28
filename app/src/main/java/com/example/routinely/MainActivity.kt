@@ -11,21 +11,24 @@ import com.example.routinely.changepassword.CreateNewPasswordScreen
 import com.example.routinely.changepassword.ForgotPasswordScreen
 import com.example.routinely.changepassword.VerificationCodeScreen
 import com.example.routinely.login.CreateAccountScreen
-import com.example.routinely.login.LoginScreen
 import com.example.routinely.task.AddTask
+import com.example.routinely.task.EditTaskScreen
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Define a orientação como retrato
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
         setContent {
             // Defina o tema aqui, substituindo RoutinelyTheme pelo seu tema real
             RoutinelyTheme {
                 // Configure a navegação aqui, se estiver usando a biblioteca de navegação
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = "addtask") {
+                NavHost(navController = navController, startDestination = "edittask") {
+                    composable("edittask") {
+                        EditTaskScreen(navController, {}, {}, {})
+                    }
                     composable("addtask") {
                         AddTask(navController)
                     }

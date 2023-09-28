@@ -37,7 +37,7 @@ import com.example.routinely.ui.components.DatePickerDiag
 import com.example.routinely.ui.components.DescriptionTextField
 import com.example.routinely.ui.components.DropdownRoutinely
 import com.example.routinely.ui.components.TimePickerDiag
-import com.example.routinely.ui.theme.BlueRoutinely
+import com.example.routinely.ui.theme.PurpleRoutinely
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 
@@ -92,16 +92,16 @@ fun AddTask(navController: NavHostController) {
                     }
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = BlueRoutinely,
+                    containerColor = PurpleRoutinely,
                 )
             )
         },
         bottomBar = {
             BottomAppBar(
-                containerColor = BlueRoutinely,
+                containerColor = PurpleRoutinely,
             ){
                 Button(
-                    colors = ButtonDefaults.buttonColors(BlueRoutinely),
+                    colors = ButtonDefaults.buttonColors(PurpleRoutinely),
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentWidth(),
@@ -131,7 +131,7 @@ fun AddTask(navController: NavHostController) {
             ) {
                 // O conteúdo da tela
                 Text(
-                    color = BlueRoutinely,
+                    color = PurpleRoutinely,
                     text = "Adicionar tarefa",
                     style = TextStyle(
                         fontSize = 24.sp,

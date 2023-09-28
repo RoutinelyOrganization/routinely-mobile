@@ -9,4 +9,12 @@
     <string name="label_home_navigation_button">Início</string>
     <string name="label_new_task_navigation_button">Nova tarefa</string>
     <string name="desc_top_bar">Top Bar</string>
+    <string name="save_changes">Save changes</string>
+    <string name="delete_task">Delete task</string>
+    <string name="duplicate_task">Duplicate task</string>
+    <string name="yes">Yes</string>
+    <string name="delete_task_confirmation">Are you sure you want to delete the task?</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+    <string name="duplicate_task_confirmation">Are you sure you want to duplicate this task?</string>
 </resources>

@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.example.routinely.ui.theme.BlueRoutinely
+import com.example.routinely.ui.theme.PurpleRoutinely
 import com.example.routinely.util.BottomNavItems
 
 @Composable
@@ -19,7 +19,7 @@ fun BottomAppBarRoutinely(
     onClick: () -> Unit,
 ) {
     NavigationBar(
-        containerColor = BlueRoutinely,
+        containerColor = PurpleRoutinely,
     ){
         bottomBarItems.forEach { item ->
             AddItem(
@@ -53,7 +53,7 @@ fun RowScope.AddItem(
         alwaysShowLabel = true,
         onClick = { onClick() },
         colors = NavigationBarItemDefaults.colors(
-            indicatorColor = BlueRoutinely,
+            indicatorColor = PurpleRoutinely,
         ),
     )
 }
