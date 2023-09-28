@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.routinely.ui.theme.BlueRoutinely
+import com.example.routinely.ui.theme.PurpleRoutinely
 @Composable
 fun SignUpButton(onLoginClick: () -> Unit) {
     OutlinedButton(
@@ -24,7 +24,7 @@ fun SignUpButton(onLoginClick: () -> Unit) {
     ) {
         Text(
             text = "Cadastre-se",
-            color = BlueRoutinely
+            color = PurpleRoutinely
         )
     }
     /*

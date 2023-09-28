@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.example.routinely.R
-import com.example.routinely.ui.theme.BlueRoutinely
+import com.example.routinely.ui.theme.PurpleRoutinely
 
 @Composable
 fun GoogleLoginButton() {
@@ -32,7 +32,7 @@ fun GoogleLoginButton() {
             .padding(start = 24.dp, end = 32.dp, bottom = 32.dp, top = 24.dp)
                 ,
         colors = ButtonDefaults.buttonColors(Color.White),
-        border = BorderStroke(width = 1.dp, BlueRoutinely)
+        border = BorderStroke(width = 1.dp, PurpleRoutinely)
     ) {
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_google),

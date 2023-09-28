@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.example.routinely.ui.theme.BlueRoutinely
+import com.example.routinely.ui.theme.PurpleRoutinely
 
 @Composable
 fun UpdatePasswordButton(
@@ -22,7 +22,7 @@ fun UpdatePasswordButton(
         onClick = onLoginClick,
         modifier = Modifier
             .fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(BlueRoutinely),
+        colors = ButtonDefaults.buttonColors(PurpleRoutinely),
         shape = MaterialTheme.shapes.small,
     ) {
         Text(

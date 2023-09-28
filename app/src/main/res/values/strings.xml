@@ -21,4 +21,13 @@
     <string name="category_finances_text">Finances</string>
     <string name="category_studies_text">Studies</string>
     <string name="app_description_splash_screen">Gerencie suas tarefas, organize sua rotina e aproveite seu tempo com o que desejar.</string>
+
+    <string name="save_changes">Save changes</string>
+    <string name="delete_task">Delete task</string>
+    <string name="duplicate_task">Duplicate task</string>
+    <string name="yes">Yes</string>
+    <string name="delete_task_confirmation">Are you sure you want to delete the task?</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel</string>
+    <string name="duplicate_task_confirmation">Are you sure you want to duplicate this task?</string>
 </resources>

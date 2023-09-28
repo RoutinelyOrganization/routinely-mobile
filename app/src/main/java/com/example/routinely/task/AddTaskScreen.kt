@@ -28,10 +28,10 @@ import com.example.routinely.ui.components.DropdownRoutinely
 import com.example.routinely.ui.components.TaskNameTextField
 import com.example.routinely.ui.components.TimeTextField
 import com.example.routinely.ui.components.TopAppBarRoutinely
-import com.example.routinely.ui.theme.BlueRoutinely
 import com.example.routinely.ui.theme.HighPriority
 import com.example.routinely.ui.theme.LowPriority
 import com.example.routinely.ui.theme.MediumPriority
+import com.example.routinely.ui.theme.PurpleRoutinely
 import com.example.routinely.ui.theme.RoutinelyTheme
 import com.example.routinely.ui.theme.UrgentPriority
 import com.example.routinely.util.BottomNavItems
@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTask(
+fun AddTaskScreen(
     onBackButtonPressed: () -> Unit,
     onHomeButtonPressed: () -> Unit,
 ) {
@@ -91,7 +91,7 @@ fun AddTask(
             ) {
                 // O conteúdo da tela
                 Text(
-                    color = BlueRoutinely,
+                    color = PurpleRoutinely,
                     text = "Adicionar tarefa",
                     style = TextStyle(
                         fontSize = 24.sp,
@@ -214,6 +214,6 @@ fun AddTask(
 @Composable
 fun AddTaskPreview() {
     RoutinelyTheme {
-        AddTask(onBackButtonPressed = { }, onHomeButtonPressed = { })
+        AddTaskScreen(onBackButtonPressed = { }, onHomeButtonPressed = { })
     }
 }

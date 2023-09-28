@@ -14,7 +14,8 @@ import com.example.routinely.home.HomeScreen
 import com.example.routinely.login.LoginScreen
 import com.example.routinely.login.LoginViewModel
 import com.example.routinely.splash_screen.SplashScreen
-import com.example.routinely.task.AddTask
+import com.example.routinely.task.AddTaskScreen
+import com.example.routinely.task.EditTaskScreen
 
 @Composable
 fun SetupNavGraph(
@@ -22,7 +23,7 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.SplashScreen.route
+        startDestination = Screen.EditTaskScreen.route
     ) {
         loginRoute(
             navigateToHomeScreen = {
@@ -46,6 +47,9 @@ fun SetupNavGraph(
             onNewTaskClicked = {
                 navController.navigate(Screen.AddTaskScreen.route)
             },
+            onEditTaskClicked = {
+                navController.navigate(Screen.EditTaskScreen.route)
+            }
         )
         addTaskScreenRoute(
             onBackButtonPressed = {
@@ -60,6 +64,18 @@ fun SetupNavGraph(
             onEmailLoginClicked = {
                 navController.navigate(Screen.Login.route)
             }
+        )
+
+        editTaskScreenRoute(
+            onBackButtonPressed = {
+                navController.popBackStack()
+            },
+            onHomeButtonPressed = {
+                navController.popBackStack()
+                navController.navigate(Screen.HomeScreen.route)
+            },
+            onMenuClicked = {},
+            onNotificationClicked = {}
         )
     }
 }
@@ -81,6 +97,7 @@ fun NavGraphBuilder.loginRoute(
         )
     }
 }
+
 fun NavGraphBuilder.createAccountRoute(
 
 ) {
@@ -88,16 +105,19 @@ fun NavGraphBuilder.createAccountRoute(
 //        CreateAccountScreen()
     }
 }
+
 fun NavGraphBuilder.newPasswordRoute(
 
 ) {
 
 }
+
 fun NavGraphBuilder.forgotPasswordRoute(
 
 ) {
 
 }
+
 fun NavGraphBuilder.verificationCodeRoute(
 
 ) {
@@ -108,12 +128,14 @@ fun NavGraphBuilder.homeScreenRoute(
     onMenuClicked: () -> Unit,
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
+    onEditTaskClicked: () -> Unit,
 ) {
     composable(route = Screen.HomeScreen.route) {
         HomeScreen(
             onMenuClicked = { onMenuClicked() },
             onNotificationClicked = { onNotificationClicked() },
             onNewTaskClicked = { onNewTaskClicked() },
+            onEditTaskClicked = { onEditTaskClicked() }
         )
     }
 }
@@ -123,13 +145,29 @@ fun NavGraphBuilder.addTaskScreenRoute(
     onHomeButtonPressed: () -> Unit
 ) {
     composable(route = Screen.AddTaskScreen.route) {
-        AddTask(
+        AddTaskScreen(
             onBackButtonPressed = { onBackButtonPressed() },
             onHomeButtonPressed = { onHomeButtonPressed() },
         )
-        AddTask(
+        AddTaskScreen(
             onBackButtonPressed = { onBackButtonPressed() },
             onHomeButtonPressed = { onHomeButtonPressed() },
+        )
+    }
+}
+
+fun NavGraphBuilder.editTaskScreenRoute(
+    onBackButtonPressed: () -> Unit,
+    onMenuClicked: () -> Unit,
+    onNotificationClicked: () -> Unit,
+    onHomeButtonPressed: () -> Unit,
+) {
+    composable(route = Screen.EditTaskScreen.route) {
+        EditTaskScreen(
+            onBackButtonPressed = { onBackButtonPressed() },
+            onHomeButtonPressed = { onHomeButtonPressed() },
+            onMenuClicked = { onMenuClicked() },
+            onNotificationClicked = { onNotificationClicked() },
         )
     }
 }

@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.routinely.ui.theme.BlueRoutinely
+import com.example.routinely.ui.theme.PurpleRoutinely
 
 @Composable
 fun ContinueWithAccountButton(
@@ -21,7 +21,7 @@ fun ContinueWithAccountButton(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 24.dp),
-        colors = ButtonDefaults.buttonColors(BlueRoutinely),
+        colors = ButtonDefaults.buttonColors(PurpleRoutinely),
         shape = MaterialTheme.shapes.extraLarge,
     ) {
         Text(
