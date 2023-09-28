@@ -133,7 +133,7 @@ fun NavGraphBuilder.forgotPasswordRoute(
 ) {
     composable(route = Screen.ForgotPasswordScreen.route) {
         ForgotPasswordScreen(
-            onResetPasswordClicked = { onResetPasswordClicked }
+            onResetPasswordClicked = onResetPasswordClicked
         )
     }
 }
@@ -142,7 +142,7 @@ fun NavGraphBuilder.verificationCodeRoute(
 ) {
     composable(route = Screen.VerificationCodeScreen.route) {
         VerificationCodeScreen(
-            onConfirmResetPasswordClicked = { onConfirmResetPasswordClicked }
+            onConfirmResetPasswordClicked = onConfirmResetPasswordClicked
         )
     }
 }
@@ -155,8 +155,8 @@ fun NavGraphBuilder.homeScreenRoute(
     composable(route = Screen.HomeScreen.route) {
         HomeScreen(
             onMenuClicked = { onMenuClicked() },
-            onNotificationClicked = { onNotificationClicked() },
-            onNewTaskClicked = { onNewTaskClicked() },
+            onNotificationClicked = onNotificationClicked,
+            onNewTaskClicked = onNewTaskClicked,
         )
     }
 }
@@ -167,12 +167,12 @@ fun NavGraphBuilder.addTaskScreenRoute(
 ) {
     composable(route = Screen.AddTaskScreen.route) {
         AddTask(
-            onBackButtonPressed = { onBackButtonPressed() },
-            onHomeButtonPressed = { onHomeButtonPressed() },
+            onBackButtonPressed = onBackButtonPressed,
+            onHomeButtonPressed = onHomeButtonPressed,
         )
         AddTask(
-            onBackButtonPressed = { onBackButtonPressed() },
-            onHomeButtonPressed = { onHomeButtonPressed() },
+            onBackButtonPressed = onBackButtonPressed,
+            onHomeButtonPressed = onHomeButtonPressed,
         )
     }
 }
