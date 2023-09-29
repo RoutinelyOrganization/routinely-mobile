@@ -116,6 +116,7 @@ fun LoginScreen(
                     navigateToForgotPasswordScreen()
                 })
             }
+            Spacer(modifier = Modifier .height(16.dp))
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
