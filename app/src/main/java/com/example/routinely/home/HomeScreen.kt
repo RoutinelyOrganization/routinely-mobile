@@ -27,11 +27,12 @@ fun HomeScreen(
     onMenuClicked: () -> Unit,
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
+    onEditTaskClicked: () -> Unit,
 ) {
     val bottomBarItems = listOf(BottomNavItems.NewTask)
     val datePickerState = datePickerState()
 
-    val listOfTasks = taskItemsDumb()
+    val listOfTasks = taskItemsDumb(onEditTaskClicked)
     val listOfConcludedTasks = concludedTaskItemsDumb()
 
     Scaffold(
@@ -62,13 +63,18 @@ fun HomeScreen(
                  */
                 DatePickerRoutinely(datePickerState)
 
-                TasksViewerRoutinely(listOfTaskItems = listOfTasks, listOfConcludedTaskItems = listOfConcludedTasks)
+                TasksViewerRoutinely(
+                    listOfTaskItems = listOfTasks,
+                    listOfConcludedTaskItems = listOfConcludedTasks
+                )
             }
         })
 }
 
 @Composable
-private fun taskItemsDumb(): List<TaskItems> {
+private fun taskItemsDumb(
+    onEditTaskClicked: () -> Unit,
+): List<TaskItems> {
     return listOf(
         TaskItems(
             nameOfTask = "Enviar email cv para Jean",
@@ -77,7 +83,7 @@ private fun taskItemsDumb(): List<TaskItems> {
             listOfActions = listOf(
                 ActionItem.Edit(
                     onClick = {
-
+                        onEditTaskClicked()
                     }
                 ),
                 ActionItem.Exclude(
@@ -94,7 +100,7 @@ private fun taskItemsDumb(): List<TaskItems> {
             listOfActions = listOf(
                 ActionItem.Edit(
                     onClick = {
-
+                        onEditTaskClicked()
                     }
                 ),
                 ActionItem.Exclude(
@@ -111,7 +117,7 @@ private fun taskItemsDumb(): List<TaskItems> {
             listOfActions = listOf(
                 ActionItem.Edit(
                     onClick = {
-
+                        onEditTaskClicked()
                     }
                 ),
                 ActionItem.Exclude(
@@ -128,7 +134,7 @@ private fun taskItemsDumb(): List<TaskItems> {
             listOfActions = listOf(
                 ActionItem.Edit(
                     onClick = {
-
+                        onEditTaskClicked()
                     }
                 ),
                 ActionItem.Exclude(
@@ -171,5 +177,6 @@ fun HomeScreenPreview() {
         onMenuClicked = { },
         onNotificationClicked = { },
         onNewTaskClicked = { },
+        onEditTaskClicked = { }
     )
 }

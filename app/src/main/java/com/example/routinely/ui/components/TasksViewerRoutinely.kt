@@ -43,7 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.routinely.R
-import com.example.routinely.ui.theme.BlueRoutinely
+import com.example.routinely.ui.theme.PurpleRoutinely
 import com.example.routinely.ui.theme.SecondaryYellowRoutinely
 import com.example.routinely.util.ActionItem
 import com.example.routinely.util.Categories
@@ -60,7 +60,7 @@ fun TasksViewerRoutinely(
             .padding(top = 12.dp, bottom = 24.dp, start = 12.dp, end = 12.dp)
             .border(
                 width = 1.dp,
-                color = BlueRoutinely,
+                color = PurpleRoutinely,
                 shape = RoundedCornerShape(10.dp)
             ),
     ) {
@@ -68,7 +68,7 @@ fun TasksViewerRoutinely(
             text = stringResource(R.string.label_tasks_viewer),
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
-            color = BlueRoutinely,
+            color = PurpleRoutinely,
             modifier = Modifier
                 .padding(top = 16.dp, bottom = 6.dp, end = 16.dp, start = 16.dp)
         )
@@ -83,7 +83,7 @@ fun TasksViewerRoutinely(
 
 
         Spacer(modifier = Modifier
-            .border(1.dp, BlueRoutinely)
+            .border(1.dp, PurpleRoutinely)
             .fillMaxWidth()
             .height(1.dp)
         )
@@ -92,7 +92,7 @@ fun TasksViewerRoutinely(
             text = stringResource(R.string.label_completed_tasks),
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
-            color = BlueRoutinely,
+            color = PurpleRoutinely,
             modifier = Modifier
                 .padding(top = 12.dp, bottom = 6.dp, end = 16.dp, start = 16.dp)
         )

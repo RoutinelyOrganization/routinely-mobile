@@ -24,7 +24,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.routinely.ui.theme.BlueRoutinely
+import com.example.routinely.ui.theme.PurpleRoutinely
 import java.time.Instant
 import java.util.Calendar
 import java.util.Locale
@@ -68,7 +68,7 @@ fun DatePickerRoutinely(
                 .padding(horizontal = 16.dp, vertical = 24.dp)
                 .border(
                     width = 1.dp,
-                    color = BlueRoutinely,
+                    color = PurpleRoutinely,
                     shape = RoundedCornerShape(10.dp)
                 ),
             showModeToggle = false,
@@ -80,10 +80,10 @@ fun DatePickerRoutinely(
                 )
             },
             colors = DatePickerDefaults.colors(
-                dividerColor = BlueRoutinely,
-                navigationContentColor = BlueRoutinely,
-                headlineContentColor = BlueRoutinely,
-                selectedDayContainerColor = BlueRoutinely,
+                dividerColor = PurpleRoutinely,
+                navigationContentColor = PurpleRoutinely,
+                headlineContentColor = PurpleRoutinely,
+                selectedDayContainerColor = PurpleRoutinely,
             )
         )
     }

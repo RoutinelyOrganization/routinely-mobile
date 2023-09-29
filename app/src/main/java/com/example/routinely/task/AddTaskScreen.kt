@@ -2,10 +2,13 @@ package com.example.routinely.task
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,10 +31,10 @@ import com.example.routinely.ui.components.DropdownRoutinely
 import com.example.routinely.ui.components.TaskNameTextField
 import com.example.routinely.ui.components.TimeTextField
 import com.example.routinely.ui.components.TopAppBarRoutinely
-import com.example.routinely.ui.theme.BlueRoutinely
 import com.example.routinely.ui.theme.HighPriority
 import com.example.routinely.ui.theme.LowPriority
 import com.example.routinely.ui.theme.MediumPriority
+import com.example.routinely.ui.theme.PurpleRoutinely
 import com.example.routinely.ui.theme.RoutinelyTheme
 import com.example.routinely.ui.theme.UrgentPriority
 import com.example.routinely.util.BottomNavItems
@@ -40,30 +43,12 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTask(
+fun AddTaskScreen(
     onBackButtonPressed: () -> Unit,
     onHomeButtonPressed: () -> Unit,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    //var selectedHour by remember { mutableStateOf(0) }
-    //var selectedMinute by remember { mutableStateOf(0) }
-    //var isDialogOpen by remember { mutableStateOf(false) }
-
-    // Função para abrir o diálogo
-    //val openDialog = { isDialogOpen = true }
-    //val focusManager = LocalFocusManager.current
-    // Função para fechar o diálogo
-    //val closeDialog = { isDialogOpen = false }
-    //var textFieldValue by remember { mutableStateOf(TextFieldValue()) }
-    // Variáveis para rastrear a hora e os minutos selecionados
-
-    // Função para atualizar o valor do campo de texto
-    // val updateTextFieldValue: () -> Unit = {
-    //     textFieldValue = TextFieldValue(
-    //         text = String.format("%02d:%02d", selectedHour, selectedMinute)
-    //     )
-    // }
     val bottomBarItems = listOf(BottomNavItems.Home)
 
 
@@ -82,16 +67,22 @@ fun AddTask(
                 onClick = { onHomeButtonPressed() },
             )
         },
-        content = { padding ->
+        content = { innerPadding ->
+            val contentPadding = PaddingValues(
+                top = innerPadding.calculateTopPadding() + 32.dp, // Adicione padding na parte superior
+                start = 16.dp,
+                end = 16.dp,
+                bottom = innerPadding.calculateBottomPadding()
+            )
             Column(
-                verticalArrangement = Arrangement.spacedBy(0.dp),
                 modifier = Modifier
+                    .padding(contentPadding)
                     .fillMaxSize()
-                    .padding(start = 30.dp, end = 30.dp, bottom = 80.dp, top = 80.dp)
+                    .verticalScroll(rememberScrollState()) //não funcionando, precisa ajuste
             ) {
                 // O conteúdo da tela
                 Text(
-                    color = BlueRoutinely,
+                    color = PurpleRoutinely,
                     text = "Adicionar tarefa",
                     style = TextStyle(
                         fontSize = 24.sp,
@@ -99,9 +90,7 @@ fun AddTask(
                     )
                 )
                 TaskNameTextField(
-                    onTaskNameChange = {
-
-                    }
+                    onTaskNameChange = {}
                 )
 
                 Row(
@@ -116,63 +105,8 @@ fun AddTask(
                     TimeTextField(
                         onTimeChange = {},
                         modifier = Modifier.weight(1f)
-                    )/*
-                        TimePickerDiag(
-                            label = "Hora",
-                            modifier = Modifier.weight(1f)
-                        )*/
-                }
-
-
-                /*
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    OutlinedTextField(
-                        value = textFieldValue,
-                        onValueChange = {
-                            // Aplicar a validação antes de atualizar o valor do campo
-                            textFieldValue = it
-                        },
-                        label = {
-                            Text(
-                                text = "Hora CustomDatePicker",
-                                style = TextStyle(color = Color.Black)
-                            )
-                        },
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedTextColor = Gray80,
-                            unfocusedTextColor = Gray80,
-                            focusedBorderColor = Color.Gray,
-                            unfocusedBorderColor = Color.Gray
-                        ),
-                        singleLine = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .onFocusEvent { state ->
-                                if (state.isFocused) {
-                                    openDialog()
-                                    focusManager.clearFocus()
-                                }
-                            },
                     )
-
-                    if (isDialogOpen) {
-                        TimePickerDialog(
-                            selectedHour = selectedHour,
-                            selectedMinute = selectedMinute,
-                            onTimeSelected = { hour, minute ->
-                                selectedHour = hour
-                                selectedMinute = minute
-                                updateTextFieldValue() // Atualizar o valor do campo de texto
-                            },
-                            onDismiss = {
-                                closeDialog()
-                                updateTextFieldValue() // Atualizar o valor do campo de texto quando o diálogo for fechado
-                            }
-                        )
-                    }*/
-
+                }
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
@@ -186,14 +120,22 @@ fun AddTask(
                             "Urgente" to UrgentPriority
                         )
                     )
-                    DropdownRoutinely(
-                        label = "Categorias",
-                        list = listOf("Pessoal", "Estudos", "Finanças", "Carreira", "Saúde")
-                    )
-                    DropdownRoutinely(
-                        label = "Tags",
-                        list = listOf("Candidatura", "Conta", "Exercicio", "Beleza", "Literatura")
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        DropdownRoutinely(
+                            label = "Categorias",
+                            list = listOf("Pessoal", "Estudos", "Finanças", "Carreira", "Saúde"),
+                            modifier = Modifier.weight(1f)
+                        )
+                        DropdownRoutinely(
+                            label = "Tags",
+                            list = listOf("Candidatura", "Conta", "Exercicio", "Beleza", "Literatura"),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
                     DescriptionTextField(
                         onDescriptionChange = {}
                     )
@@ -206,7 +148,6 @@ fun AddTask(
                     )
                 }
             }
-            //}
         },
     )
 }
@@ -214,6 +155,6 @@ fun AddTask(
 @Composable
 fun AddTaskPreview() {
     RoutinelyTheme {
-        AddTask(onBackButtonPressed = { }, onHomeButtonPressed = { })
+        AddTaskScreen(onBackButtonPressed = { }, onHomeButtonPressed = { })
     }
 }

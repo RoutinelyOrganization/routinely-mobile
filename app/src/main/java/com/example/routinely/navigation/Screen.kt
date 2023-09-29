@@ -9,4 +9,5 @@ sealed class Screen(val route: String) {
     object HomeScreen: Screen("home_screen")
     object AddTaskScreen: Screen("add_task_screen")
     object SplashScreen: Screen("splash_screen")
+    object EditTaskScreen: Screen("edit_task_screen")
 }

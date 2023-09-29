@@ -27,7 +27,9 @@ import com.example.routinely.ui.theme.RoutinelyTheme
 fun DropdownRoutinely(
     label: String,
     list: List<String>,
-    optionColors: Map<String, Color>? = null // Parâmetro opcional para as cores
+    optionColors: Map<String,
+            Color>? = null,
+    modifier: Modifier = Modifier// Parâmetro opcional para as cores
 ) {
     var expanded by remember { mutableStateOf(false) }
     val listWithLabel = listOf(label) + list
@@ -35,7 +37,7 @@ fun DropdownRoutinely(
     var selectedOptionColor by remember { mutableStateOf(optionColors?.get(selectedOptionText) ?: Color.Black) }
     val focusManager = LocalFocusManager.current
     ExposedDropdownMenuBox(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
     ) {
@@ -80,6 +82,7 @@ fun DropdownRoutinely(
                     Color.Gray
                 }
                 DropdownMenuItem(
+
                     text = {
                         Text(
                             selectionOption,
