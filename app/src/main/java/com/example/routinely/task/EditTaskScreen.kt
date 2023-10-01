@@ -33,7 +33,7 @@ import com.example.routinely.ui.components.DropdownRoutinely
 import com.example.routinely.ui.components.RoutinelyTaskButton
 import com.example.routinely.ui.components.TaskAlertDialog
 import com.example.routinely.ui.components.TaskNameTextField
-import com.example.routinely.ui.components.TimeTextField
+import com.example.routinely.ui.components.TimePickerDialog
 import com.example.routinely.ui.components.TopAppBarRoutinely
 import com.example.routinely.ui.theme.HighPriority
 import com.example.routinely.ui.theme.LowPriority
@@ -94,11 +94,7 @@ fun EditTaskScreen(
                         fontWeight = FontWeight.Bold
                     )
                 )
-                TaskNameTextField(
-                    onTaskNameChange = {
-
-                    }
-                )
+                TaskNameTextField()
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -108,8 +104,8 @@ fun EditTaskScreen(
                         label = "Data",
                         modifier = Modifier.weight(1f)
                     )
-                    TimeTextField(
-                        onTimeChange = {},
+                    TimePickerDialog(
+                        label = "Hora",
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -143,9 +139,7 @@ fun EditTaskScreen(
                             modifier = Modifier.weight(1f)
                         )
                     }
-                    DescriptionTextField(
-                        onDescriptionChange = {}
-                    )
+                    DescriptionTextField( )
                     RoutinelyTaskButton(
                         textRes = R.string.save_changes,
                         textColor = Color.White,

@@ -184,13 +184,10 @@ fun NavGraphBuilder.addTaskScreenRoute(
     onHomeButtonPressed: () -> Unit
 ) {
     composable(route = Screen.AddTaskScreen.route) {
-        AddTask(
+        AddTaskScreen(
             onBackButtonPressed = onBackButtonPressed,
             onHomeButtonPressed = onHomeButtonPressed,
         )
-        AddTask(
-            onBackButtonPressed = onBackButtonPressed,
-            onHomeButtonPressed = onHomeButtonPressed,
     }
 }
 

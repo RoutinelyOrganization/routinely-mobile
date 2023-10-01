@@ -20,14 +20,13 @@ fun ContinueWithAccountButton(
         onClick = onButtonClicked,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+            .padding(start = 24.dp, end = 24.dp, top = 16.dp),
         colors = ButtonDefaults.buttonColors(PurpleRoutinely),
-        shape = MaterialTheme.shapes.extraLarge,
+        shape = MaterialTheme.shapes.small,
     ) {
         Text(
             text = "Continuar com e-mail e senha",
             color = Color.White,
-            modifier = Modifier.padding(vertical = 6.dp)
         )
     }
 }

@@ -24,8 +24,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.routinely.R
 import com.example.routinely.ui.components.VerificationCodeButton
 import com.example.routinely.ui.components.VerificationCodeTextField
@@ -68,7 +66,7 @@ fun VerificationCodeScreen(
                 fontSize = 14.sp
             )
             VerificationCodeTextField(onCodeChange = { code ->
-                isCodeFilled = code.isNotBlank() && code.length >= 4
+                isCodeFilled = code.isNotBlank() && code.length >= 6
             })
             Text(
                 text = buildAnnotatedString {

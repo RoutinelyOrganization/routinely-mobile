@@ -101,7 +101,7 @@ fun LoginScreen(
                     isPasswordFilled = password.isNotBlank()
                     isPasswordValid = isPasswordValid(password)
                 },
-                text = "Senha"
+                label = "Senha"
             )
 
             Row(

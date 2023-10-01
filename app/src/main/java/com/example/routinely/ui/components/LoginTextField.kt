@@ -1,6 +1,9 @@
 package com.example.routinely.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -9,26 +12,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.routinely.login.isValidEmailFormat
 import com.example.routinely.ui.theme.Gray80
+import com.example.routinely.ui.theme.GrayRoutinely
+import com.example.routinely.ui.theme.PurpleRoutinely
 
 @Composable
 fun LoginTextField(onEmailChange: (String) -> Unit) {
-    var text by remember { mutableStateOf(TextFieldValue()) }
+    var loginText by remember { mutableStateOf("") }
     var isEmailValid by remember { mutableStateOf(true) }
     OutlinedTextField(
-        value = text,
+        value = loginText,
         onValueChange = {
-            text = it
-            isEmailValid = isValidEmailFormat(text.text)
-            onEmailChange(text.text)},
+            loginText = it
+            isEmailValid = isValidEmailFormat(loginText)
+            onEmailChange(loginText)},
         label = {
             Text(
                 text = "E-mail",
@@ -43,13 +46,24 @@ fun LoginTextField(onEmailChange: (String) -> Unit) {
                     text = "E-mail inválido!",
                     color = MaterialTheme.colorScheme.error
                 )
+
+            }
+        },
+        trailingIcon = {
+            if (!isEmailValid) {
+                Icon(
+                    imageVector = Icons.Default.Info,
+                    contentDescription = null,
+                    modifier = Modifier
+
+                )
             }
         },
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Gray80,
             unfocusedTextColor = Gray80,
-            focusedBorderColor = Color.Gray,
-            unfocusedBorderColor = Color.Gray,
+            focusedBorderColor = PurpleRoutinely,
+            unfocusedBorderColor = GrayRoutinely
         ),
         singleLine = true,
         modifier = Modifier

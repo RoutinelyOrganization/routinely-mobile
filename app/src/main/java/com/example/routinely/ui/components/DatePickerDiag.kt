@@ -1,7 +1,6 @@
 package com.example.routinely.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -9,6 +8,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -17,13 +17,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
+import com.example.routinely.ui.theme.Gray80
+import com.example.routinely.ui.theme.GrayRoutinely
+import com.example.routinely.ui.theme.PurpleRoutinely
 
+@OptIn(ExperimentalComposeUiApi::class)
 @ExperimentalMaterial3Api
 @Composable
 fun DatePickerDiag(
@@ -31,7 +35,6 @@ fun DatePickerDiag(
     modifier: Modifier = Modifier
 ) {
     var isSupportingText by remember { mutableStateOf(false) }
-    val focusManager = LocalFocusManager.current
     var showDatePickerDialog by remember {
         mutableStateOf(false)
     }
@@ -42,34 +45,42 @@ fun DatePickerDiag(
     val confirmEnabled by remember { derivedStateOf { datePickerState.selectedDateMillis != null } }
 
 
-    if (showDatePickerDialog) {
-        DatePickerDialog(
-            onDismissRequest = { showDatePickerDialog = false },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        datePickerState
-                            .selectedDateMillis?.let { millis ->
-                                selectedDate = millis.toBrazilianDateFormat()
-                            }
-                        showDatePickerDialog = false
-                    },
-                    enabled = confirmEnabled
-                ) {
-                    Text(text = "Confirma")
-                }
-            },
-            dismissButton = {
-                OutlinedButton(
-                    onClick = { showDatePickerDialog = false }) {
-                    Text(text = "Cancela")
-                }
-            },
-        ) {
-            DatePicker(
-                state = datePickerState,
-                showModeToggle = false
-            )
+    when {
+        showDatePickerDialog -> {
+            var clearFocus = LocalFocusManager.current.clearFocus()
+            DatePickerDialog(
+                onDismissRequest = {
+                    showDatePickerDialog = false
+                    clearFocus
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            datePickerState
+                                .selectedDateMillis?.let { millis ->
+                                    selectedDate = millis.toBrazilianDateFormat()
+                                }
+                            showDatePickerDialog = false
+                        },
+                        enabled = confirmEnabled
+                    ) {
+                        Text(text = "Confirma")
+                    }
+                },
+                dismissButton = {
+                    OutlinedButton(
+                        onClick = {
+                            showDatePickerDialog = false
+                        }) {
+                        Text(text = "Cancela")
+                    }
+                },
+            ) {
+                DatePicker(
+                    state = datePickerState,
+                    showModeToggle = false
+                )
+            }
         }
     }
 
@@ -92,13 +103,17 @@ fun DatePickerDiag(
                 )
             }
         },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Gray80,
+            unfocusedTextColor = Gray80,
+            focusedBorderColor = PurpleRoutinely,
+            unfocusedBorderColor = GrayRoutinely
+        ),
+        readOnly = true,
         modifier = modifier
             .onFocusEvent {
-                if (it.isFocused) {
+                if (it.isFocused)
                     showDatePickerDialog = true
-                    focusManager.clearFocus(force = true)
-                }
-            },
-        readOnly = true,
+            }
     )
 }

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -29,7 +28,7 @@ import com.example.routinely.ui.components.DatePickerDiag
 import com.example.routinely.ui.components.DescriptionTextField
 import com.example.routinely.ui.components.DropdownRoutinely
 import com.example.routinely.ui.components.TaskNameTextField
-import com.example.routinely.ui.components.TimeTextField
+import com.example.routinely.ui.components.TimePickerDialog
 import com.example.routinely.ui.components.TopAppBarRoutinely
 import com.example.routinely.ui.theme.HighPriority
 import com.example.routinely.ui.theme.LowPriority
@@ -50,7 +49,6 @@ fun AddTaskScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val bottomBarItems = listOf(BottomNavItems.Home)
-
 
     Scaffold(
         topBar = {
@@ -80,7 +78,6 @@ fun AddTaskScreen(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState()) //não funcionando, precisa ajuste
             ) {
-                // O conteúdo da tela
                 Text(
                     color = PurpleRoutinely,
                     text = "Adicionar tarefa",
@@ -89,26 +86,24 @@ fun AddTaskScreen(
                         fontWeight = FontWeight.Bold
                     )
                 )
-                TaskNameTextField(
-                    onTaskNameChange = {}
-                )
+                TaskNameTextField()
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    //modifier = Modifier.fillMaxWidth()
                 ) {
                     DatePickerDiag(
                         label = "Data",
                         modifier = Modifier.weight(1f)
                     )
-                    TimeTextField(
-                        onTimeChange = {},
+                    TimePickerDialog(
+                        label = "Hora",
                         modifier = Modifier.weight(1f)
                     )
                 }
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     DropdownRoutinely(
                         label = "Prioridade",
@@ -123,7 +118,7 @@ fun AddTaskScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        //modifier = Modifier.fillMaxWidth()
                     ) {
                         DropdownRoutinely(
                             label = "Categorias",
@@ -132,13 +127,17 @@ fun AddTaskScreen(
                         )
                         DropdownRoutinely(
                             label = "Tags",
-                            list = listOf("Candidatura", "Conta", "Exercicio", "Beleza", "Literatura"),
+                            list = listOf(
+                                "Candidatura",
+                                "Conta",
+                                "Exercicio",
+                                "Beleza",
+                                "Literatura"
+                            ),
                             modifier = Modifier.weight(1f)
                         )
                     }
-                    DescriptionTextField(
-                        onDescriptionChange = {}
-                    )
+                    DescriptionTextField()
                     AddTaskButton(
                         onAddTaskClick = {
                             coroutineScope.launch {
@@ -155,6 +154,9 @@ fun AddTaskScreen(
 @Composable
 fun AddTaskPreview() {
     RoutinelyTheme {
-        AddTaskScreen(onBackButtonPressed = { }, onHomeButtonPressed = { })
+        AddTaskScreen(
+            onBackButtonPressed = { },
+            onHomeButtonPressed = { },
+        )
     }
 }
