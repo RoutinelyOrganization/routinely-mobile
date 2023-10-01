@@ -1,7 +1,6 @@
 package com.example.routinely.changepassword
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,8 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.routinely.R
 import com.example.routinely.ui.components.PasswordTextField
 import com.example.routinely.ui.components.UpdatePasswordButton
@@ -29,12 +26,14 @@ import com.example.routinely.ui.components.isPasswordValid
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 @Composable
-fun CreateNewPasswordScreen(navController: NavHostController) {
+fun CreateNewPasswordScreen(
+    onUpdatePasswordClicked: () -> Unit
+) {
     var isPasswordFilled by remember { mutableStateOf(false) }
     var isPasswordValid by remember { mutableStateOf(false) }
     var password by remember { mutableStateOf("") }
     var repeatedPassword by remember { mutableStateOf("") }
-    var arePasswordsMatching by remember { mutableStateOf(false) }
+    var arePasswordsMatching by remember { mutableStateOf(true) }
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -54,7 +53,6 @@ fun CreateNewPasswordScreen(navController: NavHostController) {
             )
         }
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .weight(0.60f)
                 .fillMaxWidth(),
@@ -74,7 +72,8 @@ fun CreateNewPasswordScreen(navController: NavHostController) {
                     isPasswordValid = isPasswordValid(password)
                     arePasswordsMatching = password == repeatedPassword
                 },
-                text = "Senha"
+                label = "Senha",
+                passwordMatch = arePasswordsMatching
             )
 
             PasswordTextField(
@@ -82,7 +81,8 @@ fun CreateNewPasswordScreen(navController: NavHostController) {
                     repeatedPassword = newRepeatedPassword
                     arePasswordsMatching = password == repeatedPassword
                 },
-                text = "Repetir Senha"
+                label = "Repetir Senha",
+                passwordMatch = arePasswordsMatching
             )
         }
 
@@ -91,7 +91,7 @@ fun CreateNewPasswordScreen(navController: NavHostController) {
                 .weight(0.15f)) {
             UpdatePasswordButton(
                 onLoginClick = {
-                    navController.navigate("login")
+                    onUpdatePasswordClicked()
                 },
                 isPasswordFilled = isPasswordFilled,
                 isPasswordValid = isPasswordValid,
@@ -104,6 +104,6 @@ fun CreateNewPasswordScreen(navController: NavHostController) {
 @Composable
 fun CreateNewPasswordScreenPreview() {
     RoutinelyTheme {
-        CreateNewPasswordScreen(rememberNavController())
+        CreateNewPasswordScreen(onUpdatePasswordClicked = {})
     }
 }

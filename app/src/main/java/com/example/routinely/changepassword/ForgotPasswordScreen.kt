@@ -29,7 +29,9 @@ import com.example.routinely.ui.components.ResetPasswordButton
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 @Composable
-fun ForgotPasswordScreen(navController: NavHostController) {
+fun ForgotPasswordScreen(
+    onResetPasswordClicked: () -> Unit
+) {
     var isEmailFilled by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(true) }
     Column(
@@ -78,10 +80,10 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                 .weight(0.15f)
         ) {
             ResetPasswordButton(
-                onLoginClick = {
-                    navController.navigate("verificationcodescreen")
+                onResetPasswordClick = {
+                    onResetPasswordClicked()
                 },
-                emailPreenchido = isEmailFilled,
+                isEmailFilled = isEmailFilled,
                 isEmailValid = isEmailValid,
             )
         }
@@ -91,6 +93,6 @@ fun ForgotPasswordScreen(navController: NavHostController) {
 @Composable
 fun ForgotPasswordScreenPreview() {
     RoutinelyTheme {
-        ForgotPasswordScreen(rememberNavController())
+        ForgotPasswordScreen(onResetPasswordClicked = {})
     }
 }

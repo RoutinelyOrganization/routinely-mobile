@@ -10,7 +10,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.routinely.changepassword.CreateNewPasswordScreen
+import com.example.routinely.changepassword.ForgotPasswordScreen
+import com.example.routinely.changepassword.VerificationCodeScreen
 import com.example.routinely.home.HomeScreen
+import com.example.routinely.login.CreateAccountScreen
 import com.example.routinely.login.LoginScreen
 import com.example.routinely.login.LoginViewModel
 import com.example.routinely.splash_screen.SplashScreen
@@ -65,6 +69,29 @@ fun SetupNavGraph(
                 navController.navigate(Screen.Login.route)
             }
         )
+        createAccountRoute(
+            onAlreadyHaveAnAccountClicked = {
+                navController.navigate(Screen.Login.route)
+            },
+            onCreateAccountClicked = {
+                navController.navigate(Screen.Login.route)
+            }
+        )
+        forgotPasswordRoute(
+            onResetPasswordClicked = {
+                navController.navigate(Screen.VerificationCodeScreen.route)
+            }
+        )
+        verificationCodeRoute(
+            onConfirmResetPasswordClicked = {
+                navController.navigate(Screen.NewPasswordScreen.route)
+            }
+        )
+        newPasswordRoute(
+            onUpdatePasswordClicked = {
+                navController.navigate(Screen.Login.route)
+            }
+        )
 
         editTaskScreenRoute(
             onBackButtonPressed = {
@@ -97,31 +124,43 @@ fun NavGraphBuilder.loginRoute(
         )
     }
 }
-
 fun NavGraphBuilder.createAccountRoute(
-
+    onCreateAccountClicked: () -> Unit,
+    onAlreadyHaveAnAccountClicked: () -> Unit,
 ) {
     composable(route = Screen.CreateAccount.route) {
-//        CreateAccountScreen()
+        CreateAccountScreen(
+            onCreateAccountClicked = onCreateAccountClicked,
+            onAlreadyHaveAnAccountClicked = onAlreadyHaveAnAccountClicked ,
+        )
     }
 }
-
 fun NavGraphBuilder.newPasswordRoute(
-
+    onUpdatePasswordClicked: () -> Unit
 ) {
-
+    composable(route = Screen.NewPasswordScreen.route) {
+        CreateNewPasswordScreen(
+            onUpdatePasswordClicked = onUpdatePasswordClicked,
+        )
+    }
 }
-
 fun NavGraphBuilder.forgotPasswordRoute(
-
+    onResetPasswordClicked: () -> Unit
 ) {
-
+    composable(route = Screen.ForgotPasswordScreen.route) {
+        ForgotPasswordScreen(
+            onResetPasswordClicked = onResetPasswordClicked
+        )
+    }
 }
-
 fun NavGraphBuilder.verificationCodeRoute(
-
+    onConfirmResetPasswordClicked: () -> Unit
 ) {
-
+    composable(route = Screen.VerificationCodeScreen.route) {
+        VerificationCodeScreen(
+            onConfirmResetPasswordClicked = onConfirmResetPasswordClicked
+        )
+    }
 }
 
 fun NavGraphBuilder.homeScreenRoute(
@@ -146,12 +185,8 @@ fun NavGraphBuilder.addTaskScreenRoute(
 ) {
     composable(route = Screen.AddTaskScreen.route) {
         AddTaskScreen(
-            onBackButtonPressed = { onBackButtonPressed() },
-            onHomeButtonPressed = { onHomeButtonPressed() },
-        )
-        AddTaskScreen(
-            onBackButtonPressed = { onBackButtonPressed() },
-            onHomeButtonPressed = { onHomeButtonPressed() },
+            onBackButtonPressed = onBackButtonPressed,
+            onHomeButtonPressed = onHomeButtonPressed,
         )
     }
 }

@@ -27,21 +27,4 @@ fun SignUpButton(onLoginClick: () -> Unit) {
             color = PurpleRoutinely
         )
     }
-    /*
-    OutlinedButton(
-        onClick = {
-            // Ação executada quando o botão é clicado
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .border(1.dp, Color.LightGray),
-        contentPadding = PaddingValues(16.dp)
-        //colors = ButtonDefaults.buttonColors(Color.Transparent)
-    ) {
-        Text(
-            text = "Cadastre-se", color = BlueRoutinely
-        )
-    }
-    */
 }

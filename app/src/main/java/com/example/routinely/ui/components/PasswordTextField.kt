@@ -1,8 +1,14 @@
 package com.example.routinely.ui.components
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -13,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -23,41 +30,80 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.routinely.ui.theme.Gray80
+import com.example.routinely.ui.theme.GrayRoutinely
+import com.example.routinely.ui.theme.PurpleRoutinely
 
 @Composable
-fun PasswordTextField(onPasswordChange: (String) -> Unit, text: String) {
+fun PasswordTextField(
+    onPasswordChange: (String) -> Unit,
+    label: String,
+    passwordMatch: Boolean = true
+) {
     var password by rememberSaveable { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var isPasswordValid by remember { mutableStateOf(true) }
+
     OutlinedTextField(
         value = password,
         onValueChange = {
             password = it
             onPasswordChange(it)
-            !isPasswordValid(it)},
+            isPasswordValid = isPasswordValid(it) // Atualizamos isPasswordValid
+        },
         label = {
             Text(
-                text = text,
-                style = TextStyle(color = Color.Black) // Definindo a cor do texto como branco
+                text = label,
+                style = TextStyle(color = Color.Black)
             )
         },
+        isError = !isPasswordValid || !passwordMatch,
+        supportingText = {
+            Column() {
+                if (!isPasswordValid) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "Senha inválida!",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                if (!passwordMatch && label.contains("Repetir")) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "As senhas devem ser idênticas!",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+        },
         trailingIcon = {
-            TextButton(
-                onClick = { passwordVisible = !passwordVisible },
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 0.dp)
             ) {
-                Text(
-                    text = if (passwordVisible) "ESCONDER" else "EXIBIR",
-                    color = Color.Black,
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Center
-                )
+                TextButton(
+                    onClick = { passwordVisible = !passwordVisible },
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 0.dp)
+                ) {
+                    Text(
+                        text = if (passwordVisible) "ESCONDER" else "EXIBIR",
+                        color = Color.Black,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                if (!isPasswordValid) {
+                    Icon(
+                        imageVector = Icons.Default.Info,
+                        contentDescription = null,
+                    )
+                }
             }
         },
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Gray80,
             unfocusedTextColor = Gray80,
-            focusedBorderColor = Color.Gray,
-            unfocusedBorderColor = Color.Gray,
+            focusedBorderColor = PurpleRoutinely,
+            unfocusedBorderColor = GrayRoutinely
         ),
         singleLine = true,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),

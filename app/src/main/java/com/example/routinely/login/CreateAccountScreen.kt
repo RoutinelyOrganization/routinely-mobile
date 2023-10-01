@@ -3,8 +3,10 @@ package com.example.routinely.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -20,8 +22,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.routinely.R
 import com.example.routinely.ui.components.CreateAccountButton
 import com.example.routinely.ui.components.CreateBottomText
@@ -33,7 +33,10 @@ import com.example.routinely.ui.components.isPasswordValid
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 @Composable
-fun CreateAccountScreen(navController: NavHostController) {
+fun CreateAccountScreen(
+    onCreateAccountClicked: () -> Unit,
+    onAlreadyHaveAnAccountClicked: () -> Unit
+) {
     var isPasswordFilled by remember { mutableStateOf(false) }
     var isEmailFilled by remember { mutableStateOf(false) }
     var isEmailValid by remember { mutableStateOf(true) }
@@ -41,7 +44,7 @@ fun CreateAccountScreen(navController: NavHostController) {
     var isPasswordValid by remember { mutableStateOf(false) }
     var password by remember { mutableStateOf("") }
     var repeatedPassword by remember { mutableStateOf("") }
-    var arePasswordsMatching by remember { mutableStateOf(false) }
+    var arePasswordsMatching by remember { mutableStateOf(true) }
     val checkboxTermsState = remember { mutableStateOf(false) }
 
     Column(
@@ -64,7 +67,7 @@ fun CreateAccountScreen(navController: NavHostController) {
         }
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            //verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .weight(0.70f)
                 .fillMaxWidth(),
@@ -72,6 +75,7 @@ fun CreateAccountScreen(navController: NavHostController) {
             Text(
                 text = "Criar conta", color = Color.Black, fontSize = 25.sp
             )
+            Spacer(modifier = Modifier.height(16.dp))
             NameTextField(onNameChange = {name ->
                 isNameFilled = name.isNotBlank() && name.length >= 3})
 
@@ -87,7 +91,8 @@ fun CreateAccountScreen(navController: NavHostController) {
                     isPasswordValid = isPasswordValid(password)
                     arePasswordsMatching = password == repeatedPassword
                 },
-                text = "Senha"
+                label = "Senha",
+                passwordMatch = arePasswordsMatching
             )
 
             PasswordTextField(
@@ -95,9 +100,9 @@ fun CreateAccountScreen(navController: NavHostController) {
                     repeatedPassword = newRepeatedPassword
                     arePasswordsMatching = password == repeatedPassword
                 },
-                text = "Repetir senha"
+                label = "Repetir senha",
+                passwordMatch = arePasswordsMatching
             )
-
             TermsCheckbox(checkboxTermsState)
 
         }
@@ -107,11 +112,11 @@ fun CreateAccountScreen(navController: NavHostController) {
             modifier = Modifier.weight(0.15f)
         ) {
             CreateAccountButton(
-                onLoginClick = {
-                    navController.navigate("login")
+                onCreateAccountClick = {
+                    onCreateAccountClicked()
                 },
-                emailPreenchido = isEmailFilled,
-                senhaPreenchida = isPasswordFilled,
+                isEmailFilled = isEmailFilled,
+                isPasswordFilled = isPasswordFilled,
                 isEmailValid = isEmailValid,
                 isNameFilled = isNameFilled,
                 isPasswordValid = isPasswordValid,
@@ -119,7 +124,7 @@ fun CreateAccountScreen(navController: NavHostController) {
                 isCheckBoxChecked = checkboxTermsState.value
             )
             CreateBottomText(onLoginClick = {
-                navController.navigate("login")
+                onAlreadyHaveAnAccountClicked()
             })
         }
     }
@@ -128,6 +133,9 @@ fun CreateAccountScreen(navController: NavHostController) {
 @Composable
 fun CreateScreenPreview() {
     RoutinelyTheme {
-        CreateAccountScreen(rememberNavController())
+        CreateAccountScreen(
+            onCreateAccountClicked = {},
+            onAlreadyHaveAnAccountClicked = {}
+        )
     }
 }

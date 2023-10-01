@@ -3,7 +3,6 @@ package com.example.routinely.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
@@ -13,7 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -21,37 +20,36 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import com.example.routinely.ui.theme.Gray80
 
+
+/*
+   This component is not being used for now
+*/
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimeTextField(
     onTimeChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var textFieldValue by remember { mutableStateOf(TextFieldValue("00:00")) }
+    var textFieldState by remember { mutableStateOf(TextFieldValue("00:00")) }
+
     OutlinedTextField(
-        value = textFieldValue,
+        value = textFieldState,
         onValueChange = { newValue ->
             val numericValue = newValue.text.filter { it.isDigit() }.take(4)
-            val formattedValue = when {
-                numericValue.length >= 2 -> "${numericValue.substring(0, 2)}:${numericValue.substring(2)}"
-                else -> numericValue
+            val formattedValue = when (numericValue.length) {
+                1 -> "0$numericValue"
+                2 -> numericValue
+                3 -> "${numericValue.take(2)}:${numericValue[2]}"
+                4 -> "${numericValue.take(2)}:${numericValue.takeLast(2)}"
+                else -> "00:00"
             }
 
-            // Verifique a posição do cursor
-            val cursorPosition = if (newValue.selection.start < 3) {
-                // Posição do cursor antes dos dois pontos
-                newValue.selection.start
-            } else {
-                // Posição do cursor após os dois pontos
-                formattedValue.length
-            }
-
-            textFieldValue = TextFieldValue(
+            textFieldState = TextFieldValue(
                 text = formattedValue,
-                selection = TextRange(cursorPosition)
+                selection = TextRange(numericValue.length + 1) // Define o cursor após a formatação
             )
             onTimeChange(formattedValue)
-
         },
         label = {
             Text(
@@ -59,16 +57,7 @@ fun TimeTextField(
                 style = TextStyle(color = Color.Black)
             )
         },
-        isError = !isValidTime(textFieldValue.text),
-        supportingText = {
-            if (!isValidTime(textFieldValue.text)) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = "Formato inválido!",
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-        },
+        isError = !isValidTime(textFieldState.text),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         colors = TextFieldDefaults.outlinedTextFieldColors(
             focusedTextColor = Gray80,
@@ -78,12 +67,15 @@ fun TimeTextField(
         ),
         singleLine = true,
         modifier = modifier
-            .onFocusEvent { state ->
-                if (state.isFocused) {
-                    textFieldValue = TextFieldValue("")
+            .fillMaxWidth()
+            .onFocusChanged { focusState ->
+                if (!focusState.isFocused) {
+                    textFieldState = TextFieldValue(
+                        text = textFieldState.text.take(5),
+                        selection = TextRange(5)
+                    )
                 }
             }
-            .fillMaxWidth()
     )
 }
 

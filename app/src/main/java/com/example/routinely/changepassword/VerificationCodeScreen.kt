@@ -24,15 +24,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.routinely.R
 import com.example.routinely.ui.components.VerificationCodeButton
 import com.example.routinely.ui.components.VerificationCodeTextField
 import com.example.routinely.ui.theme.RoutinelyTheme
 
 @Composable
-fun VerificationCodeScreen(navController: NavHostController) {
+fun VerificationCodeScreen(
+    onConfirmResetPasswordClicked: () -> Unit
+) {
     var isCodeFilled by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -66,7 +66,7 @@ fun VerificationCodeScreen(navController: NavHostController) {
                 fontSize = 14.sp
             )
             VerificationCodeTextField(onCodeChange = { code ->
-                isCodeFilled = code.isNotBlank() && code.length >= 4
+                isCodeFilled = code.isNotBlank() && code.length >= 6
             })
             Text(
                 text = buildAnnotatedString {
@@ -91,8 +91,8 @@ fun VerificationCodeScreen(navController: NavHostController) {
                 .weight(0.15f)
         ) {
             VerificationCodeButton(
-                onLoginClick = {
-                    navController.navigate("createnewpassword")
+                onConfirmCodeClick = {
+                    onConfirmResetPasswordClicked()
                 },
                 isCodeFilled = isCodeFilled,
             )
@@ -103,6 +103,6 @@ fun VerificationCodeScreen(navController: NavHostController) {
 @Composable
 fun VerificationCodeScreenPreview() {
     RoutinelyTheme {
-        VerificationCodeScreen(rememberNavController())
+        VerificationCodeScreen(onConfirmResetPasswordClicked = {})
     }
 }
