@@ -24,7 +24,7 @@ fun NameTextField(
 ) {
     var nameText by rememberSaveable { mutableStateOf("") }
     var isNameFilled by remember { mutableStateOf(true) }
-    val pattern = remember { Regex("^[a-zA-Z]*\$") }
+    val pattern = remember { Regex("^[\\p{L}\\s]*$") }
     val minLength = 3
     OutlinedTextField(
         value = nameText,
