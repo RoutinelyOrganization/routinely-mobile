@@ -76,7 +76,7 @@ fun AddTaskScreen(
                 modifier = Modifier
                     .padding(contentPadding)
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState()) //não funcionando, precisa ajuste
+                    .verticalScroll(rememberScrollState())
             ) {
                 Text(
                     color = PurpleRoutinely,
