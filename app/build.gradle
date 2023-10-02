@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.routinely'
+    namespace 'com.routinely.routinely'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.routinely"
+        applicationId "com.routinely.routinely"
         minSdk 24
         targetSdk 34
         versionCode 1
