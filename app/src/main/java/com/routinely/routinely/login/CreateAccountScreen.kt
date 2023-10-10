@@ -1,5 +1,6 @@
 package com.routinely.routinely.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,10 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
+import com.routinely.routinely.data.auth.model.RegisterRequest
 import com.routinely.routinely.ui.components.CreateAccountButton
 import com.routinely.routinely.ui.components.CreateBottomText
 import com.routinely.routinely.ui.components.LoginTextField
@@ -30,10 +31,11 @@ import com.routinely.routinely.ui.components.NameTextField
 import com.routinely.routinely.ui.components.PasswordTextField
 import com.routinely.routinely.ui.components.TermsCheckbox
 import com.routinely.routinely.ui.components.isPasswordValid
-import com.routinely.routinely.ui.theme.RoutinelyTheme
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun CreateAccountScreen(
+    viewModel: CreateAccountViewModel,
     onCreateAccountClicked: () -> Unit,
     onAlreadyHaveAnAccountClicked: () -> Unit
 ) {
@@ -43,9 +45,12 @@ fun CreateAccountScreen(
     var isNameFilled by remember { mutableStateOf(false) }
     var isPasswordValid by remember { mutableStateOf(false) }
     var password by remember { mutableStateOf("") }
+    var nameText by remember { mutableStateOf("") }
+    var emailText by remember { mutableStateOf("") }
     var repeatedPassword by remember { mutableStateOf("") }
     var arePasswordsMatching by remember { mutableStateOf(true) }
-    val checkboxTermsState = remember { mutableStateOf(false) }
+    var checkboxTermsState = remember { mutableStateOf(false) }
+    var showError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -77,11 +82,13 @@ fun CreateAccountScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             NameTextField(onNameChange = {name ->
+                nameText = name
                 isNameFilled = name.isNotBlank() && name.length >= 3})
 
             LoginTextField(onEmailChange = { email ->
                 isEmailFilled = email.isNotBlank()
                 isEmailValid = isValidEmailFormat(email)
+                emailText = email
             })
 
             PasswordTextField(
@@ -104,7 +111,11 @@ fun CreateAccountScreen(
                 passwordMatch = arePasswordsMatching
             )
             TermsCheckbox(checkboxTermsState)
-
+            if (showError){
+                Text(
+                    text = "Erro"
+                )
+            }
         }
         //Espaço no final
         Column(
@@ -113,7 +124,20 @@ fun CreateAccountScreen(
         ) {
             CreateAccountButton(
                 onCreateAccountClick = {
-                    onCreateAccountClicked()
+                    val params = RegisterRequest(
+                        name = nameText,
+                        email = emailText,
+                        password = password,
+                        acceptedTerms = checkboxTermsState.value
+                    )
+                    val response = runBlocking { viewModel.createNewAccount(params) }
+                    Log.d("CreateAccountScreen", "CreateAccountScreen: ${response.message}")
+                    if(response.statusCode == null){
+                        onCreateAccountClicked()
+                    }else{
+                        showError = true
+                    }
+
                 },
                 isEmailFilled = isEmailFilled,
                 isPasswordFilled = isPasswordFilled,
@@ -129,13 +153,14 @@ fun CreateAccountScreen(
         }
     }
 }
-@Preview(showBackground = true)
-@Composable
-fun CreateScreenPreview() {
-    RoutinelyTheme {
-        CreateAccountScreen(
-            onCreateAccountClicked = {},
-            onAlreadyHaveAnAccountClicked = {}
-        )
-    }
-}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun CreateScreenPreview() {
+//    RoutinelyTheme {
+//        CreateAccountScreen(
+//            onCreateAccountClicked = {},
+//            onAlreadyHaveAnAccountClicked = {}
+//        )
+//    }
+//}

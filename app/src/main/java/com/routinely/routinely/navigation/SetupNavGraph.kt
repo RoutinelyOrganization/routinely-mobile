@@ -2,7 +2,6 @@ package com.routinely.routinely.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
@@ -15,11 +14,13 @@ import com.routinely.routinely.changepassword.ForgotPasswordScreen
 import com.routinely.routinely.changepassword.VerificationCodeScreen
 import com.routinely.routinely.home.HomeScreen
 import com.routinely.routinely.login.CreateAccountScreen
+import com.routinely.routinely.login.CreateAccountViewModel
 import com.routinely.routinely.login.LoginScreen
 import com.routinely.routinely.login.LoginViewModel
 import com.routinely.routinely.splash_screen.SplashScreen
 import com.routinely.routinely.task.AddTaskScreen
 import com.routinely.routinely.task.EditTaskScreen
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SetupNavGraph(
@@ -113,7 +114,7 @@ fun NavGraphBuilder.loginRoute(
     navigateToForgotPasswordScreen: () -> Unit,
 ) {
     composable(route = Screen.Login.route) {
-        val viewModel: LoginViewModel = viewModel()
+        val viewModel: LoginViewModel = koinViewModel()
         val authenticated by viewModel.authenticated
         LoginScreen(
             viewModel = viewModel,
@@ -129,7 +130,9 @@ fun NavGraphBuilder.createAccountRoute(
     onAlreadyHaveAnAccountClicked: () -> Unit,
 ) {
     composable(route = Screen.CreateAccount.route) {
+        val viewModel: CreateAccountViewModel = koinViewModel()
         CreateAccountScreen(
+            viewModel = viewModel,
             onCreateAccountClicked = onCreateAccountClicked,
             onAlreadyHaveAnAccountClicked = onAlreadyHaveAnAccountClicked ,
         )
