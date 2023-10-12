@@ -20,6 +20,7 @@ import com.routinely.routinely.login.LoginViewModel
 import com.routinely.routinely.splash_screen.SplashScreen
 import com.routinely.routinely.task.AddTaskScreen
 import com.routinely.routinely.task.EditTaskScreen
+import kotlinx.coroutines.runBlocking
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -74,7 +75,7 @@ fun SetupNavGraph(
             onAlreadyHaveAnAccountClicked = {
                 navController.navigate(Screen.Login.route)
             },
-            onCreateAccountClicked = {
+            navigateToLoginScreen = {
                 navController.navigate(Screen.Login.route)
             }
         )
@@ -126,15 +127,19 @@ fun NavGraphBuilder.loginRoute(
     }
 }
 fun NavGraphBuilder.createAccountRoute(
-    onCreateAccountClicked: () -> Unit,
+    navigateToLoginScreen: () -> Unit,
     onAlreadyHaveAnAccountClicked: () -> Unit,
 ) {
     composable(route = Screen.CreateAccount.route) {
         val viewModel: CreateAccountViewModel = koinViewModel()
+        val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
         CreateAccountScreen(
-            viewModel = viewModel,
-            onCreateAccountClicked = onCreateAccountClicked,
+            onCreateAccountClicked = { userRegister ->
+                runBlocking {viewModel.createNewAccount(userRegister) }
+            },
             onAlreadyHaveAnAccountClicked = onAlreadyHaveAnAccountClicked ,
+            shouldGoToNextScreen = shouldGoToNextScreen,
+            navigateToLoginScreen = navigateToLoginScreen,
         )
     }
 }
