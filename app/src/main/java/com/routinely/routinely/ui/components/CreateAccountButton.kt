@@ -14,13 +14,6 @@ import com.routinely.routinely.ui.theme.PurpleRoutinely
 fun CreateAccountButton(
     onCreateAccountClick: () -> Unit,
     isValid: Boolean
-//    isEmailFilled: Boolean,
-//    isPasswordFilled: Boolean,
-//    isEmailValid: Boolean,
-//    isNameFilled: Boolean,
-//    isPasswordValid: Boolean,
-//    isPasswordsMatch: Boolean,
-//    isCheckBoxChecked: Boolean
 ) {
     Button(
         enabled = isValid,

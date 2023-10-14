@@ -57,7 +57,7 @@ fun CreateAccountScreen(
     var arePasswordsMatching by rememberSaveable { mutableStateOf(true) }
     var checkboxTermsState = rememberSaveable { mutableStateOf(false) }
     var labelMessage by rememberSaveable { mutableStateOf("") }
-    var statusCode by rememberSaveable { mutableStateOf<Int?>(0) }
+    var statusCode by rememberSaveable { mutableStateOf<Int?>(null) }
 
 
     Column(
