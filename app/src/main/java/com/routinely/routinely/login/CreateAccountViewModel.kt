@@ -2,55 +2,112 @@ package com.routinely.routinely.login
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.api.RegisterApi
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.RegisterRequest
 import com.routinely.routinely.ui.components.isPasswordValid
+import com.routinely.routinely.util.validators.EmailInputValid
+import com.routinely.routinely.util.validators.NameInputValid
+import com.routinely.routinely.util.validators.PasswordInputValid
+
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class CreateAccountViewModel(
-    private val registerRequest: RegisterApi,
+    private val registerApi: RegisterApi,
 ) : ViewModel() {
 
-    suspend fun createNewAccount(createAccount: RegisterRequest): ApiResponse = withContext(Dispatchers.IO) {
-        if(verifyAllConditions(createAccount)){
-            val response: ApiResponse = registerRequest.registerUser(createAccount)
-            if(response.statusCode == null){
-                shouldGoToNextScreen.value = true
-            }
-            return@withContext ApiResponse(
-                message = response.message,
-                statusCode = response.statusCode,
-                error = response.error,
+    private val _apiErrorMessage = MutableStateFlow(listOf<String>())
+    val apiErrorMessage = _apiErrorMessage.asStateFlow()
+    private suspend fun createNewAccount(createAccount: RegisterRequest): ApiResponse {
+        return withContext(Dispatchers.IO) {
+            val response: ApiResponse
+
+            val registerRequest = RegisterRequest(
+                name = createAccount.name,
+                email = createAccount.email,
+                password = createAccount.password,
+                acceptedTerms = createAccount.acceptedTerms
             )
-        }else{
-            return@withContext ApiResponse(
-                message = listOf(),
-                statusCode = null,
-                error = null,
-            )
+            response = registerApi.registerUser(registerRequest)
+            return@withContext response
         }
     }
+
     var shouldGoToNextScreen = mutableStateOf(false)
         private set
-    private fun verifyName(name: String): Boolean{
-        return name.length >= 3
-    }
-    private fun verifyEmail(email: String): Boolean{
-        return isValidEmailFormat(email)
-    }
-    private fun verifyPassword(password: String): Boolean{
-        return isPasswordValid(password)
-    }
-    private fun verifyAcceptedTerms(acceptedTerms: Boolean): Boolean{
-        return acceptedTerms
+
+    fun passwordState(password: String) : PasswordInputValid {
+        if (password.isBlank()) {
+            return PasswordInputValid.Error(R.string.empty_field)
+        }
+        return if(isPasswordValid(password)){
+            PasswordInputValid.Valid
+        }else{
+            PasswordInputValid.Error(R.string.invalid_password)
+        }
     }
 
-    private fun verifyAllConditions(createAccount: RegisterRequest) : Boolean {
-        return verifyName(createAccount.name) &&
-                verifyEmail(createAccount.email) &&
-                verifyPassword(createAccount.password) &&
-                verifyAcceptedTerms(createAccount.acceptedTerms)
+    fun confirmPasswordState(password : String, confirmPassword: String) : PasswordInputValid {
+        if(confirmPassword.isBlank()) {
+            return PasswordInputValid.Error(R.string.empty_field)
+        }
+
+        return if(confirmPassword != password) {
+            PasswordInputValid.Error(R.string.passwords_must_be_identical)
+        } else {
+            PasswordInputValid.Valid
+        }
+    }
+
+    fun emailState(email: String) : EmailInputValid {
+        return when {
+            email.isEmpty() -> {
+                EmailInputValid.Error(R.string.empty_field)
+            }
+            isValidEmailFormat(email) -> {
+                EmailInputValid.Valid
+            }
+            else -> {
+                EmailInputValid.Error(R.string.invalid_email)
+
+            }
+        }
+    }
+
+    fun nameState(name: String) : NameInputValid {
+        return when {
+            name.isEmpty() -> {
+                NameInputValid.Error(R.string.empty_field)
+            }
+            !name.matches(Regex("^[A-Z][a-zA-ZÀ-ÖØ-öø-ÿ ]+\$")) -> {
+                NameInputValid.Error(R.string.invalid_name)
+            }
+            name.count { it.isLetter() } < 3 -> {
+                NameInputValid.Error(R.string.at_least_three_letters)
+            }
+            name.contains("  ") -> {
+                NameInputValid.Error(R.string.invalid_name)
+            }
+            else -> {
+                NameInputValid.Valid
+            }
+        }
+    }
+
+    fun verifyAllConditions(createAccount: RegisterRequest) {
+        viewModelScope.launch {
+            val response = createNewAccount(createAccount)
+            if(response.serverStatusCode.value < 300) {
+                shouldGoToNextScreen.value = true
+            } else {
+                _apiErrorMessage.value = response.message
+            }
+        }
     }
 }

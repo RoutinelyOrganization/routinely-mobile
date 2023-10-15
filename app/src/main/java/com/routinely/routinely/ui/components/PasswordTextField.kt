@@ -16,12 +16,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -32,44 +32,36 @@ import androidx.compose.ui.unit.sp
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
+import com.routinely.routinely.util.validators.PasswordInputValid
 
 @Composable
 fun PasswordTextField(
-    onPasswordChange: (String) -> Unit,
-    label: String,
+    onValueChange: (String) -> Unit,
+    labelRes: String,
+    value: String,
+    error: PasswordInputValid,
     passwordMatch: Boolean = true
 ) {
-    var password by rememberSaveable { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
-    var isPasswordValid by remember { mutableStateOf(true) }
-
+    var isPasswordValid by rememberSaveable { mutableStateOf(true) }
+    var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
     OutlinedTextField(
-        value = password,
+        value = value,
         onValueChange = {
-            password = it
-            onPasswordChange(it)
-            isPasswordValid = isPasswordValid(it) // Atualizamos isPasswordValid
+            onValueChange(it)
         },
         label = {
             Text(
-                text = label,
+                text = labelRes,
                 style = TextStyle(color = Color.Black)
             )
         },
-        isError = !isPasswordValid || !passwordMatch,
+        isError = error is PasswordInputValid.ErrorList || error is PasswordInputValid.Error,
         supportingText = {
             Column() {
-                if (!isPasswordValid) {
+                if (error is PasswordInputValid.Error) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "Senha inválida!",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-                if (!passwordMatch && label.contains("Repetir")) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "As senhas devem ser idênticas!",
+                        text = stringResource(error.messageId),
                         color = MaterialTheme.colorScheme.error
                     )
                 }
@@ -81,11 +73,11 @@ fun PasswordTextField(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 0.dp)
             ) {
                 TextButton(
-                    onClick = { passwordVisible = !passwordVisible },
+                    onClick = { isPasswordVisible = !isPasswordVisible },
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 0.dp)
                 ) {
                     Text(
-                        text = if (passwordVisible) "ESCONDER" else "EXIBIR",
+                        text = if (isPasswordVisible) "ESCONDER" else "EXIBIR",
                         color = Color.Black,
                         fontSize = 12.sp,
                         textAlign = TextAlign.Center
@@ -106,7 +98,7 @@ fun PasswordTextField(
             unfocusedBorderColor = GrayRoutinely
         ),
         singleLine = true,
-        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         modifier = Modifier.fillMaxWidth()
     )

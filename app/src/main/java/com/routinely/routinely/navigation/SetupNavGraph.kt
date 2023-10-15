@@ -1,6 +1,9 @@
 package com.routinely.routinely.navigation
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
@@ -10,8 +13,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.routinely.routinely.changepassword.CreateNewPasswordScreen
+import com.routinely.routinely.changepassword.CreateNewPasswordViewModel
 import com.routinely.routinely.changepassword.ForgotPasswordScreen
+import com.routinely.routinely.changepassword.ForgotPasswordViewModel
 import com.routinely.routinely.changepassword.VerificationCodeScreen
+import com.routinely.routinely.changepassword.VerificationCodeViewModel
 import com.routinely.routinely.home.HomeScreen
 import com.routinely.routinely.login.CreateAccountScreen
 import com.routinely.routinely.login.CreateAccountViewModel
@@ -20,7 +26,6 @@ import com.routinely.routinely.login.LoginViewModel
 import com.routinely.routinely.splash_screen.SplashScreen
 import com.routinely.routinely.task.AddTaskScreen
 import com.routinely.routinely.task.EditTaskScreen
-import kotlinx.coroutines.runBlocking
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -80,17 +85,17 @@ fun SetupNavGraph(
             }
         )
         forgotPasswordRoute(
-            onResetPasswordClicked = {
+            navigateToCodeVerificationScreen = {
                 navController.navigate(Screen.VerificationCodeScreen.route)
             }
         )
         verificationCodeRoute(
-            onConfirmResetPasswordClicked = {
+            navigateToSetNewPasswordScreen = {
                 navController.navigate(Screen.NewPasswordScreen.route)
             }
         )
         newPasswordRoute(
-            onUpdatePasswordClicked = {
+            navigateToLoginScreen = {
                 navController.navigate(Screen.Login.route)
             }
         )
@@ -123,6 +128,12 @@ fun NavGraphBuilder.loginRoute(
             navigateToHomeScreen = navigateToHomeScreen,
             navigateToCreateAccountScreen = navigateToCreateAccountScreen,
             navigateToForgotPasswordScreen = navigateToForgotPasswordScreen,
+            emailStateValidation = {
+                viewModel.emailState(it)
+            },
+            passwordStateValidation = {
+                viewModel.passwordState(it)
+            },
         )
     }
 }
@@ -133,40 +144,92 @@ fun NavGraphBuilder.createAccountRoute(
     composable(route = Screen.CreateAccount.route) {
         val viewModel: CreateAccountViewModel = koinViewModel()
         val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
+        val intentForPrivacyPolicy = Intent(Intent.ACTION_VIEW)
+        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
+        intentForPrivacyPolicy.setData(Uri.parse("swap.link.do.pdf"))
         CreateAccountScreen(
             onCreateAccountClicked = { userRegister ->
-                runBlocking {viewModel.createNewAccount(userRegister) }
+                viewModel.verifyAllConditions(userRegister)
             },
             onAlreadyHaveAnAccountClicked = onAlreadyHaveAnAccountClicked ,
             shouldGoToNextScreen = shouldGoToNextScreen,
             navigateToLoginScreen = navigateToLoginScreen,
+            nameStateValidation = {
+                viewModel.nameState(it)
+            },
+            emailStateValidation = {
+                viewModel.emailState(it)
+            },
+            confirmPasswordStateValidation = { password, confirmPassword ->
+                viewModel.confirmPasswordState(password, confirmPassword)
+            },
+            passwordStateValidation = {
+                viewModel.passwordState(it)
+            },
+            intentForPrivacy = intentForPrivacyPolicy,
+            apiErrorMessage = apiErrorMessage,
         )
     }
 }
 fun NavGraphBuilder.newPasswordRoute(
-    onUpdatePasswordClicked: () -> Unit
+    navigateToLoginScreen: () -> Unit
 ) {
     composable(route = Screen.NewPasswordScreen.route) {
+        val viewModel: CreateNewPasswordViewModel = koinViewModel()
+        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
+        val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
         CreateNewPasswordScreen(
-            onUpdatePasswordClicked = onUpdatePasswordClicked,
+            onUpdatePasswordClicked = { password :String, confirmPassword :String ->
+                viewModel.verifyAllConditions(password, confirmPassword)
+            },
+            passwordStateValidation = {
+                viewModel.passwordState(it)
+            },
+            apiErrorMessage = apiErrorMessage,
+            shouldGoToNextScreen = shouldGoToNextScreen,
+            navigateToLoginScreen = navigateToLoginScreen,
+            confirmPasswordStateValidation = { password, confirmPassword ->
+                viewModel.confirmPasswordState(password, confirmPassword)
+            }
         )
     }
 }
 fun NavGraphBuilder.forgotPasswordRoute(
-    onResetPasswordClicked: () -> Unit
+    navigateToCodeVerificationScreen: () -> Unit,
 ) {
     composable(route = Screen.ForgotPasswordScreen.route) {
+        val viewModel: ForgotPasswordViewModel = koinViewModel()
+        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
+        val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
         ForgotPasswordScreen(
-            onResetPasswordClicked = onResetPasswordClicked
+            navigateToCodeVerificationScreen = navigateToCodeVerificationScreen,
+            onResetPasswordClicked = { email :String ->
+                viewModel.verifyAllConditions(email)
+            },
+            emailStateValidation = {
+                viewModel.emailState(it)
+            },
+            shouldGoToNextScreen = shouldGoToNextScreen,
+            apiErrorMessage = apiErrorMessage
         )
     }
 }
 fun NavGraphBuilder.verificationCodeRoute(
-    onConfirmResetPasswordClicked: () -> Unit
+    navigateToSetNewPasswordScreen: () -> Unit
 ) {
     composable(route = Screen.VerificationCodeScreen.route) {
+        val viewModel: VerificationCodeViewModel = koinViewModel()
+        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
+        val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
         VerificationCodeScreen(
-            onConfirmResetPasswordClicked = onConfirmResetPasswordClicked
+            onConfirmResetPasswordClicked = { code :String ->
+                viewModel.verifyAllConditions(code)
+            },
+            codeStateValidation = { code :String ->
+                viewModel.codeState(code)
+            },
+            navigateToSetNewPasswordScreen = navigateToSetNewPasswordScreen,
+            shouldGoToNextScreen = shouldGoToNextScreen
         )
     }
 }

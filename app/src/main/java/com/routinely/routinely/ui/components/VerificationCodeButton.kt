@@ -13,10 +13,10 @@ import com.routinely.routinely.ui.theme.PurpleRoutinely
 @Composable
 fun VerificationCodeButton(
     onConfirmCodeClick: () -> Unit,
-    isCodeFilled: Boolean
+    isCodeValid: Boolean
 ) {
     Button(
-        enabled = isCodeFilled,
+        enabled = isCodeValid,
         onClick = onConfirmCodeClick,
         modifier = Modifier
             .fillMaxWidth(),

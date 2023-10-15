@@ -1,61 +1,45 @@
 package com.routinely.routinely.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
-import com.routinely.routinely.login.isValidEmailFormat
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
+import com.routinely.routinely.util.validators.EmailInputValid
 
 @Composable
-fun LoginTextField(onEmailChange: (String) -> Unit) {
-    var loginText by remember { mutableStateOf("") }
-    var isEmailValid by remember { mutableStateOf(true) }
+fun LoginTextField(
+    onValueChange: (String) -> Unit,
+    labelRes: String,
+    value: String,
+    error: EmailInputValid,
+) {
     OutlinedTextField(
-        value = loginText,
-        onValueChange = {
-            loginText = it
-            isEmailValid = isValidEmailFormat(loginText)
-            onEmailChange(loginText)},
+        value = value,
+        onValueChange = { onValueChange(it) },
         label = {
             Text(
-                text = "E-mail",
-                style = TextStyle(color = Color.Black) // Definindo a cor do texto como branco
+                text = labelRes,
+                style = TextStyle(color = Color.Black)
             )
         },
-        isError = !isEmailValid,
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+        isError = error is EmailInputValid.Error,
         supportingText = {
-            if (!isEmailValid) {
+            if(error is EmailInputValid.Error) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "E-mail inválido!",
+                    text = stringResource(id = error.messageId),
                     color = MaterialTheme.colorScheme.error
-                )
-
-            }
-        },
-        trailingIcon = {
-            if (!isEmailValid) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = null,
-                    modifier = Modifier
-
                 )
             }
         },
@@ -65,16 +49,5 @@ fun LoginTextField(onEmailChange: (String) -> Unit) {
             focusedBorderColor = PurpleRoutinely,
             unfocusedBorderColor = GrayRoutinely
         ),
-        singleLine = true,
-        modifier = Modifier
-            .fillMaxWidth()
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginTextFieldPreview() {
-    LoginTextField(
-        onEmailChange = {}
     )
 }

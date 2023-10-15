@@ -1,5 +1,6 @@
 package com.routinely.routinely.login
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,36 +31,43 @@ import com.routinely.routinely.data.auth.model.RegisterRequest
 import com.routinely.routinely.ui.components.CreateAccountButton
 import com.routinely.routinely.ui.components.CreateBottomText
 import com.routinely.routinely.ui.components.LabelError
-import com.routinely.routinely.ui.components.LabelSuccess
 import com.routinely.routinely.ui.components.LoginTextField
 import com.routinely.routinely.ui.components.NameTextField
 import com.routinely.routinely.ui.components.PasswordTextField
 import com.routinely.routinely.ui.components.TermsCheckbox
-import com.routinely.routinely.ui.components.isPasswordValid
 import com.routinely.routinely.ui.theme.RoutinelyTheme
+import com.routinely.routinely.util.validators.EmailInputValid
+import com.routinely.routinely.util.validators.NameInputValid
+import com.routinely.routinely.util.validators.PasswordInputValid
+import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.delay
 
 @Composable
 fun CreateAccountScreen(
-    onCreateAccountClicked: (RegisterRequest) -> ApiResponse,
+    onCreateAccountClicked: (RegisterRequest) -> Unit,
     onAlreadyHaveAnAccountClicked: () -> Unit,
     shouldGoToNextScreen: Boolean,
     navigateToLoginScreen: () -> Unit,
+    nameStateValidation: (name: String) -> NameInputValid,
+    emailStateValidation: (email: String) -> EmailInputValid,
+    passwordStateValidation: (password: String) -> PasswordInputValid,
+    confirmPasswordStateValidation: (password: String, confirmPassword: String) -> PasswordInputValid,
+    intentForPrivacy: Intent,
+    apiErrorMessage: List<String>,
 ) {
-    var isPasswordFilled by rememberSaveable { mutableStateOf(false) }
-    var isEmailFilled by rememberSaveable { mutableStateOf(false) }
-    var isEmailValid by rememberSaveable { mutableStateOf(true) }
-    var isNameFilled by rememberSaveable { mutableStateOf(false) }
-    var isPasswordValid by rememberSaveable { mutableStateOf(false) }
-    var password by rememberSaveable { mutableStateOf("") }
-    var nameText by rememberSaveable { mutableStateOf("") }
-    var emailText by rememberSaveable { mutableStateOf("") }
-    var repeatedPassword by rememberSaveable { mutableStateOf("") }
-    var arePasswordsMatching by rememberSaveable { mutableStateOf(true) }
-    var checkboxTermsState = rememberSaveable { mutableStateOf(false) }
-    var labelMessage by rememberSaveable { mutableStateOf("") }
-    var statusCode by rememberSaveable { mutableStateOf<Int?>(null) }
+    var passwordHidden by rememberSaveable { mutableStateOf(true) }
+    var confirmPasswordHidden by rememberSaveable { mutableStateOf(true) }
 
+    var name by rememberSaveable { mutableStateOf("") }
+    var nameState by rememberSaveable { mutableStateOf<NameInputValid>(NameInputValid.Empty) }
+    var email by rememberSaveable { mutableStateOf("") }
+    var emailState by rememberSaveable { mutableStateOf<EmailInputValid>(EmailInputValid.Empty) }
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordState by rememberSaveable { mutableStateOf<PasswordInputValid>(PasswordInputValid.Empty) }
+    var confirmPassword by rememberSaveable { mutableStateOf("") }
+    var confirmPasswordState by rememberSaveable { mutableStateOf<PasswordInputValid>(PasswordInputValid.Empty) }
+    var privacy by rememberSaveable { mutableStateOf(false) }
+    var privacyState by rememberSaveable { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -88,40 +97,60 @@ fun CreateAccountScreen(
                 text = "Criar conta", color = Color.Black, fontSize = 25.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
-            NameTextField(onNameChange = {name ->
-                nameText = name
-                isNameFilled = name.isNotBlank() && name.length >= 3})
-
-            LoginTextField(onEmailChange = { email ->
-                isEmailFilled = email.isNotBlank()
-                isEmailValid = isValidEmailFormat(email)
-                emailText = email
-            })
-
-            PasswordTextField(
-                onPasswordChange = { newPassword ->
-                    password = newPassword
-                    isPasswordFilled = password.isNotBlank()
-                    isPasswordValid = isPasswordValid(password)
-                    arePasswordsMatching = password == repeatedPassword
+            NameTextField(
+                value = name,
+                onValueChange = { newName: String ->
+                    name = newName
+                    nameState = nameStateValidation(name)
                 },
-                label = "Senha",
-                passwordMatch = arePasswordsMatching
+                labelRes = stringResource(id = R.string.name),
+                error = nameState,
+            )
+
+            LoginTextField(
+                onValueChange = { newEmail ->
+                    email = newEmail
+                    emailState = emailStateValidation(email)
+                },
+                labelRes = stringResource(R.string.email),
+                value = email,
+                error = emailState,
             )
 
             PasswordTextField(
-                onPasswordChange = { newRepeatedPassword ->
-                    repeatedPassword = newRepeatedPassword
-                    arePasswordsMatching = password == repeatedPassword
+                onValueChange = { newPass: String ->
+                    password = newPass
+                    passwordState = passwordStateValidation(password)
                 },
-                label = "Repetir senha",
-                passwordMatch = arePasswordsMatching
+                labelRes = stringResource(id = R.string.password),
+                value = password,
+                error = passwordState,
+                passwordMatch = passwordState == PasswordInputValid.Valid
             )
-            TermsCheckbox(checkboxTermsState)
-            if(statusCode != null){
-                LabelError(labelMessage)
-            }else {
-                LabelSuccess(labelMessage)
+
+            PasswordTextField(
+                onValueChange = { newPassConfirm ->
+                    confirmPassword = newPassConfirm
+                    confirmPasswordState = confirmPasswordStateValidation(password, confirmPassword)
+                },
+                labelRes = "Repetir Senha",
+                value = confirmPassword,
+                error = confirmPasswordState,
+                passwordMatch = confirmPasswordState == PasswordInputValid.Valid
+            )
+
+            TermsCheckbox(
+                isChecked = privacy,
+                onCheckedChange = {
+                    privacy = !privacy
+                    privacyState = privacy
+                },
+                modifier = Modifier,
+            )
+            apiErrorMessage.forEach {
+                LabelError(
+                    labelRes = it
+                )
             }
         }
         //Espaço no final
@@ -129,26 +158,24 @@ fun CreateAccountScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.weight(0.15f)
         ) {
-            CreateAccountButton(
+            CreateAccountButton (
                 {
-                    val response = onCreateAccountClicked (
+                    onCreateAccountClicked(
                         RegisterRequest(
-                            name = nameText,
-                            email = emailText,
+                            name = name,
+                            email = email,
                             password = password,
-                            acceptedTerms = checkboxTermsState.value
+                            acceptedTerms = privacy
                         )
                     )
-                    labelMessage = response.message[0]
-                    statusCode = response.statusCode
                 },
-                isPasswordValid && isEmailValid && isNameFilled && arePasswordsMatching && checkboxTermsState.value
+                nameState == NameInputValid.Valid && emailState == EmailInputValid.Valid &&
+                        passwordState == PasswordInputValid.Valid
             )
 
             CreateBottomText(onLoginClick = {
                 onAlreadyHaveAnAccountClicked()
             })
-
         }
     }
     LaunchedEffect(key1 = shouldGoToNextScreen) {
@@ -164,10 +191,26 @@ fun CreateAccountScreen(
 fun CreateScreenPreview() {
     RoutinelyTheme {
         CreateAccountScreen(
-            onCreateAccountClicked = { ApiResponse(message = listOf(), error = "", statusCode = null) },
+            onCreateAccountClicked = { ApiResponse(message = listOf(), HttpStatusCode.OK) },
             onAlreadyHaveAnAccountClicked = {},
             shouldGoToNextScreen = false,
-            navigateToLoginScreen = {}
+            navigateToLoginScreen = {},
+            intentForPrivacy = Intent(Intent.ACTION_VIEW),
+            nameStateValidation = {
+                NameInputValid.Error(R.string.invalid_name)
+            },
+            emailStateValidation = {
+                EmailInputValid.Valid
+            },
+            passwordStateValidation = {
+                PasswordInputValid.Valid
+            },
+            apiErrorMessage = listOf(
+//            "Email inválido", "Senha deve ser maior", "Gênero não existe"
+            ),
+            confirmPasswordStateValidation = { password, confirmPassword ->
+                PasswordInputValid.Valid
+            },
         )
     }
 }

@@ -13,12 +13,9 @@ import com.routinely.routinely.ui.theme.PurpleRoutinely
 @Composable
 fun UpdatePasswordButton(
     onLoginClick: () -> Unit,
-    isPasswordFilled: Boolean,
-    isPasswordValid: Boolean,
-    isPasswordsMatch: Boolean,
 ) {
     Button(
-        enabled = isPasswordFilled && isPasswordValid && isPasswordsMatch,
+        //enabled = isPasswordFilled && isPasswordValid && isPasswordsMatch,
         onClick = onLoginClick,
         modifier = Modifier
             .fillMaxWidth(),

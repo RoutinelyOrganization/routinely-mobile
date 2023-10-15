@@ -13,14 +13,10 @@ import com.routinely.routinely.ui.theme.PurpleRoutinely
 @Composable
 fun LoginButton(
     onLoginClick: () -> Unit,
-    emailPreenchido: Boolean,
-    senhaPreenchida: Boolean,
-    isEmailValid: Boolean,
-    isPasswordValid: Boolean
+    areFieldValid: Boolean
 ) {
-    val isButtonEnabled = senhaPreenchida && emailPreenchido && isEmailValid && isPasswordValid;
     Button(
-        enabled = isButtonEnabled,
+        enabled = areFieldValid,
         onClick = onLoginClick,
         modifier = Modifier
             .fillMaxWidth(),

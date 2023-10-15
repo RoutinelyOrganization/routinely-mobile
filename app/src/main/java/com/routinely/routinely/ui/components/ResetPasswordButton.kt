@@ -1,6 +1,5 @@
 package com.routinely.routinely.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -10,15 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.routinely.routinely.ui.theme.PurpleRoutinely
+
 @Composable
 fun ResetPasswordButton(
     onResetPasswordClick: () -> Unit,
-    isEmailFilled: Boolean,
     isEmailValid: Boolean,
 ) {
-    Log.d("TAG", (isEmailFilled && isEmailValid).toString())
     Button(
-        enabled = isEmailFilled && isEmailValid,
+        enabled = isEmailValid,
         onClick = onResetPasswordClick,
         modifier = Modifier
             .fillMaxWidth(),

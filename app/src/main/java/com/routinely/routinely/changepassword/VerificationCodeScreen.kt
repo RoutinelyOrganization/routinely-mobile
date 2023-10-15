@@ -9,14 +9,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -28,12 +30,19 @@ import com.routinely.routinely.R
 import com.routinely.routinely.ui.components.VerificationCodeButton
 import com.routinely.routinely.ui.components.VerificationCodeTextField
 import com.routinely.routinely.ui.theme.RoutinelyTheme
+import com.routinely.routinely.util.validators.CodeInputValid
+import kotlinx.coroutines.delay
 
 @Composable
 fun VerificationCodeScreen(
-    onConfirmResetPasswordClicked: () -> Unit
+    onConfirmResetPasswordClicked: (String) -> CodeInputValid,
+    shouldGoToNextScreen: Boolean,
+    navigateToSetNewPasswordScreen: () -> Unit,
+    codeStateValidation: (code: String) -> CodeInputValid,
 ) {
-    var isCodeFilled by remember { mutableStateOf(false) }
+    var code by rememberSaveable { mutableStateOf("") }
+    var codeState by rememberSaveable { mutableStateOf<CodeInputValid>(CodeInputValid.Empty) }
+
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -59,30 +68,39 @@ fun VerificationCodeScreen(
                 .fillMaxWidth(),
         ) {
             Text(
-                text = "Redefinir senha", color = Color.Black, fontSize = 25.sp
+                text = stringResource(R.string.reset_password),
+                color = Color.Black,
+                fontSize = 25.sp
             )
             Text(
-                text = "Insira o código de verificação enviado no e-mail",
+                text = stringResource(R.string.type_the_code),
                 fontSize = 14.sp
             )
-            VerificationCodeTextField(onCodeChange = { code ->
-                isCodeFilled = code.isNotBlank() && code.length >= 6
-            })
+            VerificationCodeTextField(
+                value = code,
+                onValueChange = { newCode: String ->
+                    code = newCode
+                    codeState = codeStateValidation(code)
+                },
+                labelRes = "Código",
+                error = codeState,
+            )
             Text(
                 text = buildAnnotatedString {
                     withStyle(
                         style = SpanStyle(
                             color = Color(0xff171a21), fontSize = 12.sp
                         )
-                    ) { append("Não recebeu? ") }
+                    ) { append(stringResource(R.string.didnt_receive)) }
                     withStyle(
                         style = SpanStyle(
                             color = Color(0xff171a21),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
                         )
-                    ) { append(" Enviar novamente") }
+                    ) { append(stringResource(R.string.send_again)) }
                 }
+
             )
         }
         //Espaço no final
@@ -92,10 +110,18 @@ fun VerificationCodeScreen(
         ) {
             VerificationCodeButton(
                 onConfirmCodeClick = {
-                    onConfirmResetPasswordClicked()
+                    onConfirmResetPasswordClicked(
+                        code
+                    )
                 },
-                isCodeFilled = isCodeFilled,
+                isCodeValid = codeState == CodeInputValid.Valid,
             )
+        }
+    }
+    LaunchedEffect(key1 = shouldGoToNextScreen) {
+        if(shouldGoToNextScreen) {
+            delay(2000)
+            navigateToSetNewPasswordScreen()
         }
     }
 }
@@ -103,6 +129,14 @@ fun VerificationCodeScreen(
 @Composable
 fun VerificationCodeScreenPreview() {
     RoutinelyTheme {
-        VerificationCodeScreen(onConfirmResetPasswordClicked = {})
+        VerificationCodeScreen(
+            onConfirmResetPasswordClicked = {
+                CodeInputValid.Valid
+            },
+            navigateToSetNewPasswordScreen = {},
+            shouldGoToNextScreen = false
+        ) { code ->
+            CodeInputValid.Valid
+        }
     }
 }

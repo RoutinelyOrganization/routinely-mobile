@@ -8,32 +8,40 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
+import com.routinely.routinely.ui.components.LabelError
 import com.routinely.routinely.ui.components.PasswordTextField
 import com.routinely.routinely.ui.components.UpdatePasswordButton
-import com.routinely.routinely.ui.components.isPasswordValid
 import com.routinely.routinely.ui.theme.RoutinelyTheme
+import com.routinely.routinely.util.validators.PasswordInputValid
+import kotlinx.coroutines.delay
 
 @Composable
 fun CreateNewPasswordScreen(
-    onUpdatePasswordClicked: () -> Unit
+    navigateToLoginScreen: () -> Unit,
+    onUpdatePasswordClicked: (password: String, confirmPassword: String) -> PasswordInputValid,
+    passwordStateValidation: (password: String) -> PasswordInputValid,
+    confirmPasswordStateValidation: (password: String, confirmPassword: String) -> PasswordInputValid,
+    shouldGoToNextScreen: Boolean,
+    apiErrorMessage: List<String>,
 ) {
-    var isPasswordFilled by remember { mutableStateOf(false) }
-    var isPasswordValid by remember { mutableStateOf(false) }
-    var password by remember { mutableStateOf("") }
-    var repeatedPassword by remember { mutableStateOf("") }
-    var arePasswordsMatching by remember { mutableStateOf(true) }
+    var password by rememberSaveable { mutableStateOf("") }
+    var confirmPassword by rememberSaveable { mutableStateOf("") }
+    var passwordState by rememberSaveable { mutableStateOf<PasswordInputValid>(PasswordInputValid.Empty) }
+    var confirmPasswordState by rememberSaveable { mutableStateOf<PasswordInputValid>(PasswordInputValid.Empty) }
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -46,7 +54,7 @@ fun CreateNewPasswordScreen(
         ){
             Image(
                 painter = painterResource(R.drawable.logo_vertical),
-                contentDescription = "Image",
+                contentDescription = "vertical logotype",
                 modifier = Modifier
                     .size(168.dp)
                     .align(Alignment.CenterHorizontally)
@@ -58,32 +66,39 @@ fun CreateNewPasswordScreen(
                 .fillMaxWidth(),
         ){
             Text(
-                text = "Criar nova senha",
+                text = stringResource(R.string.create_new_password),
                 color = Color.Black, fontSize = 25.sp
             )
             Text(
-                text = "Escolha uma nova senha abaixo ela precisa ser diferente da senha anterior",
+                text = stringResource(R.string.chose_a_new_password),
                 fontSize = 14.sp
             )
             PasswordTextField(
-                onPasswordChange = { newPassword ->
-                    password = newPassword
-                    isPasswordFilled = password.isNotBlank()
-                    isPasswordValid = isPasswordValid(password)
-                    arePasswordsMatching = password == repeatedPassword
+                onValueChange = { newPass: String ->
+                    password = newPass
+                    passwordState = passwordStateValidation(password)
                 },
-                label = "Senha",
-                passwordMatch = arePasswordsMatching
+                labelRes = stringResource(id = R.string.password),
+                value = password,
+                error = passwordState,
+                passwordMatch = passwordState == PasswordInputValid.Valid
             )
 
             PasswordTextField(
-                onPasswordChange = { newRepeatedPassword ->
-                    repeatedPassword = newRepeatedPassword
-                    arePasswordsMatching = password == repeatedPassword
+                onValueChange = { newPassConfirm ->
+                    confirmPassword = newPassConfirm
+                    confirmPasswordState = confirmPasswordStateValidation(password, confirmPassword)
                 },
-                label = "Repetir Senha",
-                passwordMatch = arePasswordsMatching
+                labelRes = "Repetir Senha",
+                value = confirmPassword,
+                error = confirmPasswordState,
+                passwordMatch = confirmPasswordState == PasswordInputValid.Valid
             )
+            apiErrorMessage.forEach {
+                LabelError(
+                    labelRes = it
+                )
+            }
         }
 
         Column(
@@ -91,12 +106,15 @@ fun CreateNewPasswordScreen(
                 .weight(0.15f)) {
             UpdatePasswordButton(
                 onLoginClick = {
-                    onUpdatePasswordClicked()
+                    onUpdatePasswordClicked(password, confirmPassword)
                 },
-                isPasswordFilled = isPasswordFilled,
-                isPasswordValid = isPasswordValid,
-                isPasswordsMatch = arePasswordsMatching
             )
+        }
+    }
+    LaunchedEffect(key1 = shouldGoToNextScreen) {
+        if(shouldGoToNextScreen) {
+            delay(2000)
+            navigateToLoginScreen()
         }
     }
 }
@@ -104,6 +122,21 @@ fun CreateNewPasswordScreen(
 @Composable
 fun CreateNewPasswordScreenPreview() {
     RoutinelyTheme {
-        CreateNewPasswordScreen(onUpdatePasswordClicked = {})
+        CreateNewPasswordScreen(
+            onUpdatePasswordClicked = { password, confirmPassword ->
+                PasswordInputValid.Valid
+            },
+            passwordStateValidation = {
+                PasswordInputValid.Valid
+            },
+            apiErrorMessage = listOf(
+//            "Email inválido"
+            ),
+            shouldGoToNextScreen = false,
+            navigateToLoginScreen = {},
+            confirmPasswordStateValidation = { password, confirmPassword ->
+                PasswordInputValid.Valid
+            }
+        )
     }
 }
