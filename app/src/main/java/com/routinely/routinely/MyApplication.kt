@@ -1,6 +1,9 @@
 package com.routinely.routinely
 
 import android.app.Application
+import com.routinely.routinely.changepassword.createNewPasswordModule
+import com.routinely.routinely.changepassword.forgotPasswordModule
+import com.routinely.routinely.changepassword.verificationCodeModule
 import com.routinely.routinely.data.auth.di.authModule
 import com.routinely.routinely.data.core.coreModule
 import com.routinely.routinely.login.createNewAccountModule
@@ -15,7 +18,9 @@ class MyApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@MyApplication)
-            modules(authModule, coreModule, createNewAccountModule, loginModule)
+            modules(authModule, coreModule, createNewAccountModule,
+                loginModule, createNewPasswordModule, forgotPasswordModule,
+                verificationCodeModule)
         }
     }
 }

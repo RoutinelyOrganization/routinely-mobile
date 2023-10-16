@@ -1,6 +1,5 @@
 package com.routinely.routinely.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -11,11 +10,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -23,35 +17,29 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
+import com.routinely.routinely.util.validators.CodeInputValid
 
 @Composable
-fun VerificationCodeTextField(onCodeChange: (String) -> Unit) {
-    var codeText by rememberSaveable { mutableStateOf("") }
-    var isCodeValid by remember { mutableStateOf( true) }
-    val maxLength = 6
-    val pattern = remember { Regex("^[0-9]*\$") }
-
+fun VerificationCodeTextField(
+    value : String,
+    onValueChange: (String) -> Unit,
+    labelRes: String,
+    error: CodeInputValid,
+) {
     OutlinedTextField(
-        value = codeText,
+        value = value,
         onValueChange = {
-            Log.d("TaskNameTextField", "TaskNameTextField: " + it.length)
-            if (it.length > maxLength)
-                isCodeValid = false
-            if (it.matches(pattern) && it.length <= maxLength) {
-                codeText = it
-                isCodeValid = true
-            }
-            onCodeChange(it)
+            onValueChange(it)
         },
         label = {
             Text(
-                text = "Código de verificação",
+                text = labelRes,
                 style = TextStyle(color = Color.Black) // Definindo a cor do texto como branco
             )
         },
-        isError = !isCodeValid,
+        isError = error is CodeInputValid.Error,
         supportingText = {
-            if (!isCodeValid) {
+            if (error is CodeInputValid.Error) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = "Quantidade de números máximo, 6!",
@@ -66,7 +54,7 @@ fun VerificationCodeTextField(onCodeChange: (String) -> Unit) {
             unfocusedBorderColor = GrayRoutinely
         ),
         trailingIcon = {
-            if (!isCodeValid) {
+            if (error is CodeInputValid.Error) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = null,

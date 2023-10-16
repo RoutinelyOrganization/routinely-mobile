@@ -21,7 +21,25 @@
     <string name="category_finances_text">Finances</string>
     <string name="category_studies_text">Studies</string>
     <string name="app_description_splash_screen">Gerencie suas tarefas, organize sua rotina e aproveite seu tempo com o que desejar.</string>
-
+    <string name="invalid_password">A senha deve ter o mínimo de 6 caracteres e conter letras maiúsculas e minúsculas, números e símbolos como ! @ # $ % &amp; * =</string>
+    <string name="invalid_name">Nome inválido</string>
+    <string name="empty_field">Campo vazio</string>
+    <string name="at_least_three_letters">O nome deve conter pelo menos três letras</string>
+    <string name="name">Nome</string>
+    <string name="email">Email</string>
+    <string name="invalid_email">E-mail inválido</string>
+    <string name="passwords_must_be_identical">As senhas devem ser idênticas</string>
+    <string name="forgot_your_password">Esqueceu sua senha?</string>
+    <string name="you_will_receive_the_code">Você receberá um código de verificação no seu email</string>
+    <string name="type_your_email">Digite o e-mail cadastrado na sua conta Routinely</string>
+    <string name="create_new_password">Criar nova senha</string>
+    <string name="chose_a_new_password">Escolha uma nova senha abaixo ela precisa ser diferente da senha anterior</string>
+    <string name="reset_password">Redefinir senha</string>
+    <string name="type_the_code">Insira o código de verificação enviado no e-mail</string>
+    <string name="didnt_receive">Não recebeu?</string>
+    <string name="send_again">Enviar novamente</string>
+    <string name="password">Senha</string>
+    <string name="login_invalid_password">Senha inválida</string>
     <string name="save_changes">Save changes</string>
     <string name="delete_task">Delete task</string>
     <string name="duplicate_task">Duplicate task</string>

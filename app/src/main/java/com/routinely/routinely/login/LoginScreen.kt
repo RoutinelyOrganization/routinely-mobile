@@ -18,13 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
@@ -35,7 +36,8 @@ import com.routinely.routinely.ui.components.LoginTextField
 import com.routinely.routinely.ui.components.PasswordTextField
 import com.routinely.routinely.ui.components.RememberCheckbox
 import com.routinely.routinely.ui.components.SignUpButton
-import com.routinely.routinely.ui.components.isPasswordValid
+import com.routinely.routinely.util.validators.EmailInputValid
+import com.routinely.routinely.util.validators.PasswordInputValid
 import kotlinx.coroutines.launch
 
 @Composable
@@ -45,13 +47,14 @@ fun LoginScreen(
     navigateToHomeScreen: () -> Unit,
     navigateToCreateAccountScreen: () -> Unit,
     navigateToForgotPasswordScreen: () -> Unit,
+    emailStateValidation: (email: String) -> EmailInputValid,
+    passwordStateValidation: (password: String) -> PasswordInputValid,
 ) {
-    var isPasswordFilled by remember { mutableStateOf(false) }
-    var isEmailFilled by remember { mutableStateOf(false) }
-    var isEmailValid by remember { mutableStateOf(true) }
-    var isPasswordValid by remember { mutableStateOf(false) }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordState by rememberSaveable { mutableStateOf<PasswordInputValid>(PasswordInputValid.Empty) }
+    var emailState by rememberSaveable { mutableStateOf<EmailInputValid>(EmailInputValid.Empty) }
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -87,19 +90,24 @@ fun LoginScreen(
                 fontSize = 25.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
-            LoginTextField(onEmailChange = { newEmail ->
-                email = newEmail
-                isEmailFilled = newEmail.isNotBlank()
-                isEmailValid = isValidEmailFormat(newEmail)
-            })
+            LoginTextField(
+                onValueChange = { newEmail ->
+                    email = newEmail
+                    emailState = emailStateValidation(email)
+                },
+                labelRes = stringResource(R.string.email),
+                value = email,
+                error = emailState,
+            )
 
             PasswordTextField(
-                onPasswordChange = { newPassword ->
-                    password = newPassword
-                    isPasswordFilled = password.isNotBlank()
-                    isPasswordValid = isPasswordValid(password)
+                onValueChange = { newPass: String ->
+                    password = newPass
+                    passwordState = passwordStateValidation(password)
                 },
-                label = "Senha"
+                labelRes = stringResource(id = R.string.password),
+                value = password,
+                error = passwordState,
             )
 
             Row(
@@ -110,9 +118,11 @@ fun LoginScreen(
                     .padding(0.dp),
             ) {
                 RememberCheckbox()
-                ForgotPasswordText(onLoginClick = {
-                    navigateToForgotPasswordScreen()
-                })
+                ForgotPasswordText(
+                    onLoginClick = {
+                        navigateToForgotPasswordScreen()
+                    }
+                )
             }
             Spacer(modifier = Modifier .height(16.dp))
             Column(
@@ -124,10 +134,8 @@ fun LoginScreen(
                             viewModel.loginWithEmailAndPassword(email = email, password = password)
                         }
                     },
-                    emailPreenchido = isEmailFilled,
-                    senhaPreenchida = isPasswordFilled,
-                    isEmailValid = isEmailValid,
-                    isPasswordValid = isPasswordValid
+                    areFieldValid = emailState == EmailInputValid.Valid &&
+                            passwordState == PasswordInputValid.Valid
                 )
                 SignUpButton(onLoginClick = {
                     navigateToCreateAccountScreen()

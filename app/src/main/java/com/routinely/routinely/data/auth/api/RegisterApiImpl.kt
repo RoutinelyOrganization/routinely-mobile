@@ -3,7 +3,7 @@ package com.routinely.routinely.data.auth.api
 import com.routinely.routinely.data.auth.HttpRoutes
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.RegisterRequest
-import com.routinely.routinely.network.extensions.toApiResponse
+import com.routinely.routinely.data.auth.extensions.toApiResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.RedirectResponseException
@@ -11,6 +11,7 @@ import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 
 internal class RegisterApiImpl(
@@ -24,19 +25,20 @@ internal class RegisterApiImpl(
             }.toApiResponse()
         } catch(e: RedirectResponseException){
             // 3xx - responses
-            println("Error: ${e.response.status.description}")
-            ApiResponse(listOf(), null, null)
+            handleErrorResponse(e.response.status)
         } catch(e: ClientRequestException){
             // 4xx - responses
-            println("Error: ${e.response.status.description}")
-            ApiResponse(listOf(), null, null)
+            handleErrorResponse(e.response.status)
         } catch(e: ServerResponseException){
             // 5xx - responses
-            println("Error: ${e.response.status.description}")
-            ApiResponse(listOf(), null, null)
+            handleErrorResponse(e.response.status)
         } catch(e: Exception){
-            println("Error: ${e.message}")
-            ApiResponse(listOf(), null, null)
+            handleErrorResponse(HttpStatusCode(900, e.message ?: "Unknown Exception"))
         }
+    }
+
+    private fun handleErrorResponse(httpStatusCode: HttpStatusCode): ApiResponse {
+        println("Error: ${httpStatusCode.description}")
+        return ApiResponse(listOf("Unknown Exception"), httpStatusCode)
     }
 }

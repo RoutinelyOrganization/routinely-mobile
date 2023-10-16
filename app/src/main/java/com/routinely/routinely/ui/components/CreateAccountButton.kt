@@ -13,10 +13,10 @@ import com.routinely.routinely.ui.theme.PurpleRoutinely
 @Composable
 fun CreateAccountButton(
     onCreateAccountClick: () -> Unit,
-    isValid: Boolean
+    areFieldsValid: Boolean
 ) {
     Button(
-        enabled = isValid,
+        enabled = areFieldsValid,
         onClick = onCreateAccountClick,
         modifier = Modifier
             .fillMaxWidth(),
