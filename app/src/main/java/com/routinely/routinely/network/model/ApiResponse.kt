@@ -12,6 +12,4 @@ data class ApiResponse(
 @Serializable
 internal data class ResponseStringTemp(
     val message: String,
-    val statusCode: Int?,
-    val error: String?
 )

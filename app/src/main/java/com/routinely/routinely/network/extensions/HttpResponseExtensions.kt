@@ -13,8 +13,7 @@ suspend fun HttpResponse.toApiResponse() : ApiResponse {
         val messageToList = listOf(temp.message)
         ApiResponse(
             message = messageToList,
-            statusCode = temp.statusCode,
-            error = temp.error
+            serverStatusCode = this.status
         )
     }
 }
