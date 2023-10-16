@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
@@ -37,7 +36,6 @@ import com.routinely.routinely.ui.components.PasswordTextField
 import com.routinely.routinely.ui.components.RememberCheckbox
 import com.routinely.routinely.ui.components.SignUpButton
 import com.routinely.routinely.ui.components.isPasswordValid
-import com.routinely.routinely.ui.theme.RoutinelyTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -150,16 +148,16 @@ fun LoginScreen(
 fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    RoutinelyTheme {
-        LoginScreen(
-            viewModel = LoginViewModel(),
-            authenticated = false,
-            navigateToHomeScreen = {},
-            navigateToCreateAccountScreen = {},
-            navigateToForgotPasswordScreen = {},
-            )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun LoginScreenPreview() {
+//    RoutinelyTheme {
+//        LoginScreen(
+//            viewModel = LoginViewModel(),
+//            authenticated = false,
+//            navigateToHomeScreen = {},
+//            navigateToCreateAccountScreen = {},
+//            navigateToForgotPasswordScreen = {},
+//            )
+//    }
+//}

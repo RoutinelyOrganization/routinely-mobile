@@ -11,9 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,29 +24,41 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
+import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.auth.model.RegisterRequest
 import com.routinely.routinely.ui.components.CreateAccountButton
 import com.routinely.routinely.ui.components.CreateBottomText
+import com.routinely.routinely.ui.components.LabelError
+import com.routinely.routinely.ui.components.LabelSuccess
 import com.routinely.routinely.ui.components.LoginTextField
 import com.routinely.routinely.ui.components.NameTextField
 import com.routinely.routinely.ui.components.PasswordTextField
 import com.routinely.routinely.ui.components.TermsCheckbox
 import com.routinely.routinely.ui.components.isPasswordValid
 import com.routinely.routinely.ui.theme.RoutinelyTheme
+import kotlinx.coroutines.delay
 
 @Composable
 fun CreateAccountScreen(
-    onCreateAccountClicked: () -> Unit,
-    onAlreadyHaveAnAccountClicked: () -> Unit
+    onCreateAccountClicked: (RegisterRequest) -> ApiResponse,
+    onAlreadyHaveAnAccountClicked: () -> Unit,
+    shouldGoToNextScreen: Boolean,
+    navigateToLoginScreen: () -> Unit,
 ) {
-    var isPasswordFilled by remember { mutableStateOf(false) }
-    var isEmailFilled by remember { mutableStateOf(false) }
-    var isEmailValid by remember { mutableStateOf(true) }
-    var isNameFilled by remember { mutableStateOf(false) }
-    var isPasswordValid by remember { mutableStateOf(false) }
-    var password by remember { mutableStateOf("") }
-    var repeatedPassword by remember { mutableStateOf("") }
-    var arePasswordsMatching by remember { mutableStateOf(true) }
-    val checkboxTermsState = remember { mutableStateOf(false) }
+    var isPasswordFilled by rememberSaveable { mutableStateOf(false) }
+    var isEmailFilled by rememberSaveable { mutableStateOf(false) }
+    var isEmailValid by rememberSaveable { mutableStateOf(true) }
+    var isNameFilled by rememberSaveable { mutableStateOf(false) }
+    var isPasswordValid by rememberSaveable { mutableStateOf(false) }
+    var password by rememberSaveable { mutableStateOf("") }
+    var nameText by rememberSaveable { mutableStateOf("") }
+    var emailText by rememberSaveable { mutableStateOf("") }
+    var repeatedPassword by rememberSaveable { mutableStateOf("") }
+    var arePasswordsMatching by rememberSaveable { mutableStateOf(true) }
+    var checkboxTermsState = rememberSaveable { mutableStateOf(false) }
+    var labelMessage by rememberSaveable { mutableStateOf("") }
+    var statusCode by rememberSaveable { mutableStateOf<Int?>(null) }
+
 
     Column(
         modifier = Modifier
@@ -67,7 +80,6 @@ fun CreateAccountScreen(
         }
 
         Column(
-            //verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .weight(0.70f)
                 .fillMaxWidth(),
@@ -77,11 +89,13 @@ fun CreateAccountScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             NameTextField(onNameChange = {name ->
+                nameText = name
                 isNameFilled = name.isNotBlank() && name.length >= 3})
 
             LoginTextField(onEmailChange = { email ->
                 isEmailFilled = email.isNotBlank()
                 isEmailValid = isValidEmailFormat(email)
+                emailText = email
             })
 
             PasswordTextField(
@@ -104,7 +118,11 @@ fun CreateAccountScreen(
                 passwordMatch = arePasswordsMatching
             )
             TermsCheckbox(checkboxTermsState)
-
+            if(statusCode != null){
+                LabelError(labelMessage)
+            }else {
+                LabelSuccess(labelMessage)
+            }
         }
         //Espaço no final
         Column(
@@ -112,30 +130,44 @@ fun CreateAccountScreen(
             modifier = Modifier.weight(0.15f)
         ) {
             CreateAccountButton(
-                onCreateAccountClick = {
-                    onCreateAccountClicked()
+                {
+                    val response = onCreateAccountClicked (
+                        RegisterRequest(
+                            name = nameText,
+                            email = emailText,
+                            password = password,
+                            acceptedTerms = checkboxTermsState.value
+                        )
+                    )
+                    labelMessage = response.message[0]
+                    statusCode = response.statusCode
                 },
-                isEmailFilled = isEmailFilled,
-                isPasswordFilled = isPasswordFilled,
-                isEmailValid = isEmailValid,
-                isNameFilled = isNameFilled,
-                isPasswordValid = isPasswordValid,
-                isPasswordsMatch = arePasswordsMatching,
-                isCheckBoxChecked = checkboxTermsState.value
+                isPasswordValid && isEmailValid && isNameFilled && arePasswordsMatching && checkboxTermsState.value
             )
+
             CreateBottomText(onLoginClick = {
                 onAlreadyHaveAnAccountClicked()
             })
+
+        }
+    }
+    LaunchedEffect(key1 = shouldGoToNextScreen) {
+        if(shouldGoToNextScreen) {
+            delay(3000)
+            navigateToLoginScreen()
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun CreateScreenPreview() {
     RoutinelyTheme {
         CreateAccountScreen(
-            onCreateAccountClicked = {},
-            onAlreadyHaveAnAccountClicked = {}
+            onCreateAccountClicked = { ApiResponse(message = listOf(), error = "", statusCode = null) },
+            onAlreadyHaveAnAccountClicked = {},
+            shouldGoToNextScreen = false,
+            navigateToLoginScreen = {}
         )
     }
 }
