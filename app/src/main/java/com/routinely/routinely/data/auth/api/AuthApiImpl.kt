@@ -46,10 +46,10 @@ internal class AuthApiImpl(
 
     private fun handleErrorResponse(httpStatusCode: HttpStatusCode): ApiResponse {
         println("Error: ${httpStatusCode.description}")
-        return ApiResponse(listOf(httpStatusCode.description), httpStatusCode)
+        return ApiResponse(listOf("Unknown Exception"), httpStatusCode)
     }
     private fun handleSignInErrorResponse(httpStatusCode: HttpStatusCode): SignInResult {
         println("Error SignIn: ${httpStatusCode.description}")
-        return SignInResult.Error.stringMessage(httpStatusCode.description)
+        return SignInResult.Error.stringMessage("Unknown Exception")
     }
 }
