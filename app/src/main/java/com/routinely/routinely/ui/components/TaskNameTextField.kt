@@ -1,76 +1,55 @@
 package com.routinely.routinely.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
+import com.routinely.routinely.util.validators.TaskNameInputValid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskNameTextField() {
-    var nameTaskText by remember { mutableStateOf("") }
-    var isNameValid by remember { mutableStateOf( true ) }
-    val maxLength = 50
-
+fun TaskNameTextField(
+    value : String,
+    onValueChange: (String) -> Unit,
+    labelRes: String,
+    error: TaskNameInputValid,
+) {
     OutlinedTextField(
-        value = nameTaskText,
-        onValueChange = {
-            if (it.length > maxLength)
-                isNameValid = false
-            if (it.length <= maxLength) {
-                nameTaskText = it
-                isNameValid = true
-            }
-        },
+        value = value,
+        onValueChange = { onValueChange(it) },
         label = {
             Text(
-                text = "Nome da tarefa",
+                text = labelRes,
                 style = TextStyle(color = Color.Black)
             )
         },
-        isError = !isNameValid,
+        singleLine = true,
+        isError = error is TaskNameInputValid.Error,
         supportingText = {
-            if(!isNameValid) {
+            if(error is TaskNameInputValid.Error) {
                 Text(
-                    text = "Quantidade de caracteres máximo, $maxLength!",
                     modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(id = error.messageId),
                     color = MaterialTheme.colorScheme.error
                 )
             }
         },
+        modifier = Modifier.fillMaxWidth(),
         colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = Gray80,
             unfocusedTextColor = Gray80,
             focusedBorderColor = PurpleRoutinely,
             unfocusedBorderColor = GrayRoutinely
         ),
-        trailingIcon = {
-            if (!isNameValid) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = null,
-                    modifier = Modifier
-
-                )
-            }
-        },
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth()
     )
 }

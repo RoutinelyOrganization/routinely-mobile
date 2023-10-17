@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,14 +26,16 @@ import com.routinely.routinely.ui.theme.RoutinelyTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownRoutinely(
-    label: String,
+    value: String,
+    labelRes: String,
+    onValueChange: (String) -> Unit,
     list: List<String>,
     optionColors: Map<String,
             Color>? = null,
     modifier: Modifier = Modifier// Parâmetro opcional para as cores
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    val listWithLabel = listOf(label) + list
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    val listWithLabel = listOf(labelRes) + list
     var selectedOptionText by remember { mutableStateOf(listWithLabel[0]) }
     var selectedOptionColor by remember { mutableStateOf(optionColors?.get(selectedOptionText) ?: Color.Black) }
     ExposedDropdownMenuBox(
@@ -45,11 +48,11 @@ fun DropdownRoutinely(
                 .menuAnchor()
                 .fillMaxWidth(),
             readOnly = true,
-            value = selectedOptionText.takeIf { it.isNotEmpty() } ?: label,
-            onValueChange = {},
+            value = selectedOptionText.takeIf { it.isNotEmpty() } ?: labelRes,
+            onValueChange = {  },
             label = {
                 Text(
-                    text = label,
+                    text = labelRes,
                     style = TextStyle(color = Color.Black)
                 )
             },
@@ -91,6 +94,7 @@ fun DropdownRoutinely(
                         if (!isGrayedOut) {
                             selectedOptionText = selectionOption
                             selectedOptionColor = textColor // Atualize a cor do texto
+                            onValueChange(selectedOptionText)
                         }
                         expanded = false
                     },
@@ -105,6 +109,6 @@ fun DropdownRoutinely(
 @Composable
 fun DropdownRoutinelyPreview() {
     RoutinelyTheme {
-        DropdownRoutinely("Teste", listOf("Opção 1", "Opção 2"))
+        DropdownRoutinely("Teste","", onValueChange = {}, listOf("Opção 1", "Opção 2") )
     }
 }

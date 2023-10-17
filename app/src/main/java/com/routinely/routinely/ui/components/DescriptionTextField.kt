@@ -9,36 +9,31 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
+import com.routinely.routinely.util.validators.DescriptionInputValid
 
 @Composable
-fun DescriptionTextField() {
-    var descriptionText by remember { mutableStateOf("") }
-    var isDescriptionValid by remember { mutableStateOf( true ) }
-    val maxLength = 1000
+fun DescriptionTextField(
+    value : String,
+    onValueChange: (String) -> Unit,
+    labelRes: String,
+    error: DescriptionInputValid,
+) {
 
     OutlinedTextField(
-        value = descriptionText,
+        value = value,
         onValueChange = {
-            if (it.length > maxLength)
-                isDescriptionValid = false
-            if (it.length <= maxLength) {
-                descriptionText = it
-                isDescriptionValid = true
-            }
+            onValueChange(it)
         },
         label = {
             Text(
-                text = "Descrição",
+                text = labelRes,
                 style = TextStyle(color = Color.Black)
             )
         },
@@ -48,18 +43,18 @@ fun DescriptionTextField() {
             focusedBorderColor = PurpleRoutinely,
             unfocusedBorderColor = GrayRoutinely
         ),
-        isError = !isDescriptionValid,
+        isError = error is DescriptionInputValid.Error,
         supportingText = {
-            if(!isDescriptionValid) {
+            if(error is DescriptionInputValid.Error) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Quantidade de caracteres máximo, 1000!",
+                    text = stringResource(id = error.messageId),
                     color = MaterialTheme.colorScheme.error
                 )
             }
         },
         trailingIcon = {
-            if (!isDescriptionValid) {
+            if (error is DescriptionInputValid.Error) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = null,

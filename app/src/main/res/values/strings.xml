@@ -48,4 +48,5 @@
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
     <string name="duplicate_task_confirmation">Are you sure you want to duplicate this task?</string>
+    <string name="task_name_limit">Quantidade de caracteres máximo, 50!</string>
 </resources>

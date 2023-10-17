@@ -26,15 +26,17 @@ import androidx.compose.ui.text.TextStyle
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
+import com.routinely.routinely.util.validators.DateTimeInputValid
 
 @OptIn(ExperimentalComposeUiApi::class)
 @ExperimentalMaterial3Api
 @Composable
 fun DatePickerDiag(
-    label: String,
-    modifier: Modifier = Modifier
+    onValueChange: (String) -> Unit,
+    labelRes: String,
+    error: DateTimeInputValid,
+    modifier: Modifier
 ) {
-    var isSupportingText by remember { mutableStateOf(false) }
     var showDatePickerDialog by remember {
         mutableStateOf(false)
     }
@@ -43,7 +45,6 @@ fun DatePickerDiag(
         mutableStateOf("")
     }
     val confirmEnabled by remember { derivedStateOf { datePickerState.selectedDateMillis != null } }
-
 
     when {
         showDatePickerDialog -> {
@@ -59,6 +60,7 @@ fun DatePickerDiag(
                             datePickerState
                                 .selectedDateMillis?.let { millis ->
                                     selectedDate = millis.toBrazilianDateFormat()
+                                    onValueChange(selectedDate)
                                 }
                             showDatePickerDialog = false
                         },
@@ -85,17 +87,17 @@ fun DatePickerDiag(
     }
 
     OutlinedTextField(
-        onValueChange = { },
+        onValueChange = {},
         value = selectedDate.takeIf { it.isNotEmpty() } ?: "__/__/____",
         label = {
             Text(
-                text = label,
+                text = labelRes,
                 style = TextStyle(color = Color.Black)
             )
         },
-        isError = isSupportingText,
+        isError = error is DateTimeInputValid.Error,
         supportingText = {
-            if (isSupportingText) {
+            if (error is DateTimeInputValid.Error) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = "Formato inválido!",

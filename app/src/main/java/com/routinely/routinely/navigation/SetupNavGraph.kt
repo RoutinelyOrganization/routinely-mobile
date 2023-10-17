@@ -19,6 +19,7 @@ import com.routinely.routinely.changepassword.ForgotPasswordViewModel
 import com.routinely.routinely.changepassword.VerificationCodeScreen
 import com.routinely.routinely.changepassword.VerificationCodeViewModel
 import com.routinely.routinely.home.HomeScreen
+import com.routinely.routinely.login.AddTaskViewModel
 import com.routinely.routinely.login.CreateAccountScreen
 import com.routinely.routinely.login.CreateAccountViewModel
 import com.routinely.routinely.login.LoginScreen
@@ -68,6 +69,10 @@ fun SetupNavGraph(
                 navController.popBackStack()
             },
             onHomeButtonPressed = {
+                navController.popBackStack()
+                navController.navigate(Screen.HomeScreen.route)
+            },
+            navigateToHomeScreen = {
                 navController.popBackStack()
                 navController.navigate(Screen.HomeScreen.route)
             }
@@ -259,12 +264,43 @@ fun NavGraphBuilder.homeScreenRoute(
 
 fun NavGraphBuilder.addTaskScreenRoute(
     onBackButtonPressed: () -> Unit,
-    onHomeButtonPressed: () -> Unit
+    onHomeButtonPressed: () -> Unit,
+    navigateToHomeScreen: () -> Unit
 ) {
     composable(route = Screen.AddTaskScreen.route) {
+        val viewModel: AddTaskViewModel = koinViewModel()
+        val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
+        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
         AddTaskScreen(
             onBackButtonPressed = onBackButtonPressed,
             onHomeButtonPressed = onHomeButtonPressed,
+            navigateToHomeScreen = navigateToHomeScreen,
+            onAddTaskClick = { newTask ->
+                viewModel.verifyAllConditions(newTask)
+            },
+            shouldGoToNextScreen = shouldGoToNextScreen,
+            apiErrorMessage = apiErrorMessage,
+            taskNameStateValidation = { taskName ->
+                viewModel.taskNameState(taskName)
+            },
+            taskDateStateValidation = { taskDate ->
+                viewModel.taskDateState(taskDate)
+            },
+            taskTimeStateValidation = { taskTime ->
+                viewModel.taskTimeState(taskTime)
+            },
+            taskDropdownPriorityStateValidation = { priority ->
+                viewModel.taskPriorityState(priority)
+            },
+            taskDropdownTagsStateValidation = { tag ->
+                viewModel.taskTagState(tag)
+            },
+            taskDropdownCategoryStateValidation = { category ->
+                viewModel.taskCategoryState(category)
+            },
+            taskDescriptionStateValidation = { description ->
+                viewModel.taskDescriptionState(description)
+            },
         )
     }
 }
@@ -276,11 +312,33 @@ fun NavGraphBuilder.editTaskScreenRoute(
     onHomeButtonPressed: () -> Unit,
 ) {
     composable(route = Screen.EditTaskScreen.route) {
+        val viewModel: AddTaskViewModel = koinViewModel() /* TROCAR ESSE VIEWMODEL */
         EditTaskScreen(
             onBackButtonPressed = { onBackButtonPressed() },
             onHomeButtonPressed = { onHomeButtonPressed() },
             onMenuClicked = { onMenuClicked() },
             onNotificationClicked = { onNotificationClicked() },
+            taskNameStateValidation = { taskName ->
+                viewModel.taskNameState(taskName)
+            },
+            taskDateStateValidation = { taskDate ->
+                viewModel.taskDateState(taskDate)
+            },
+            taskTimeStateValidation = { taskTime ->
+                viewModel.taskTimeState(taskTime)
+            },
+            taskDropdownPriorityStateValidation = { priority ->
+                viewModel.taskPriorityState(priority)
+            },
+            taskDropdownTagsStateValidation = { tag ->
+                viewModel.taskTagState(tag)
+            },
+            taskDropdownCategoryStateValidation = { category ->
+                viewModel.taskCategoryState(category)
+            },
+            taskDescriptionStateValidation = { description ->
+                viewModel.taskDescriptionState(description)
+            },
         )
     }
 }
