@@ -14,9 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +42,7 @@ import com.routinely.routinely.ui.components.PasswordTextField
 import com.routinely.routinely.ui.components.RememberCheckbox
 import com.routinely.routinely.ui.components.SignUpButton
 import com.routinely.routinely.ui.theme.RoutinelyTheme
+import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.util.validators.EmailInputValid
 import com.routinely.routinely.util.validators.PasswordInputValid
 import kotlinx.coroutines.launch
@@ -237,13 +235,4 @@ fun LoginScreenPreview() {
             saveUser = { token, rememberUser ->  }
             )
     }
-}
-
-@Composable
-fun IndeterminateCircularIndicator() {
-    CircularProgressIndicator(
-        modifier = Modifier.width(64.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
-        trackColor = MaterialTheme.colorScheme.secondary,
-    )
 }
