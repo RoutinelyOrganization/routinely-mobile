@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.LoginRequest
+import com.routinely.routinely.data.auth.model.SignInResult
 import com.routinely.routinely.ui.components.ForgotPasswordText
 import com.routinely.routinely.ui.components.LabelError
 import com.routinely.routinely.ui.components.LoginButton
@@ -53,7 +58,8 @@ fun LoginScreen(
     navigateToForgotPasswordScreen: () -> Unit,
     emailStateValidation: (email: String) -> EmailInputValid,
     passwordStateValidation: (password: String) -> PasswordInputValid,
-    apiErrorMessage: List<String>
+    signInResult: SignInResult,
+    saveUser: (token: String, rememberUser: Boolean) -> Unit,
 ) {
 
     var email by rememberSaveable { mutableStateOf("") }
@@ -61,6 +67,10 @@ fun LoginScreen(
     var passwordState by rememberSaveable { mutableStateOf<PasswordInputValid>(PasswordInputValid.Empty) }
     var emailState by rememberSaveable { mutableStateOf<EmailInputValid>(EmailInputValid.Empty) }
     val coroutineScope = rememberCoroutineScope()
+    var showApiErrors by rememberSaveable { mutableStateOf(false) }
+    var showLoading by rememberSaveable { mutableStateOf(false) }
+    var apiErrorMessage by rememberSaveable { mutableStateOf<List<String>>(listOf()) }
+    val rememberLoginCheck = rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -122,18 +132,21 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .padding(0.dp),
             ) {
-                RememberCheckbox()
+                RememberCheckbox(
+                    isChecked =  rememberLoginCheck.value,
+                    onCheckChange = {
+                        rememberLoginCheck.value = !rememberLoginCheck.value
+                    },
+                )
                 ForgotPasswordText(
                     onLoginClick = {
                         navigateToForgotPasswordScreen()
                     }
                 )
             }
-            if(apiErrorMessage.isNotEmpty()) {
+            if(showApiErrors) {
                 apiErrorMessage.forEach {
-                    LabelError(
-                        labelRes = it,
-                    )
+                    LabelError(it)
                 }
             }
             Spacer(modifier = Modifier .height(16.dp))
@@ -170,6 +183,38 @@ fun LoginScreen(
                 navigateToHomeScreen()
             }
         }
+
+        LaunchedEffect(key1 = signInResult) {
+            Log.d("LoginScreen", "SignIn value changed")
+            when(signInResult) {
+                is SignInResult.Success -> {
+                    showApiErrors = false
+                    showLoading = false
+                    saveUser(signInResult.token, rememberLoginCheck.value)
+                    navigateToHomeScreen()
+                }
+                is SignInResult.Error -> {
+                    apiErrorMessage = signInResult.message
+                    showApiErrors = true
+                    showLoading = false
+                }
+                is SignInResult.Loading -> {
+                    showLoading = true
+                    showApiErrors = false
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    if(showLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+
+        ) {
+            IndeterminateCircularIndicator()
+        }
     }
 }
 fun showToast(context: Context, message: String) {
@@ -186,9 +231,19 @@ fun LoginScreenPreview() {
             navigateToCreateAccountScreen = {},
             navigateToForgotPasswordScreen = {},
             loginWithEmailAndPassword = { },
-            apiErrorMessage = listOf("Usuário ou senha inválidos"),
             emailStateValidation = { EmailInputValid.Valid },
             passwordStateValidation = { PasswordInputValid.Valid },
+            signInResult = SignInResult.Empty,
+            saveUser = { token, rememberUser ->  }
             )
     }
+}
+
+@Composable
+fun IndeterminateCircularIndicator() {
+    CircularProgressIndicator(
+        modifier = Modifier.width(64.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        trackColor = MaterialTheme.colorScheme.secondary,
+    )
 }

@@ -1,7 +1,9 @@
 package com.routinely.routinely.data.auth.extensions
 
 import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.auth.model.LoginResponse
 import com.routinely.routinely.data.auth.model.ResponseStringTemp
+import com.routinely.routinely.data.auth.model.SignInResult
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 
@@ -17,5 +19,16 @@ suspend fun HttpResponse.toApiResponse() : ApiResponse {
             message = messageToList,
             serverStatusCode = this.status
         )
+    }
+}
+
+suspend fun HttpResponse.toSignInResult() : SignInResult {
+    val apiResponse = this.toApiResponse()
+
+    return if(apiResponse.serverStatusCode.value < 300) {
+        val response = this.body<LoginResponse>()
+        SignInResult.Success(response.token)
+    } else {
+        SignInResult.Error(apiResponse.message)
     }
 }
