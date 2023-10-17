@@ -8,7 +8,9 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 
 class Session(
     private val dataStore: DataStore<Preferences>
@@ -21,20 +23,6 @@ class Session(
         val isLogin = booleanPreferencesKey(IsLogin)
         val token = stringPreferencesKey(TOKEN)
         val remember = booleanPreferencesKey(REMEMBER)
-    }
-
-    fun isUserLoggedIn(): Flow<Boolean> {
-        return dataStore.data.catch {
-            emit(emptyPreferences())
-        }.map { preference ->
-            preference[isLogin] ?: false
-        }
-    }
-
-    suspend fun setUserLoggedIn(isUserLoggedIn: Boolean) {
-        dataStore.edit { preference ->
-            preference[isLogin] = isUserLoggedIn
-        }
     }
 
     fun getToken(): Flow<String> {
@@ -51,12 +39,13 @@ class Session(
         }
     }
 
-    fun getRememberLogin(): Flow<Boolean> {
-        return dataStore.data.catch {
-            emit(emptyPreferences())
-        }.map { value: Preferences ->
-            value[remember] ?: false
+    fun getRememberLogin(): Boolean {
+        var response: Boolean
+        runBlocking {
+            val pref = dataStore.data.first()
+            response = pref[remember] ?: false
         }
+        return response
     }
 
     suspend fun setRememberLogin() {
