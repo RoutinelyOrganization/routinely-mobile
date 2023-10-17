@@ -1,7 +1,7 @@
 package com.routinely.routinely.ui.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,25 +13,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LabelError(
+fun ColumnScope.LabelError(
     labelRes: String,
 ) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
-            .padding(15.dp),
-        horizontalAlignment = Alignment.End,
-    ) {
-        Text(
-            text = labelRes,
-            fontWeight = FontWeight.Bold,
-            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-            color = MaterialTheme.colorScheme.error
-        )
-    }
+    Text(
+        modifier = Modifier
+            .padding(vertical = 15.dp)
+            .align(Alignment.End),
+        text = labelRes,
+        fontWeight = FontWeight.Bold,
+        fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+        color = MaterialTheme.colorScheme.error
+    )
+
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun LabelError() {
-
+fun LabelErrorPreview() {
+    Column {
+        LabelError(
+            labelRes = "Error"
+        )
+    }
 }

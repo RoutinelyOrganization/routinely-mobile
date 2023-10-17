@@ -121,10 +121,13 @@ fun NavGraphBuilder.loginRoute(
 ) {
     composable(route = Screen.Login.route) {
         val viewModel: LoginViewModel = koinViewModel()
-        val authenticated by viewModel.authenticated
+        val authenticated by viewModel.authenticated.collectAsState()
+        val apiErrors by viewModel.apiErrorMessage.collectAsState()
         LoginScreen(
-            viewModel = viewModel,
             authenticated = authenticated,
+            loginWithEmailAndPassword = {
+                viewModel.loginWithEmailAndPassword(it)
+            },
             navigateToHomeScreen = navigateToHomeScreen,
             navigateToCreateAccountScreen = navigateToCreateAccountScreen,
             navigateToForgotPasswordScreen = navigateToForgotPasswordScreen,
@@ -134,6 +137,7 @@ fun NavGraphBuilder.loginRoute(
             passwordStateValidation = {
                 viewModel.passwordState(it)
             },
+            apiErrorMessage = apiErrors
         )
     }
 }

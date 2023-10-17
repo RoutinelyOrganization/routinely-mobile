@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.routinely.routinely.R
-import com.routinely.routinely.data.auth.api.RegisterApi
+import com.routinely.routinely.data.auth.api.AuthApi
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.RegisterRequest
 import com.routinely.routinely.ui.components.isPasswordValid
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class CreateAccountViewModel(
-    private val registerApi: RegisterApi,
+    private val authApi: AuthApi,
 ) : ViewModel() {
 
     private val _apiErrorMessage = MutableStateFlow(listOf<String>())
@@ -34,7 +34,7 @@ class CreateAccountViewModel(
                 password = createAccount.password,
                 acceptedTerms = createAccount.acceptedTerms
             )
-            response = registerApi.registerUser(registerRequest)
+            response = authApi.registerUser(registerRequest)
             return@withContext response
         }
     }
