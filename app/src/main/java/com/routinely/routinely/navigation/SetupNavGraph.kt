@@ -2,7 +2,6 @@ package com.routinely.routinely.navigation
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -65,8 +64,9 @@ fun SetupNavGraph(
                 navController.navigate(Screen.EditTaskScreen.route)
             },
             navigateToLoginScreen = {
-                navController.popBackStack(route = Screen.HomeScreen.route, inclusive = true)
-                navController.navigate(Screen.Login.route)
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0)
+                }
             }
         )
         addTaskScreenRoute(
@@ -75,7 +75,11 @@ fun SetupNavGraph(
             },
             onHomeButtonPressed = {
                 navController.popBackStack()
-                navController.navigate(Screen.HomeScreen.route)
+            },
+            navigateToLoginScreen = {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0)
+                }
             }
         )
         splashScreenRoute(
@@ -115,7 +119,12 @@ fun SetupNavGraph(
                 navController.popBackStack()
                 navController.navigate(Screen.HomeScreen.route)
             },
-            onNotificationClicked = {}
+            onNotificationClicked = { },
+            navigateToLoginScreen = {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0)
+                }
+            }
         )
     }
 }
@@ -257,27 +266,19 @@ fun NavGraphBuilder.homeScreenRoute(
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
-                onItemClick = {
-                    Log.d("SetupNavGraph", "homeScreenRoute: onItemClick config")
-                }
+                onItemClick = { }
             ),
             MenuItem(
                 text = stringResource(R.string.menu_goal),
-                onItemClick = {
-                    Log.d("SetupNavGraph", "homeScreenRoute: onItemClick goals")
-
-                }
+                onItemClick = { }
             ),
             MenuItem(
                 text = stringResource(R.string.menu_notification),
-                onItemClick = {
-                    Log.d("SetupNavGraph", "homeScreenRoute: onItemClick notification")
-                }
+                onItemClick = { }
             ),
             MenuItem(
                 text = stringResource(R.string.menu_logout),
                 onItemClick = {
-                    Log.d("SetupNavGraph", "homeScreenRoute: onItemClick logout")
                     viewModel.logout()
                     navigateToLoginScreen()
                 }
@@ -295,9 +296,12 @@ fun NavGraphBuilder.homeScreenRoute(
 
 fun NavGraphBuilder.addTaskScreenRoute(
     onBackButtonPressed: () -> Unit,
-    onHomeButtonPressed: () -> Unit
+    onHomeButtonPressed: () -> Unit,
+    navigateToLoginScreen: () -> Unit,
 ) {
     composable(route = Screen.AddTaskScreen.route) {
+        // TODO change this viewmodel for it own viewmodel
+        val viewModel: HomeViewModel = koinViewModel()
 
         val menuItems = listOf(
             MenuItem(
@@ -314,7 +318,10 @@ fun NavGraphBuilder.addTaskScreenRoute(
             ),
             MenuItem(
                 text = stringResource(R.string.menu_logout),
-                onItemClick = { }
+                onItemClick = {
+                    viewModel.logout()
+                    navigateToLoginScreen()
+                }
             ),
         )
 
@@ -330,8 +337,12 @@ fun NavGraphBuilder.editTaskScreenRoute(
     onBackButtonPressed: () -> Unit,
     onNotificationClicked: () -> Unit,
     onHomeButtonPressed: () -> Unit,
+    navigateToLoginScreen: () -> Unit,
 ) {
     composable(route = Screen.EditTaskScreen.route) {
+        // TODO change this viewmodel for it own viewmodel
+        val viewModel: HomeViewModel = koinViewModel()
+
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
@@ -347,7 +358,10 @@ fun NavGraphBuilder.editTaskScreenRoute(
             ),
             MenuItem(
                 text = stringResource(R.string.menu_logout),
-                onItemClick = { }
+                onItemClick = {
+                    viewModel.logout()
+                    navigateToLoginScreen()
+                }
             ),
         )
         EditTaskScreen(
