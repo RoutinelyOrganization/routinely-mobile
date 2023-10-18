@@ -30,11 +30,12 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SetupNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    startDest: Screen,
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.SplashScreen.route
+        startDestination = startDest.route
     ) {
         loginRoute(
             navigateToHomeScreen = {
@@ -121,10 +122,13 @@ fun NavGraphBuilder.loginRoute(
 ) {
     composable(route = Screen.Login.route) {
         val viewModel: LoginViewModel = koinViewModel()
-        val authenticated by viewModel.authenticated
+        val authenticated by viewModel.authenticated.collectAsState()
+        val signInResult by viewModel.signInResult.collectAsState()
         LoginScreen(
-            viewModel = viewModel,
             authenticated = authenticated,
+            loginWithEmailAndPassword = {
+                viewModel.loginWithEmailAndPassword(it)
+            },
             navigateToHomeScreen = navigateToHomeScreen,
             navigateToCreateAccountScreen = navigateToCreateAccountScreen,
             navigateToForgotPasswordScreen = navigateToForgotPasswordScreen,
@@ -134,6 +138,10 @@ fun NavGraphBuilder.loginRoute(
             passwordStateValidation = {
                 viewModel.passwordState(it)
             },
+            signInResult = signInResult,
+            saveUser =  { token, remember ->
+                viewModel.saveUser(token, remember)
+            }
         )
     }
 }
@@ -219,7 +227,6 @@ fun NavGraphBuilder.verificationCodeRoute(
 ) {
     composable(route = Screen.VerificationCodeScreen.route) {
         val viewModel: VerificationCodeViewModel = koinViewModel()
-        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
         val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
         VerificationCodeScreen(
             onConfirmResetPasswordClicked = { code :String ->

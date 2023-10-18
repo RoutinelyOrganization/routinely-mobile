@@ -7,25 +7,27 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun RememberCheckbox() {
-    val checkboxState = remember { mutableStateOf(false) }
+fun RememberCheckbox(
+    isChecked: Boolean,
+    onCheckChange : () -> Unit
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
-            .clickable {checkboxState.value = !checkboxState.value }
+            .clickable {
+               onCheckChange()
+            }
     )
     {
         Checkbox(
-            checked = checkboxState.value, onCheckedChange = null,
+            checked = isChecked, onCheckedChange = null,
             colors = CheckboxDefaults.colors(
                 checkedColor = Color(0xff8f8ce7),
                 uncheckedColor = Color.Black,
