@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +47,7 @@ import com.routinely.routinely.ui.theme.RedRoutinely
 import com.routinely.routinely.ui.theme.RoutinelyTheme
 import com.routinely.routinely.ui.theme.UrgentPriority
 import com.routinely.routinely.util.BottomNavItems
+import com.routinely.routinely.util.MenuItem
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,6 +72,24 @@ fun EditTaskScreen(
                 onBackButtonClicked = { onBackButtonPressed() },
                 onDismissMenu = { expanded = false },
                 expanded = expanded,
+                menuItems = listOf(
+                    MenuItem(
+                        text = stringResource(R.string.menu_configuration),
+                        onItemClick = { }
+                    ),
+                    MenuItem(
+                        text = stringResource(R.string.menu_goal),
+                        onItemClick = { }
+                    ),
+                    MenuItem(
+                        text = stringResource(R.string.menu_notification),
+                        onItemClick = { }
+                    ),
+                    MenuItem(
+                        text = stringResource(R.string.menu_logout),
+                        onItemClick = { }
+                    ),
+                )
             )
         },
         bottomBar = {

@@ -36,28 +36,8 @@ fun TopAppBarRoutinely(
     expanded: Boolean,
     showBackButton: Boolean,
     onBackButtonClicked: () -> Unit,
+    menuItems: List<MenuItem>,
 ) {
-
-    val menuItems: List<MenuItem> = listOf(
-        MenuItem(
-            text = stringResource(R.string.menu_configuration),
-            onItemClick = { }
-        ),
-        MenuItem(
-            text = stringResource(R.string.menu_goal),
-            onItemClick = { }
-        ),
-        MenuItem(
-            text = stringResource(R.string.menu_notification),
-            onItemClick = { }
-        ),
-        MenuItem(
-            text = stringResource(R.string.menu_logout),
-            onItemClick = { }
-        ),
-
-    )
-
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = PurpleRoutinely,

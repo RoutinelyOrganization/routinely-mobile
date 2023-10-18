@@ -13,7 +13,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.routinely.routinely.R
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.DatePickerRoutinely
 import com.routinely.routinely.ui.components.TasksViewerRoutinely
@@ -22,6 +24,7 @@ import com.routinely.routinely.ui.components.datePickerState
 import com.routinely.routinely.util.ActionItem
 import com.routinely.routinely.util.BottomNavItems
 import com.routinely.routinely.util.Categories
+import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskItems
 import com.routinely.routinely.util.TaskPriority
 
@@ -49,6 +52,24 @@ fun HomeScreen(
                 onBackButtonClicked = { },
                 expanded = expanded,
                 onDismissMenu = { expanded = false },
+                menuItems = listOf(
+                    MenuItem(
+                        text = stringResource(R.string.menu_configuration),
+                        onItemClick = { }
+                    ),
+                    MenuItem(
+                        text = stringResource(R.string.menu_goal),
+                        onItemClick = { }
+                    ),
+                    MenuItem(
+                        text = stringResource(R.string.menu_notification),
+                        onItemClick = { }
+                    ),
+                    MenuItem(
+                        text = stringResource(R.string.menu_logout),
+                        onItemClick = { }
+                    ),
+                )
             )
         },
         bottomBar = {
