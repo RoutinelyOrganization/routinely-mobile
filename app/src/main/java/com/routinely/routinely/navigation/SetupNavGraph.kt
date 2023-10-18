@@ -19,7 +19,7 @@ import com.routinely.routinely.changepassword.ForgotPasswordViewModel
 import com.routinely.routinely.changepassword.VerificationCodeScreen
 import com.routinely.routinely.changepassword.VerificationCodeViewModel
 import com.routinely.routinely.home.HomeScreen
-import com.routinely.routinely.login.AddTaskViewModel
+import com.routinely.routinely.task.AddTaskViewModel
 import com.routinely.routinely.login.CreateAccountScreen
 import com.routinely.routinely.login.CreateAccountViewModel
 import com.routinely.routinely.login.LoginScreen

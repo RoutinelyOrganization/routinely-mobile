@@ -63,7 +63,7 @@ fun AddTaskScreen(
     taskDescriptionStateValidation: (descriptionTask: String) -> DescriptionInputValid,
     apiErrorMessage: List<String>,
     navigateToHomeScreen: () -> Unit,
-    onAddTaskClick: (AddTaskRequest) -> Unit
+    onAddTaskClick: (AddTaskRequest) -> Unit,
 ) {
     var taskName by rememberSaveable { mutableStateOf("") }
     var taskNameState by rememberSaveable { mutableStateOf<TaskNameInputValid>(TaskNameInputValid.Empty) }
@@ -223,10 +223,11 @@ fun AddTaskScreen(
                                     name = taskName,
                                     date = taskDate,
                                     priority = dropdownPriority,
-                                    accountId = "token aqui",
+                                    accountId = "token",
                                     description = taskDescription,
                                     hour = taskTime,
-                                    tag = dropdownTags
+                                    tag = dropdownTags,
+                                    category = dropdownCategory
                                 )
                             )
                         },

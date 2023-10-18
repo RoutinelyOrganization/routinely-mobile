@@ -1,4 +1,4 @@
-package com.routinely.routinely.login
+package com.routinely.routinely.task
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
@@ -8,6 +8,7 @@ import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.api.AddTaskApi
 import com.routinely.routinely.data.auth.model.AddTaskRequest
 import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.core.Session
 import com.routinely.routinely.util.validators.DateTimeInputValid
 import com.routinely.routinely.util.validators.DescriptionInputValid
 import com.routinely.routinely.util.validators.DropdownInputValid
@@ -20,21 +21,51 @@ import kotlinx.coroutines.withContext
 
 class AddTaskViewModel(
     private val addNewTaskApi: AddTaskApi,
+    private val session: Session,
 ) : ViewModel() {
 
     private val _apiErrorMessage = MutableStateFlow(listOf<String>())
     val apiErrorMessage = _apiErrorMessage.asStateFlow()
+
+    private val priorityMap = mapOf(
+        "Baixa" to "low",
+        "Média" to "medium",
+        "Alta" to "high",
+        "Urgente" to "urgent"
+    )
+
+    private val categoryMap = mapOf(
+        "Conta" to "bill",
+        "Pessoal" to "personal",
+        "Estudos" to "study",
+        "Finanças" to "finance",
+        "Carreira" to "career",
+        "Saúde" to "health"
+    )
+
+    private val tagMap = mapOf(
+        "Candidatura" to "candidacy",
+        "Conta" to "bill",
+        "Exercicio" to "exercise",
+        "Beleza" to "beauty",
+        "Literatura" to "literature"
+    )
+
+
+
     private suspend fun addNewTask(newTask: AddTaskRequest): ApiResponse {
         return withContext(Dispatchers.IO) {
+            Log.d("TAG", "addNewTask: " + getTokenSession().toString())
             val response: ApiResponse
             val newTaskData = AddTaskRequest(
                 name = newTask.name,
                 date = newTask.date,
                 hour = newTask.hour,
                 description = newTask.description,
-                accountId = newTask.accountId,
-                priority = newTask.priority,
-                tag = newTask.tag
+                accountId = getTokenSession(),
+                priority = priorityMap[newTask.priority] ?: error("Prioridade inválida"),
+                tag = tagMap[newTask.tag] ?: error("Tag inválida"),
+                category = categoryMap[newTask.category] ?: error("Categoria inválida"),
             )
             response = addNewTaskApi.addTask(newTaskData)
             return@withContext response
@@ -135,5 +166,9 @@ class AddTaskViewModel(
                 _apiErrorMessage.value = response.message
             }
         }
+    }
+
+    private fun getTokenSession(): String {
+            return session.getToken()
     }
 }

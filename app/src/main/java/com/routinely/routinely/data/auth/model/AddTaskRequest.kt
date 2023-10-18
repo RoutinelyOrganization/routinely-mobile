@@ -11,4 +11,5 @@ data class AddTaskRequest(
     val accountId: String,
     val priority: String,
     val tag: String,
+    val category: String
 )

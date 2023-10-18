@@ -60,7 +60,7 @@ fun DatePickerDiag(
                             datePickerState
                                 .selectedDateMillis?.let { millis ->
                                     selectedDate = millis.toBrazilianDateFormat()
-                                    onValueChange(selectedDate)
+                                    onValueChange(millis.toApiDateFormat())
                                 }
                             showDatePickerDialog = false
                         },
