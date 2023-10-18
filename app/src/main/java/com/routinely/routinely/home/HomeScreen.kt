@@ -13,9 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.routinely.routinely.R
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.DatePickerRoutinely
 import com.routinely.routinely.ui.components.TasksViewerRoutinely
@@ -34,6 +32,7 @@ fun HomeScreen(
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
     onEditTaskClicked: () -> Unit,
+    menuItems: List<MenuItem>,
 ) {
     val bottomBarItems = listOf(BottomNavItems.NewTask)
     val datePickerState = datePickerState()
@@ -52,24 +51,7 @@ fun HomeScreen(
                 onBackButtonClicked = { },
                 expanded = expanded,
                 onDismissMenu = { expanded = false },
-                menuItems = listOf(
-                    MenuItem(
-                        text = stringResource(R.string.menu_configuration),
-                        onItemClick = { }
-                    ),
-                    MenuItem(
-                        text = stringResource(R.string.menu_goal),
-                        onItemClick = { }
-                    ),
-                    MenuItem(
-                        text = stringResource(R.string.menu_notification),
-                        onItemClick = { }
-                    ),
-                    MenuItem(
-                        text = stringResource(R.string.menu_logout),
-                        onItemClick = { }
-                    ),
-                )
+                menuItems = menuItems,
             )
         },
         bottomBar = {
@@ -204,6 +186,7 @@ fun HomeScreenPreview() {
     HomeScreen(
         onNotificationClicked = { },
         onNewTaskClicked = { },
-        onEditTaskClicked = { }
+        onEditTaskClicked = { },
+        menuItems = listOf()
     )
 }

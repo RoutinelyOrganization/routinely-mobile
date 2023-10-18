@@ -23,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,6 +55,7 @@ fun EditTaskScreen(
     onBackButtonPressed: () -> Unit,
     onNotificationClicked: () -> Unit,
     onHomeButtonPressed: () -> Unit,
+    menuItems: List<MenuItem>,
 ) {
     val bottomBarItems = listOf(BottomNavItems.Home)
     var showDialog by rememberSaveable { mutableStateOf(false) }
@@ -72,24 +72,7 @@ fun EditTaskScreen(
                 onBackButtonClicked = { onBackButtonPressed() },
                 onDismissMenu = { expanded = false },
                 expanded = expanded,
-                menuItems = listOf(
-                    MenuItem(
-                        text = stringResource(R.string.menu_configuration),
-                        onItemClick = { }
-                    ),
-                    MenuItem(
-                        text = stringResource(R.string.menu_goal),
-                        onItemClick = { }
-                    ),
-                    MenuItem(
-                        text = stringResource(R.string.menu_notification),
-                        onItemClick = { }
-                    ),
-                    MenuItem(
-                        text = stringResource(R.string.menu_logout),
-                        onItemClick = { }
-                    ),
-                )
+                menuItems = menuItems,
             )
         },
         bottomBar = {
@@ -249,7 +232,8 @@ fun EditTaskScreenPreview() {
         EditTaskScreen(
             onNotificationClicked = { },
             onHomeButtonPressed = { },
-            onBackButtonPressed = { }
+            onBackButtonPressed = { },
+            menuItems = listOf()
         )
     }
 }

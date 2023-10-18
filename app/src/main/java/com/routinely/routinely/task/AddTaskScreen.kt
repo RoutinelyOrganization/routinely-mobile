@@ -20,13 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.routinely.routinely.R
 import com.routinely.routinely.login.showToast
 import com.routinely.routinely.ui.components.AddTaskButton
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
@@ -52,6 +50,7 @@ import kotlinx.coroutines.launch
 fun AddTaskScreen(
     onBackButtonPressed: () -> Unit,
     onHomeButtonPressed: () -> Unit,
+    menuItems: List<MenuItem>,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -68,24 +67,7 @@ fun AddTaskScreen(
                 onBackButtonClicked = { onBackButtonPressed() },
                 onDismissMenu = { expanded = false },
                 expanded = expanded,
-                menuItems = listOf(
-                    MenuItem(
-                        text = stringResource(R.string.menu_configuration),
-                        onItemClick = { }
-                    ),
-                    MenuItem(
-                        text = stringResource(R.string.menu_goal),
-                        onItemClick = { }
-                    ),
-                    MenuItem(
-                        text = stringResource(R.string.menu_notification),
-                        onItemClick = { }
-                    ),
-                    MenuItem(
-                        text = stringResource(R.string.menu_logout),
-                        onItemClick = { }
-                    ),
-                )
+                menuItems = menuItems,
             )
         },
         bottomBar = {
@@ -186,6 +168,7 @@ fun AddTaskPreview() {
         AddTaskScreen(
             onBackButtonPressed = { },
             onHomeButtonPressed = { },
+            menuItems = listOf()
         )
     }
 }
