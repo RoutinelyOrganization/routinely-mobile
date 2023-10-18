@@ -12,7 +12,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,6 +41,7 @@ import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.ui.theme.RoutinelyTheme
 import com.routinely.routinely.ui.theme.UrgentPriority
 import com.routinely.routinely.util.BottomNavItems
+import com.routinely.routinely.util.MenuItem
 import kotlinx.coroutines.launch
 
 
@@ -45,18 +50,24 @@ import kotlinx.coroutines.launch
 fun AddTaskScreen(
     onBackButtonPressed: () -> Unit,
     onHomeButtonPressed: () -> Unit,
+    menuItems: List<MenuItem>,
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val bottomBarItems = listOf(BottomNavItems.Home)
+    var expanded by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
             TopAppBarRoutinely(
-                onMenuClick = {  },
+                onMenuClick = { expanded = true },
                 onNotificationClick = {  },
                 showBackButton = true,
-                onBackButtonClicked = { onBackButtonPressed() }
+                onBackButtonClicked = { onBackButtonPressed() },
+                onDismissMenu = { expanded = false },
+                expanded = expanded,
+                menuItems = menuItems,
             )
         },
         bottomBar = {
@@ -157,6 +168,7 @@ fun AddTaskPreview() {
         AddTaskScreen(
             onBackButtonPressed = { },
             onHomeButtonPressed = { },
+            menuItems = listOf()
         )
     }
 }

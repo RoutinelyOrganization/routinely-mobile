@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,27 +46,33 @@ import com.routinely.routinely.ui.theme.RedRoutinely
 import com.routinely.routinely.ui.theme.RoutinelyTheme
 import com.routinely.routinely.ui.theme.UrgentPriority
 import com.routinely.routinely.util.BottomNavItems
+import com.routinely.routinely.util.MenuItem
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTaskScreen(
     onBackButtonPressed: () -> Unit,
-    onMenuClicked: () -> Unit,
     onNotificationClicked: () -> Unit,
     onHomeButtonPressed: () -> Unit,
+    menuItems: List<MenuItem>,
 ) {
     val bottomBarItems = listOf(BottomNavItems.Home)
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var showDuplicateDialog by rememberSaveable { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
             TopAppBarRoutinely(
-                onMenuClick = { onMenuClicked() },
+                onMenuClick = { expanded = true },
                 onNotificationClick = { onNotificationClicked() },
                 showBackButton = true,
-                onBackButtonClicked = { onBackButtonPressed() }
+                onBackButtonClicked = { onBackButtonPressed() },
+                onDismissMenu = { expanded = false },
+                expanded = expanded,
+                menuItems = menuItems,
             )
         },
         bottomBar = {
@@ -223,10 +230,10 @@ fun EditTaskScreen(
 fun EditTaskScreenPreview() {
     RoutinelyTheme {
         EditTaskScreen(
-            onMenuClicked = { },
             onNotificationClicked = { },
             onHomeButtonPressed = { },
-            onBackButtonPressed = { }
+            onBackButtonPressed = { },
+            menuItems = listOf()
         )
     }
 }
