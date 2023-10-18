@@ -53,9 +53,6 @@ fun SetupNavGraph(
             onNotificationClicked = {
 //                navController.navigate()
             },
-            onMenuClicked = {
-//                navController.navigate()
-            },
             onNewTaskClicked = {
                 navController.navigate(Screen.AddTaskScreen.route)
             },
@@ -109,7 +106,6 @@ fun SetupNavGraph(
                 navController.popBackStack()
                 navController.navigate(Screen.HomeScreen.route)
             },
-            onMenuClicked = {},
             onNotificationClicked = {}
         )
     }
@@ -242,14 +238,12 @@ fun NavGraphBuilder.verificationCodeRoute(
 }
 
 fun NavGraphBuilder.homeScreenRoute(
-    onMenuClicked: () -> Unit,
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
     onEditTaskClicked: () -> Unit,
 ) {
     composable(route = Screen.HomeScreen.route) {
         HomeScreen(
-            onMenuClicked = { onMenuClicked() },
             onNotificationClicked = { onNotificationClicked() },
             onNewTaskClicked = { onNewTaskClicked() },
             onEditTaskClicked = { onEditTaskClicked() }
@@ -271,7 +265,6 @@ fun NavGraphBuilder.addTaskScreenRoute(
 
 fun NavGraphBuilder.editTaskScreenRoute(
     onBackButtonPressed: () -> Unit,
-    onMenuClicked: () -> Unit,
     onNotificationClicked: () -> Unit,
     onHomeButtonPressed: () -> Unit,
 ) {
@@ -279,7 +272,6 @@ fun NavGraphBuilder.editTaskScreenRoute(
         EditTaskScreen(
             onBackButtonPressed = { onBackButtonPressed() },
             onHomeButtonPressed = { onHomeButtonPressed() },
-            onMenuClicked = { onMenuClicked() },
             onNotificationClicked = { onNotificationClicked() },
         )
     }

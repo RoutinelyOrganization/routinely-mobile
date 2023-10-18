@@ -12,7 +12,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,14 +53,18 @@ fun AddTaskScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val bottomBarItems = listOf(BottomNavItems.Home)
+    var expanded by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
             TopAppBarRoutinely(
-                onMenuClick = {  },
+                onMenuClick = { expanded = true },
                 onNotificationClick = {  },
                 showBackButton = true,
-                onBackButtonClicked = { onBackButtonPressed() }
+                onBackButtonClicked = { onBackButtonPressed() },
+                onDismissMenu = { expanded = false },
+                expanded = expanded,
             )
         },
         bottomBar = {

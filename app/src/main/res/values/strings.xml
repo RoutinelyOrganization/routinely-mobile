@@ -48,4 +48,8 @@
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
     <string name="duplicate_task_confirmation">Are you sure you want to duplicate this task?</string>
+    <string name="menu_configuration">Configurações</string>
+    <string name="menu_goal">Metas</string>
+    <string name="menu_notification">Notificações</string>
+    <string name="menu_logout">Sair da conta</string>
 </resources>
