@@ -1,6 +1,5 @@
 package com.routinely.routinely.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -78,9 +77,7 @@ fun TopAppBarRoutinely(
                     tint = Color.White,
                 )
             }
-            Box(
-
-            ) {
+            Box{
                 IconButton(
                     onClick = {
                         onMenuClick()
