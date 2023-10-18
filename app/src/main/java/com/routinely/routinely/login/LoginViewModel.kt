@@ -67,7 +67,7 @@ class LoginViewModel(
     fun saveUser(token: String, remember: Boolean) {
         viewModelScope.launch {
             session.setToken(token)
-            if(remember) session.setRememberLogin()
+            if(remember) session.setRememberLogin(true)
         }
     }
 }

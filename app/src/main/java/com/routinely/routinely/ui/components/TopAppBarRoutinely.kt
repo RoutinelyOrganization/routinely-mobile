@@ -77,9 +77,7 @@ fun TopAppBarRoutinely(
                     tint = Color.White,
                 )
             }
-            Box(
-
-            ) {
+            Box{
                 IconButton(
                     onClick = {
                         onMenuClick()
@@ -101,7 +99,7 @@ fun TopAppBarRoutinely(
                     menuItems.forEach {
                         DropdownMenuItem(
                             text = { Text(it.text, color = PurpleRoutinely) },
-                            onClick = { it.text },
+                            onClick = { it.onItemClick() },
                             contentPadding = PaddingValues(start = 8.dp)
                         )
                     }

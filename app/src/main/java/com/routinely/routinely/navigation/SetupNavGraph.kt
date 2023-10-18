@@ -21,6 +21,7 @@ import com.routinely.routinely.changepassword.ForgotPasswordViewModel
 import com.routinely.routinely.changepassword.VerificationCodeScreen
 import com.routinely.routinely.changepassword.VerificationCodeViewModel
 import com.routinely.routinely.home.HomeScreen
+import com.routinely.routinely.home.HomeViewModel
 import com.routinely.routinely.login.CreateAccountScreen
 import com.routinely.routinely.login.CreateAccountViewModel
 import com.routinely.routinely.login.LoginScreen
@@ -62,6 +63,11 @@ fun SetupNavGraph(
             onEditTaskClicked = {
                 navController.navigate(Screen.EditTaskScreen.route)
             },
+            navigateToLoginScreen = {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0)
+                }
+            }
         )
         addTaskScreenRoute(
             onBackButtonPressed = {
@@ -69,7 +75,11 @@ fun SetupNavGraph(
             },
             onHomeButtonPressed = {
                 navController.popBackStack()
-                navController.navigate(Screen.HomeScreen.route)
+            },
+            navigateToLoginScreen = {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0)
+                }
             }
         )
         splashScreenRoute(
@@ -109,7 +119,12 @@ fun SetupNavGraph(
                 navController.popBackStack()
                 navController.navigate(Screen.HomeScreen.route)
             },
-            onNotificationClicked = {}
+            onNotificationClicked = { },
+            navigateToLoginScreen = {
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(0)
+                }
+            }
         )
     }
 }
@@ -244,8 +259,10 @@ fun NavGraphBuilder.homeScreenRoute(
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
     onEditTaskClicked: () -> Unit,
+    navigateToLoginScreen: () -> Unit,
 ) {
     composable(route = Screen.HomeScreen.route) {
+        val viewModel: HomeViewModel = koinViewModel()
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
@@ -261,7 +278,10 @@ fun NavGraphBuilder.homeScreenRoute(
             ),
             MenuItem(
                 text = stringResource(R.string.menu_logout),
-                onItemClick = { }
+                onItemClick = {
+                    viewModel.logout()
+                    navigateToLoginScreen()
+                }
             ),
         )
 
@@ -276,9 +296,12 @@ fun NavGraphBuilder.homeScreenRoute(
 
 fun NavGraphBuilder.addTaskScreenRoute(
     onBackButtonPressed: () -> Unit,
-    onHomeButtonPressed: () -> Unit
+    onHomeButtonPressed: () -> Unit,
+    navigateToLoginScreen: () -> Unit,
 ) {
     composable(route = Screen.AddTaskScreen.route) {
+        // TODO change this viewmodel for it own viewmodel
+        val viewModel: HomeViewModel = koinViewModel()
 
         val menuItems = listOf(
             MenuItem(
@@ -295,7 +318,10 @@ fun NavGraphBuilder.addTaskScreenRoute(
             ),
             MenuItem(
                 text = stringResource(R.string.menu_logout),
-                onItemClick = { }
+                onItemClick = {
+                    viewModel.logout()
+                    navigateToLoginScreen()
+                }
             ),
         )
 
@@ -311,8 +337,12 @@ fun NavGraphBuilder.editTaskScreenRoute(
     onBackButtonPressed: () -> Unit,
     onNotificationClicked: () -> Unit,
     onHomeButtonPressed: () -> Unit,
+    navigateToLoginScreen: () -> Unit,
 ) {
     composable(route = Screen.EditTaskScreen.route) {
+        // TODO change this viewmodel for it own viewmodel
+        val viewModel: HomeViewModel = koinViewModel()
+
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
@@ -328,7 +358,10 @@ fun NavGraphBuilder.editTaskScreenRoute(
             ),
             MenuItem(
                 text = stringResource(R.string.menu_logout),
-                onItemClick = { }
+                onItemClick = {
+                    viewModel.logout()
+                    navigateToLoginScreen()
+                }
             ),
         )
         EditTaskScreen(
