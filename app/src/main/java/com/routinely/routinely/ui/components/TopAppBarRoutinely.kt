@@ -1,5 +1,6 @@
 package com.routinely.routinely.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -101,7 +102,7 @@ fun TopAppBarRoutinely(
                     menuItems.forEach {
                         DropdownMenuItem(
                             text = { Text(it.text, color = PurpleRoutinely) },
-                            onClick = { it.text },
+                            onClick = { it.onItemClick() },
                             contentPadding = PaddingValues(start = 8.dp)
                         )
                     }

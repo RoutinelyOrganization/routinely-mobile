@@ -2,6 +2,7 @@ package com.routinely.routinely.navigation
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,6 +22,7 @@ import com.routinely.routinely.changepassword.ForgotPasswordViewModel
 import com.routinely.routinely.changepassword.VerificationCodeScreen
 import com.routinely.routinely.changepassword.VerificationCodeViewModel
 import com.routinely.routinely.home.HomeScreen
+import com.routinely.routinely.home.HomeViewModel
 import com.routinely.routinely.login.CreateAccountScreen
 import com.routinely.routinely.login.CreateAccountViewModel
 import com.routinely.routinely.login.LoginScreen
@@ -62,6 +64,10 @@ fun SetupNavGraph(
             onEditTaskClicked = {
                 navController.navigate(Screen.EditTaskScreen.route)
             },
+            navigateToLoginScreen = {
+                navController.popBackStack(route = Screen.HomeScreen.route, inclusive = true)
+                navController.navigate(Screen.Login.route)
+            }
         )
         addTaskScreenRoute(
             onBackButtonPressed = {
@@ -244,24 +250,37 @@ fun NavGraphBuilder.homeScreenRoute(
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
     onEditTaskClicked: () -> Unit,
+    navigateToLoginScreen: () -> Unit,
 ) {
     composable(route = Screen.HomeScreen.route) {
+        val viewModel: HomeViewModel = koinViewModel()
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
-                onItemClick = { }
+                onItemClick = {
+                    Log.d("SetupNavGraph", "homeScreenRoute: onItemClick config")
+                }
             ),
             MenuItem(
                 text = stringResource(R.string.menu_goal),
-                onItemClick = { }
+                onItemClick = {
+                    Log.d("SetupNavGraph", "homeScreenRoute: onItemClick goals")
+
+                }
             ),
             MenuItem(
                 text = stringResource(R.string.menu_notification),
-                onItemClick = { }
+                onItemClick = {
+                    Log.d("SetupNavGraph", "homeScreenRoute: onItemClick notification")
+                }
             ),
             MenuItem(
                 text = stringResource(R.string.menu_logout),
-                onItemClick = { }
+                onItemClick = {
+                    Log.d("SetupNavGraph", "homeScreenRoute: onItemClick logout")
+                    viewModel.logout()
+                    navigateToLoginScreen()
+                }
             ),
         )
 

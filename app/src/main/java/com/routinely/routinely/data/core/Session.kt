@@ -48,9 +48,9 @@ class Session(
         return response
     }
 
-    suspend fun setRememberLogin() {
+    suspend fun setRememberLogin(shouldRemember: Boolean) {
         dataStore.edit { preference ->
-            preference[remember] = true
+            preference[remember] = shouldRemember
         }
     }
 }
