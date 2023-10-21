@@ -9,6 +9,7 @@ import com.routinely.routinely.data.core.coreModule
 import com.routinely.routinely.home.homeModule
 import com.routinely.routinely.login.createNewAccountModule
 import com.routinely.routinely.login.loginModule
+import com.routinely.routinely.task.addTaskModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -21,7 +22,7 @@ class MyApplication : Application() {
             androidContext(this@MyApplication)
             modules(authModule, coreModule, createNewAccountModule,
                 loginModule, createNewPasswordModule, forgotPasswordModule,
-                verificationCodeModule, homeModule)
+                verificationCodeModule, homeModule, addTaskModule)
         }
     }
 }

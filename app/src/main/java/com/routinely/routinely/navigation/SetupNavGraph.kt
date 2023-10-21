@@ -28,6 +28,7 @@ import com.routinely.routinely.login.LoginScreen
 import com.routinely.routinely.login.LoginViewModel
 import com.routinely.routinely.splash_screen.SplashScreen
 import com.routinely.routinely.task.AddTaskScreen
+import com.routinely.routinely.task.AddTaskViewModel
 import com.routinely.routinely.task.EditTaskScreen
 import com.routinely.routinely.util.MenuItem
 import org.koin.androidx.compose.koinViewModel
@@ -43,8 +44,9 @@ fun SetupNavGraph(
     ) {
         loginRoute(
             navigateToHomeScreen = {
-                navController.popBackStack(route = Screen.SplashScreen.route, inclusive = true)
-                navController.navigate(Screen.HomeScreen.route)
+                navController.navigate(Screen.HomeScreen.route) {
+                    popUpTo(0)
+                }
             },
             navigateToCreateAccountScreen = {
                 navController.navigate(Screen.CreateAccount.route)
@@ -75,6 +77,11 @@ fun SetupNavGraph(
             },
             onHomeButtonPressed = {
                 navController.popBackStack()
+                navController.navigate(Screen.HomeScreen.route)
+            },
+            navigateToHomeScreen = {
+                navController.popBackStack()
+                navController.navigate(Screen.HomeScreen.route)
             },
             navigateToLoginScreen = {
                 navController.navigate(Screen.Login.route) {
@@ -119,7 +126,7 @@ fun SetupNavGraph(
                 navController.popBackStack()
                 navController.navigate(Screen.HomeScreen.route)
             },
-            onNotificationClicked = { },
+            onNotificationClicked = {},
             navigateToLoginScreen = {
                 navController.navigate(Screen.Login.route) {
                     popUpTo(0)
@@ -297,12 +304,14 @@ fun NavGraphBuilder.homeScreenRoute(
 fun NavGraphBuilder.addTaskScreenRoute(
     onBackButtonPressed: () -> Unit,
     onHomeButtonPressed: () -> Unit,
+    navigateToHomeScreen: () -> Unit,
     navigateToLoginScreen: () -> Unit,
 ) {
     composable(route = Screen.AddTaskScreen.route) {
         // TODO change this viewmodel for it own viewmodel
-        val viewModel: HomeViewModel = koinViewModel()
-
+        val viewModel: AddTaskViewModel = koinViewModel()
+        val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
+        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
@@ -328,6 +337,33 @@ fun NavGraphBuilder.addTaskScreenRoute(
         AddTaskScreen(
             onBackButtonPressed = onBackButtonPressed,
             onHomeButtonPressed = onHomeButtonPressed,
+            navigateToHomeScreen = navigateToHomeScreen,
+            onAddTaskClick = { newTask ->
+                viewModel.verifyAllConditions(newTask)
+            },
+            shouldGoToNextScreen = shouldGoToNextScreen,
+            apiErrorMessage = apiErrorMessage,
+            taskNameStateValidation = { taskName ->
+                viewModel.taskNameState(taskName)
+            },
+            taskDateStateValidation = { taskDate ->
+                viewModel.taskDateState(taskDate)
+            },
+            taskTimeStateValidation = { taskTime ->
+                viewModel.taskTimeState(taskTime)
+            },
+            taskDropdownPriorityStateValidation = { priority ->
+                viewModel.taskPriorityState(priority)
+            },
+            taskDropdownTagsStateValidation = { tag ->
+                viewModel.taskTagState(tag)
+            },
+            taskDropdownCategoryStateValidation = { category ->
+                viewModel.taskCategoryState(category)
+            },
+            taskDescriptionStateValidation = { description ->
+                viewModel.taskDescriptionState(description)
+            },
             menuItems = menuItems,
         )
     }
@@ -340,9 +376,7 @@ fun NavGraphBuilder.editTaskScreenRoute(
     navigateToLoginScreen: () -> Unit,
 ) {
     composable(route = Screen.EditTaskScreen.route) {
-        // TODO change this viewmodel for it own viewmodel
-        val viewModel: HomeViewModel = koinViewModel()
-
+        val viewModel: AddTaskViewModel = koinViewModel()
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
@@ -369,6 +403,27 @@ fun NavGraphBuilder.editTaskScreenRoute(
             onHomeButtonPressed = { onHomeButtonPressed() },
             onNotificationClicked = { onNotificationClicked() },
             menuItems = menuItems,
+            taskNameStateValidation = { taskName ->
+                viewModel.taskNameState(taskName)
+            },
+            taskDateStateValidation = { taskDate ->
+                viewModel.taskDateState(taskDate)
+            },
+            taskTimeStateValidation = { taskTime ->
+                viewModel.taskTimeState(taskTime)
+            },
+            taskDropdownPriorityStateValidation = { priority ->
+                viewModel.taskPriorityState(priority)
+            },
+            taskDropdownTagsStateValidation = { tag ->
+                viewModel.taskTagState(tag)
+            },
+            taskDropdownCategoryStateValidation = { category ->
+                viewModel.taskCategoryState(category)
+            },
+            taskDescriptionStateValidation = { description ->
+                viewModel.taskDescriptionState(description)
+            },
         )
     }
 }
@@ -381,11 +436,4 @@ fun NavGraphBuilder.splashScreenRoute(
             onEmailLoginClicked = { onEmailLoginClicked() }
         )
     }
-}
-
-@Composable
-fun getCurrentDestination(navController: NavController): NavDestination? {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-
-    return navBackStackEntry?.destination
 }

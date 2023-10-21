@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,15 +33,18 @@ import androidx.compose.ui.unit.dp
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
+import com.routinely.routinely.util.validators.DateTimeInputValid
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerDialog(
-    label: String,
-    modifier: Modifier = Modifier
+    onValueChange: (String) -> Unit,
+    labelRes: String,
+    error: DateTimeInputValid,
+    modifier: Modifier
 ) {
-    var selectedHour by remember {  mutableIntStateOf(0) }
-    var selectedMinute by remember { mutableIntStateOf(0) }
+    var selectedHour by rememberSaveable {  mutableIntStateOf(0) }
+    var selectedMinute by rememberSaveable { mutableIntStateOf(0) }
     val timePickerState = rememberTimePickerState(
         initialHour = selectedHour,
         initialMinute = selectedMinute,
@@ -88,6 +92,7 @@ fun TimePickerDialog(
                                 openAlertDialog.value = false
                                 selectedHour = timePickerState.hour
                                 selectedMinute = timePickerState.minute
+                                onValueChange(timeFormatter(selectedHour.toString(), selectedMinute.toString()))
                             }
                         ) {
                             Text(text = "Selecionar")
@@ -97,19 +102,15 @@ fun TimePickerDialog(
             }
         }
     }
-    var isSupportingText by remember { mutableStateOf(false) }
-    var timeText by remember { mutableStateOf("") }
     OutlinedTextField(
         value = timeFormatter(selectedHour.toString(), selectedMinute.toString()),
         label = {
             Text(
-                text = label,
+                text = labelRes,
                 style = TextStyle(color = Color.Black)
             )
         },
-        onValueChange = {
-            timeText = it
-        },
+        onValueChange = {},
         modifier = modifier
             .onFocusEvent {
                 if (it.isFocused) {
@@ -117,9 +118,9 @@ fun TimePickerDialog(
                 }
             }
             .fillMaxWidth(),
-        isError = isSupportingText,
+        isError = error is DateTimeInputValid.Error,
         supportingText = {
-            if (isSupportingText) {
+            if (error is DateTimeInputValid.Error) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = "Formato inválido!",

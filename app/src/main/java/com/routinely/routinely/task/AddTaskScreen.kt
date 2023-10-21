@@ -12,25 +12,27 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.routinely.routinely.login.showToast
+import com.routinely.routinely.R
+import com.routinely.routinely.data.auth.model.AddTaskRequest
 import com.routinely.routinely.ui.components.AddTaskButton
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.DatePickerDiag
 import com.routinely.routinely.ui.components.DescriptionTextField
 import com.routinely.routinely.ui.components.DropdownRoutinely
+import com.routinely.routinely.ui.components.LabelError
 import com.routinely.routinely.ui.components.TaskNameTextField
 import com.routinely.routinely.ui.components.TimePickerDialog
 import com.routinely.routinely.ui.components.TopAppBarRoutinely
@@ -38,11 +40,14 @@ import com.routinely.routinely.ui.theme.HighPriority
 import com.routinely.routinely.ui.theme.LowPriority
 import com.routinely.routinely.ui.theme.MediumPriority
 import com.routinely.routinely.ui.theme.PurpleRoutinely
-import com.routinely.routinely.ui.theme.RoutinelyTheme
 import com.routinely.routinely.ui.theme.UrgentPriority
 import com.routinely.routinely.util.BottomNavItems
 import com.routinely.routinely.util.MenuItem
-import kotlinx.coroutines.launch
+import com.routinely.routinely.util.validators.DateTimeInputValid
+import com.routinely.routinely.util.validators.DescriptionInputValid
+import com.routinely.routinely.util.validators.DropdownInputValid
+import com.routinely.routinely.util.validators.TaskNameInputValid
+import kotlinx.coroutines.delay
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,14 +55,36 @@ import kotlinx.coroutines.launch
 fun AddTaskScreen(
     onBackButtonPressed: () -> Unit,
     onHomeButtonPressed: () -> Unit,
+    shouldGoToNextScreen: Boolean,
+    taskNameStateValidation: (nameTask: String) -> TaskNameInputValid,
+    taskDateStateValidation: (dateTask: String) -> DateTimeInputValid,
+    taskTimeStateValidation: (timeTask: String) -> DateTimeInputValid,
+    taskDropdownPriorityStateValidation: (priorityTask: String) -> DropdownInputValid,
+    taskDropdownTagsStateValidation: (tagTask: String) -> DropdownInputValid,
+    taskDropdownCategoryStateValidation: (categoryTask: String) -> DropdownInputValid,
+    taskDescriptionStateValidation: (descriptionTask: String) -> DescriptionInputValid,
+    apiErrorMessage: List<String>,
+    navigateToHomeScreen: () -> Unit,
+    onAddTaskClick: (AddTaskRequest) -> Unit,
     menuItems: List<MenuItem>,
 ) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    var taskName by rememberSaveable { mutableStateOf("") }
+    var taskNameState by rememberSaveable { mutableStateOf<TaskNameInputValid>(TaskNameInputValid.Empty) }
+    var taskDate by rememberSaveable { mutableStateOf("") }
+    var taskDateState by rememberSaveable { mutableStateOf<DateTimeInputValid>(DateTimeInputValid.Empty) }
+    var taskTime by rememberSaveable { mutableStateOf("") }
+    var taskTimeState by rememberSaveable { mutableStateOf<DateTimeInputValid>(DateTimeInputValid.Empty) }
+    var dropdownPriority by rememberSaveable { mutableStateOf("") }
+    var dropdownPriorityState by rememberSaveable { mutableStateOf<DropdownInputValid>(DropdownInputValid.Empty) }
+    var dropdownTags by rememberSaveable { mutableStateOf("") }
+    var dropdownTagsState by rememberSaveable { mutableStateOf<DropdownInputValid>(DropdownInputValid.Empty) }
+    var dropdownCategory by rememberSaveable { mutableStateOf("") }
+    var dropdownCategoryState by rememberSaveable { mutableStateOf<DropdownInputValid>(DropdownInputValid.Empty) }
+    var taskDescription by rememberSaveable { mutableStateOf("") }
+    var taskDescriptionState by rememberSaveable { mutableStateOf<DescriptionInputValid>(DescriptionInputValid.Empty) }
+
     val bottomBarItems = listOf(BottomNavItems.Home)
     var expanded by remember { mutableStateOf(false) }
-
-
     Scaffold(
         topBar = {
             TopAppBarRoutinely(
@@ -97,7 +124,15 @@ fun AddTaskScreen(
                         fontWeight = FontWeight.Bold
                     )
                 )
-                TaskNameTextField()
+                TaskNameTextField(
+                    value = taskName,
+                    onValueChange = { newTaskName: String ->
+                        taskName = newTaskName
+                        taskNameState = taskNameStateValidation(taskName)
+                    },
+                    labelRes = stringResource(id = R.string.name),
+                    error = taskNameState,
+                )
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -105,11 +140,21 @@ fun AddTaskScreen(
                     //modifier = Modifier.fillMaxWidth()
                 ) {
                     DatePickerDiag(
-                        label = "Data",
+                        onValueChange = { newTaskDate: String ->
+                            taskDate = newTaskDate
+                            taskDateState = taskDateStateValidation(taskDate)
+                        },
+                        labelRes = "Date",
+                        error = taskDateState,
                         modifier = Modifier.weight(1f)
                     )
                     TimePickerDialog(
-                        label = "Hora",
+                        onValueChange = { newTaskTime: String ->
+                            taskTime = newTaskTime
+                            taskTimeState = taskTimeStateValidation(taskTime)
+                        },
+                        labelRes = "Hora",
+                        error = taskTimeState,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -117,7 +162,11 @@ fun AddTaskScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     DropdownRoutinely(
-                        label = "Prioridade",
+                        labelRes = "Prioridade",
+                        onValueChange = { newDropDown: String ->
+                            dropdownPriority = newDropDown
+                            dropdownPriorityState = taskDropdownPriorityStateValidation(dropdownPriority)
+                        },
                         list = listOf("Urgente", "Alta", "Média", "Baixa"),
                         optionColors = mapOf(
                             "Baixa" to LowPriority,
@@ -132,12 +181,20 @@ fun AddTaskScreen(
                         //modifier = Modifier.fillMaxWidth()
                     ) {
                         DropdownRoutinely(
-                            label = "Categorias",
+                            labelRes = "Categorias",
+                            onValueChange = { newDropDown: String ->
+                                dropdownCategory = newDropDown
+                                dropdownCategoryState = taskDropdownCategoryStateValidation(dropdownCategory)
+                            },
                             list = listOf("Pessoal", "Estudos", "Finanças", "Carreira", "Saúde"),
                             modifier = Modifier.weight(1f)
                         )
                         DropdownRoutinely(
-                            label = "Tags",
+                            labelRes = "Tags",
+                            onValueChange = { newDropDown: String ->
+                                dropdownTags = newDropDown
+                                dropdownTagsState = taskDropdownTagsStateValidation(dropdownTags)
+                            },
                             list = listOf(
                                 "Candidatura",
                                 "Conta",
@@ -148,27 +205,62 @@ fun AddTaskScreen(
                             modifier = Modifier.weight(1f)
                         )
                     }
-                    DescriptionTextField()
-                    AddTaskButton(
-                        onAddTaskClick = {
-                            coroutineScope.launch {
-                                showToast(context, "Falta adicionar integração com API")
-                            }
-                        }
+                    DescriptionTextField(
+                        value = taskDescription,
+                        onValueChange = { newTaskDescription: String ->
+                            taskDescription = newTaskDescription
+                            taskDescriptionState = taskDescriptionStateValidation(taskDescription)
+                        },
+                        labelRes = "Descrição",
+                        error = taskDescriptionState,
+                    )
+                    apiErrorMessage.forEach {
+                        LabelError(
+                            labelRes = it
+                        )
+                    }
+                    AddTaskButton (
+                        {
+                            onAddTaskClick(
+                                AddTaskRequest(
+                                    name = taskName,
+                                    date = taskDate,
+                                    priority = dropdownPriority,
+                                    accountId = "token",
+                                    description = taskDescription,
+                                    hour = taskTime,
+                                    tag = dropdownTags,
+                                    category = dropdownCategory
+                                )
+                            )
+                        },
+                        areFieldsValid = taskNameState == TaskNameInputValid.Valid &&
+                                taskDescriptionState == DescriptionInputValid.Valid &&
+                                taskDateState == DateTimeInputValid.Valid &&
+                                dropdownPriorityState == DropdownInputValid.Valid &&
+                                dropdownCategoryState == DropdownInputValid.Valid &&
+                                dropdownTagsState == DropdownInputValid.Valid &&
+                                taskTimeState == DateTimeInputValid.Valid
                     )
                 }
             }
         },
     )
-}
-@Preview(showBackground = false)
-@Composable
-fun AddTaskPreview() {
-    RoutinelyTheme {
-        AddTaskScreen(
-            onBackButtonPressed = { },
-            onHomeButtonPressed = { },
-            menuItems = listOf()
-        )
+
+    LaunchedEffect(key1 = shouldGoToNextScreen) {
+        if(shouldGoToNextScreen) {
+            delay(3000)
+            navigateToHomeScreen()
+        }
     }
 }
+//@Preview(showBackground = false)
+//@Composable
+//fun AddTaskPreview() {
+//    RoutinelyTheme {
+//        AddTaskScreen(
+//            onBackButtonPressed = { },
+//            onHomeButtonPressed = { },
+//        )
+//    }
+//}

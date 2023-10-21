@@ -13,10 +13,10 @@ import com.routinely.routinely.ui.theme.PurpleRoutinely
 @Composable
 fun AddTaskButton(
     onAddTaskClick: () -> Unit,
+    areFieldsValid: Boolean
 ) {
-    val isButtonEnabled = true
     Button(
-        enabled = isButtonEnabled,
+        enabled = areFieldsValid,
         onClick = onAddTaskClick,
         modifier = Modifier
             .fillMaxWidth(),
