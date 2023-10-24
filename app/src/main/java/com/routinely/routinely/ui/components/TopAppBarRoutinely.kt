@@ -118,7 +118,7 @@ fun TopAppBarRoutinely(
                             horizontalArrangement = Arrangement.End
                         ) {
                             IconButton(
-                                onClick = { }
+                                onClick = { onDismissMenu() }
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_close),
