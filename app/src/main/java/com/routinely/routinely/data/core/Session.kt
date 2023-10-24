@@ -4,12 +4,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 
 class Session(
@@ -25,12 +21,13 @@ class Session(
         val remember = booleanPreferencesKey(REMEMBER)
     }
 
-    fun getToken(): Flow<String> {
-        return dataStore.data.catch {
-            emit(emptyPreferences())
-        }.map { value: Preferences ->
-            value[token] ?: ""
+    fun getToken(): String {
+        var response: String
+        runBlocking {
+            val pref = dataStore.data.first()
+            response = pref[token] ?: ""
         }
+        return response
     }
 
     suspend fun setToken(userToken: String) {
