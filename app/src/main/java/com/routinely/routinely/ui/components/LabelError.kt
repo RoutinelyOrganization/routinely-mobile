@@ -18,8 +18,8 @@ fun ColumnScope.LabelError(
 ) {
     Text(
         modifier = Modifier
-            .padding(vertical = 15.dp)
-            .align(Alignment.End),
+            .padding(vertical = 24.dp)
+            .align(Alignment.Start),
         text = labelRes,
         fontWeight = FontWeight.Bold,
         fontSize = MaterialTheme.typography.bodyMedium.fontSize,

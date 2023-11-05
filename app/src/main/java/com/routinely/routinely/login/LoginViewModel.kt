@@ -57,9 +57,8 @@ class LoginViewModel(
             _signInResult.value = SignInResult.Loading
             try{
                 _signInResult.value = authApi.loginUser(loginRequest)
-                Log.d("LoginViewModel", "loginWithEmailAndPassword: signInResult ${signInResult.value}")
             } catch (e: Exception) {
-                _signInResult.value = SignInResult.Error.stringMessage(e.localizedMessage ?: "Unknown error")
+                _signInResult.value = SignInResult.Error(R.string.api_unexpected_error)
             }
         }
     }

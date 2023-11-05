@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -67,7 +68,7 @@ fun LoginScreen(
     val coroutineScope = rememberCoroutineScope()
     var showApiErrors by rememberSaveable { mutableStateOf(false) }
     var showLoading by rememberSaveable { mutableStateOf(false) }
-    var apiErrorMessage by rememberSaveable { mutableStateOf<List<String>>(listOf()) }
+    var apiErrorMessage by rememberSaveable { mutableIntStateOf(0) }
     val rememberLoginCheck = rememberSaveable { mutableStateOf(false) }
 
     Column(
@@ -143,9 +144,7 @@ fun LoginScreen(
                 )
             }
             if(showApiErrors) {
-                apiErrorMessage.forEach {
-                    LabelError(it)
-                }
+                LabelError(stringResource(apiErrorMessage))
             }
             Spacer(modifier = Modifier .height(16.dp))
 

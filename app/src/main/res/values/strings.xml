@@ -53,4 +53,8 @@
     <string name="menu_notification">Notificações</string>
     <string name="menu_logout">Sair da conta</string>
     <string name="task_name_limit">Quantidade de caracteres máximo, 50!</string>
+
+    <!--     API RETURNS     -->
+    <string name="api_login_unauthorized">Email e/ou senha inválido</string>
+    <string name="api_unexpected_error">Ocorreu um erro inesperado. Tente novamente mais tarde</string>
 </resources>

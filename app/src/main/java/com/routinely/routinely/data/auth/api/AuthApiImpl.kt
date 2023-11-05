@@ -1,5 +1,6 @@
 package com.routinely.routinely.data.auth.api
 
+import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.HttpRoutes
 import com.routinely.routinely.data.auth.extensions.toApiResponse
 import com.routinely.routinely.data.auth.extensions.toSignInResult
@@ -50,6 +51,6 @@ internal class AuthApiImpl(
     }
     private fun handleSignInErrorResponse(httpStatusCode: HttpStatusCode): SignInResult {
         println("Error SignIn: ${httpStatusCode.description}")
-        return SignInResult.Error.stringMessage("Unknown Exception")
+        return SignInResult.Error(R.string.api_unexpected_error)
     }
 }
