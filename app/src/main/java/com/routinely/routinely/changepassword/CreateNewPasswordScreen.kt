@@ -80,8 +80,7 @@ fun CreateNewPasswordScreen(
                 },
                 labelRes = stringResource(id = R.string.password),
                 value = password,
-                error = passwordState,
-                passwordMatch = passwordState == PasswordInputValid.Valid
+                error = passwordState
             )
 
             PasswordTextField(
@@ -91,8 +90,7 @@ fun CreateNewPasswordScreen(
                 },
                 labelRes = "Repetir Senha",
                 value = confirmPassword,
-                error = confirmPasswordState,
-                passwordMatch = confirmPasswordState == PasswordInputValid.Valid
+                error = confirmPasswordState
             )
             apiErrorMessage.forEach {
                 LabelError(

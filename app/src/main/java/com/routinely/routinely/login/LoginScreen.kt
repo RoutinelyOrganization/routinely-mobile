@@ -1,8 +1,6 @@
 package com.routinely.routinely.login
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,6 +33,7 @@ import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.LoginRequest
 import com.routinely.routinely.data.auth.model.SignInResult
 import com.routinely.routinely.ui.components.ForgotPasswordText
+import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.ui.components.LabelError
 import com.routinely.routinely.ui.components.LoginButton
 import com.routinely.routinely.ui.components.LoginHeaderText
@@ -43,7 +42,6 @@ import com.routinely.routinely.ui.components.PasswordTextField
 import com.routinely.routinely.ui.components.RememberCheckbox
 import com.routinely.routinely.ui.components.SignUpButton
 import com.routinely.routinely.ui.theme.RoutinelyTheme
-import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.util.validators.EmailInputValid
 import com.routinely.routinely.util.validators.PasswordInputValid
 import kotlinx.coroutines.launch
@@ -213,9 +211,6 @@ fun LoginScreen(
             IndeterminateCircularIndicator()
         }
     }
-}
-fun showToast(context: Context, message: String) {
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
 @Preview(showBackground = true)

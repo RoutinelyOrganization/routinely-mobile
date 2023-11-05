@@ -2,6 +2,7 @@ package com.routinely.routinely.data.auth.extensions
 
 import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.auth.model.CreateAccountResult
 import com.routinely.routinely.data.auth.model.LoginResponse
 import com.routinely.routinely.data.auth.model.ResponseStringTemp
 import com.routinely.routinely.data.auth.model.SignInResult
@@ -35,6 +36,20 @@ suspend fun HttpResponse.toSignInResult() : SignInResult {
         }
         else -> {
             SignInResult.Error(R.string.api_unexpected_error)
+        }
+    }
+}
+
+fun HttpResponse.toCreateAccountResult() : CreateAccountResult {
+    return when(this.status) {
+        HttpStatusCode.Created -> {
+            CreateAccountResult.Success
+        }
+        HttpStatusCode.UnprocessableEntity -> {
+            CreateAccountResult.Error(R.string.api_create_account_already_exist_email)
+        }
+        else -> {
+            CreateAccountResult.Error(R.string.api_unexpected_error)
         }
     }
 }

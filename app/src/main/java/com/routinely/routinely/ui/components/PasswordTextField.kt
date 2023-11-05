@@ -39,10 +39,9 @@ fun PasswordTextField(
     onValueChange: (String) -> Unit,
     labelRes: String,
     value: String,
-    error: PasswordInputValid,
-    passwordMatch: Boolean = true
+    error: PasswordInputValid
 ) {
-    var isPasswordValid by rememberSaveable { mutableStateOf(true) }
+    val isPasswordValid by rememberSaveable { mutableStateOf(true) }
     var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
     OutlinedTextField(
         value = value,
