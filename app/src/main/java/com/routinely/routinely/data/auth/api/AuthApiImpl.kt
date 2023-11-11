@@ -52,7 +52,7 @@ internal class AuthApiImpl(
     }
     private fun handleSignInErrorResponse(httpStatusCode: HttpStatusCode): SignInResult {
         println("Error SignIn: ${httpStatusCode.description}")
-        return SignInResult.Error(R.string.api_unexpected_error)
+        return SignInResult.DefaultError
     }
     private fun handleCreateAccountErrorResponse(httpStatusCode: HttpStatusCode): CreateAccountResult {
         println("Error SignIn: ${httpStatusCode.description}")

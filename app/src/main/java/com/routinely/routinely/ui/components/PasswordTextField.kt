@@ -39,7 +39,8 @@ fun PasswordTextField(
     onValueChange: (String) -> Unit,
     labelRes: String,
     value: String,
-    error: PasswordInputValid
+    error: PasswordInputValid,
+    apiError: Boolean = false,
 ) {
     val isPasswordValid by rememberSaveable { mutableStateOf(true) }
     var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
@@ -54,9 +55,9 @@ fun PasswordTextField(
                 style = TextStyle(color = Color.Black)
             )
         },
-        isError = error is PasswordInputValid.ErrorList || error is PasswordInputValid.Error,
+        isError = error is PasswordInputValid.ErrorList || error is PasswordInputValid.Error || apiError,
         supportingText = {
-            Column() {
+            Column {
                 if (error is PasswordInputValid.Error) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),

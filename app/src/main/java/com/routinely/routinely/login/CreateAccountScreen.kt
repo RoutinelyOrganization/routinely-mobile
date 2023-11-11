@@ -69,6 +69,7 @@ fun CreateAccountScreen(
     var apiErrorMessage by rememberSaveable { mutableIntStateOf(0) }
     var showApiErrors by rememberSaveable { mutableStateOf(false) }
     var showLoading by rememberSaveable { mutableStateOf(false) }
+    var showFieldError by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -112,30 +113,34 @@ fun CreateAccountScreen(
                 onValueChange = { newEmail ->
                     email = newEmail
                     emailState = emailStateValidation(email)
+                    if(showFieldError) showFieldError = false
                 },
                 labelRes = stringResource(R.string.email),
                 value = email,
                 error = emailState,
+                apiError = showFieldError
             )
 
             PasswordTextField(
                 onValueChange = { newPass: String ->
                     password = newPass
                     passwordState = passwordStateValidation(password)
+                    if(showFieldError) showFieldError = false
                 },
                 labelRes = stringResource(id = R.string.password),
                 value = password,
-                error = passwordState
+                error = passwordState,
             )
 
             PasswordTextField(
                 onValueChange = { newPassConfirm ->
                     confirmPassword = newPassConfirm
                     confirmPasswordState = confirmPasswordStateValidation(password, confirmPassword)
+                    if(showFieldError) showFieldError = false
                 },
                 labelRes = "Repetir Senha",
                 value = confirmPassword,
-                error = confirmPasswordState
+                error = confirmPasswordState,
             )
 
             TermsCheckbox(
@@ -186,16 +191,24 @@ fun CreateAccountScreen(
             is CreateAccountResult.Success -> {
                 showApiErrors = false
                 showLoading = false
+                showFieldError = false
                 navigateToLoginScreen()
             }
             is CreateAccountResult.Error -> {
                 apiErrorMessage = createAccountResult.message
                 showApiErrors = true
                 showLoading = false
+                showFieldError = true
+            }
+            is CreateAccountResult.DefaultError -> {
+                apiErrorMessage = R.string.api_unexpected_error
+                showApiErrors = true
+                showLoading = false
             }
             is CreateAccountResult.Loading -> {
                 showLoading = true
                 showApiErrors = false
+                showFieldError = false
             }
             else -> Unit
         }

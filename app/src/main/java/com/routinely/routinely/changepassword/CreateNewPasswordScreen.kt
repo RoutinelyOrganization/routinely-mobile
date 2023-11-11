@@ -42,6 +42,7 @@ fun CreateNewPasswordScreen(
     var confirmPassword by rememberSaveable { mutableStateOf("") }
     var passwordState by rememberSaveable { mutableStateOf<PasswordInputValid>(PasswordInputValid.Empty) }
     var confirmPasswordState by rememberSaveable { mutableStateOf<PasswordInputValid>(PasswordInputValid.Empty) }
+
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -80,7 +81,7 @@ fun CreateNewPasswordScreen(
                 },
                 labelRes = stringResource(id = R.string.password),
                 value = password,
-                error = passwordState
+                error = passwordState,
             )
 
             PasswordTextField(
@@ -90,7 +91,7 @@ fun CreateNewPasswordScreen(
                 },
                 labelRes = "Repetir Senha",
                 value = confirmPassword,
-                error = confirmPasswordState
+                error = confirmPasswordState,
             )
             apiErrorMessage.forEach {
                 LabelError(

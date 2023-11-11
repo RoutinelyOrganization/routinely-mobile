@@ -40,6 +40,7 @@ fun ForgotPasswordScreen(
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var emailState by rememberSaveable { mutableStateOf<EmailInputValid>(EmailInputValid.Empty) }
+
     Column(
         modifier = Modifier
             .padding(16.dp)

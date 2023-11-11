@@ -56,7 +56,7 @@
 
     <!--     API RETURNS     -->
     <string name="api_login_unauthorized">Email e/ou senha inválido</string>
-    <string name="api_unexpected_error">Ocorreu um erro inesperado. Tente novamente mais tarde</string>
+    <string name="api_unexpected_error">Ooops!!! Algo de errado não está certo. Tente novamente mais tarde</string>
     <string name="api_create_account_already_exist_email">Esse email já está sendo utilizado</string>
 
 </resources>

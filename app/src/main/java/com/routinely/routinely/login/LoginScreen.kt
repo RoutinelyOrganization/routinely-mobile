@@ -68,6 +68,7 @@ fun LoginScreen(
     var showLoading by rememberSaveable { mutableStateOf(false) }
     var apiErrorMessage by rememberSaveable { mutableIntStateOf(0) }
     val rememberLoginCheck = rememberSaveable { mutableStateOf(false) }
+    var showFieldError by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -106,20 +107,24 @@ fun LoginScreen(
                 onValueChange = { newEmail ->
                     email = newEmail
                     emailState = emailStateValidation(email)
+                    if(showFieldError) showFieldError = false
                 },
                 labelRes = stringResource(R.string.email),
                 value = email,
                 error = emailState,
+                apiError = showFieldError,
             )
 
             PasswordTextField(
                 onValueChange = { newPass: String ->
                     password = newPass
                     passwordState = passwordStateValidation(password)
+                    if(showFieldError) showFieldError = false
                 },
                 labelRes = stringResource(id = R.string.password),
                 value = password,
                 error = passwordState,
+                apiError = showFieldError,
             )
 
             Row(
@@ -185,6 +190,7 @@ fun LoginScreen(
                 is SignInResult.Success -> {
                     showApiErrors = false
                     showLoading = false
+                    showFieldError = false
                     saveUser(signInResult.token, rememberLoginCheck.value)
                     navigateToHomeScreen()
                 }
@@ -192,10 +198,17 @@ fun LoginScreen(
                     apiErrorMessage = signInResult.message
                     showApiErrors = true
                     showLoading = false
+                    showFieldError = true
+                }
+                is SignInResult.DefaultError -> {
+                    apiErrorMessage = R.string.api_unexpected_error
+                    showApiErrors = true
+                    showLoading = false
                 }
                 is SignInResult.Loading -> {
                     showLoading = true
                     showApiErrors = false
+                    showFieldError = false
                 }
                 else -> Unit
             }

@@ -35,7 +35,7 @@ suspend fun HttpResponse.toSignInResult() : SignInResult {
             SignInResult.Error(R.string.api_login_unauthorized)
         }
         else -> {
-            SignInResult.Error(R.string.api_unexpected_error)
+            SignInResult.DefaultError
         }
     }
 }
@@ -49,7 +49,7 @@ fun HttpResponse.toCreateAccountResult() : CreateAccountResult {
             CreateAccountResult.Error(R.string.api_create_account_already_exist_email)
         }
         else -> {
-            CreateAccountResult.Error(R.string.api_unexpected_error)
+            CreateAccountResult.DefaultError
         }
     }
 }

@@ -92,6 +92,7 @@ fun VerificationCodeScreen(
                             color = Color(0xff171a21), fontSize = 12.sp
                         )
                     ) { append(stringResource(R.string.didnt_receive)) }
+                    append(" ")
                     withStyle(
                         style = SpanStyle(
                             color = Color(0xff171a21),

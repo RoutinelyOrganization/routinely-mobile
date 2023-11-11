@@ -54,7 +54,7 @@ class LoginViewModel(
             try{
                 _signInResult.value = authApi.loginUser(loginRequest)
             } catch (e: Exception) {
-                _signInResult.value = SignInResult.Error(R.string.api_unexpected_error)
+                _signInResult.value = SignInResult.DefaultError
             }
         }
     }
