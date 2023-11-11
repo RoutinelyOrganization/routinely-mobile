@@ -55,7 +55,7 @@ fun CreateNewPasswordScreen(
         ){
             Image(
                 painter = painterResource(R.drawable.logo_vertical),
-                contentDescription = "vertical logotype",
+                contentDescription = stringResource(R.string.desc_vertical_logo),
                 modifier = Modifier
                     .size(168.dp)
                     .align(Alignment.CenterHorizontally)
@@ -89,7 +89,7 @@ fun CreateNewPasswordScreen(
                     confirmPassword = newPassConfirm
                     confirmPasswordState = confirmPasswordStateValidation(password, confirmPassword)
                 },
-                labelRes = "Repetir Senha",
+                labelRes = stringResource(R.string.label_repeat_password),
                 value = confirmPassword,
                 error = confirmPasswordState,
             )

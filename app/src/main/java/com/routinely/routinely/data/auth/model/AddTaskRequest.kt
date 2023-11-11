@@ -1,8 +1,5 @@
 package com.routinely.routinely.data.auth.model
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class AddTaskRequest(
     val name: String,
     val date: String,

@@ -21,10 +21,10 @@ import com.routinely.routinely.ui.components.TopAppBarRoutinely
 import com.routinely.routinely.ui.components.datePickerState
 import com.routinely.routinely.util.ActionItem
 import com.routinely.routinely.util.BottomNavItems
-import com.routinely.routinely.util.Categories
+import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskItems
-import com.routinely.routinely.util.TaskPriority
+import com.routinely.routinely.util.TaskPriorities
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,8 +88,8 @@ private fun taskItemsDumb(
     return listOf(
         TaskItems(
             nameOfTask = "Enviar email cv para Jean",
-            category = Categories.Career,
-            taskPriority = TaskPriority.Urgent,
+            category = TaskCategory.Career,
+            taskPriorities = TaskPriorities.Urgent,
             listOfActions = listOf(
                 ActionItem.Edit(
                     onClick = {
@@ -105,8 +105,8 @@ private fun taskItemsDumb(
         ),
         TaskItems(
             nameOfTask = "Ir ao médico",
-            category = Categories.Health,
-            taskPriority = TaskPriority.Low,
+            category = TaskCategory.Health,
+            taskPriorities = TaskPriorities.Low,
             listOfActions = listOf(
                 ActionItem.Edit(
                     onClick = {
@@ -122,8 +122,8 @@ private fun taskItemsDumb(
         ),
         TaskItems(
             nameOfTask = "Pagar luz",
-            category = Categories.Finances,
-            taskPriority = TaskPriority.High,
+            category = TaskCategory.Finances,
+            taskPriorities = TaskPriorities.High,
             listOfActions = listOf(
                 ActionItem.Edit(
                     onClick = {
@@ -139,8 +139,8 @@ private fun taskItemsDumb(
         ),
         TaskItems(
             nameOfTask = "Estudar Inglês",
-            category = Categories.Studies,
-            taskPriority = TaskPriority.High,
+            category = TaskCategory.Studies,
+            taskPriorities = TaskPriorities.High,
             listOfActions = listOf(
                 ActionItem.Edit(
                     onClick = {
@@ -161,20 +161,20 @@ fun concludedTaskItemsDumb(): List<TaskItems> {
     return listOf(
         TaskItems(
             nameOfTask = "Enviar email cv para Jean",
-            category = Categories.Career,
-            taskPriority = TaskPriority.Urgent,
+            category = TaskCategory.Career,
+            taskPriorities = TaskPriorities.Urgent,
             listOfActions = emptyList()
         ),
         TaskItems(
             nameOfTask = "Ir ao médico",
-            category = Categories.Health,
-            taskPriority = TaskPriority.Low,
+            category = TaskCategory.Health,
+            taskPriorities = TaskPriorities.Low,
             listOfActions = emptyList()
         ),
         TaskItems(
             nameOfTask = "Pagar luz",
-            category = Categories.Finances,
-            taskPriority = TaskPriority.High,
+            category = TaskCategory.Finances,
+            taskPriorities = TaskPriorities.High,
             listOfActions = emptyList()
         )
     )

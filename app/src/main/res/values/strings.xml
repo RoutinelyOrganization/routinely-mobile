@@ -58,5 +58,29 @@
     <string name="api_login_unauthorized">Email e/ou senha inválido</string>
     <string name="api_unexpected_error">Ooops!!! Algo de errado não está certo. Tente novamente mais tarde</string>
     <string name="api_create_account_already_exist_email">Esse email já está sendo utilizado</string>
+    <string name="desc_vertical_logo">Vertical Logo</string>
+    <string name="label_repeat_password">\"Repetir Senha\"</string>
+    <string name="label_verification_code">Código</string>
+    <string name="desc_horizontal_logo">Logo horizontal</string>
+    <string name="title_create_account">Criar conta</string>
+    <string name="title_login">Acessar conta</string>
+    <string name="title_add_task">Adicionar tarefa</string>
+    <string name="label_date_picker">Data</string>
+    <string name="label_time_picker">Hora</string>
+    <string name="label_priority_dropdown">Prioridade</string>
+    <string name="urgent_priority">Urgente</string>
+    <string name="high_priority">Alta</string>
+    <string name="medium_priority">Média</string>
+    <string name="low_priority">Baixa</string>
+    <string name="text_tag_bill">Conta</string>
+    <string name="api_tag_bill">bill</string>
+    <string name="label_category_dropdown">Categorias</string>
+    <string name="label_tag_dropdown">Tags</string>
+    <string name="label_task_description">Descrição</string>
+    <string name="text_tag_candidacy">Candidacy</string>
+    <string name="text_tag_beauty">Beauty</string>
+    <string name="text_tag_literature">Literature</string>
+    <string name="text_tag_exercise">Exercise</string>
+    <string name="title_edit_task">Edit task</string>
 
 </resources>

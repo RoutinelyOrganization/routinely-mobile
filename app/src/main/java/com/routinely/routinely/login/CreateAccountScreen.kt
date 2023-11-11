@@ -43,7 +43,6 @@ import com.routinely.routinely.util.validators.EmailInputValid
 import com.routinely.routinely.util.validators.NameInputValid
 import com.routinely.routinely.util.validators.PasswordInputValid
 import com.routinely.routinely.util.validators.PrivacyPolicyInputValid
-import io.ktor.http.HttpStatusCode
 
 @Composable
 fun CreateAccountScreen(
@@ -83,7 +82,7 @@ fun CreateAccountScreen(
         ){
             Image(
                 painter = painterResource(R.drawable.logo_horizontal),
-                contentDescription = "Image",
+                contentDescription = stringResource(R.string.desc_horizontal_logo),
                 modifier = Modifier
                     .size(224.dp)
                     .align(Alignment.CenterHorizontally)
@@ -96,7 +95,7 @@ fun CreateAccountScreen(
                 .fillMaxWidth(),
         ){
             Text(
-                text = "Criar conta", color = Color.Black, fontSize = 25.sp
+                text = stringResource(R.string.title_create_account), color = Color.Black, fontSize = 25.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
             NameTextField(
@@ -138,7 +137,7 @@ fun CreateAccountScreen(
                     confirmPasswordState = confirmPasswordStateValidation(password, confirmPassword)
                     if(showFieldError) showFieldError = false
                 },
-                labelRes = "Repetir Senha",
+                labelRes = stringResource(R.string.label_repeat_password),
                 value = confirmPassword,
                 error = confirmPasswordState,
             )
@@ -229,7 +228,7 @@ fun CreateAccountScreen(
 fun CreateScreenPreview() {
     RoutinelyTheme {
         CreateAccountScreen(
-            onCreateAccountClicked = { ApiResponse(message = listOf(), HttpStatusCode.OK) },
+            onCreateAccountClicked = { ApiResponse.DefaultError },
             onAlreadyHaveAnAccountClicked = {},
             createAccountResult = CreateAccountResult.Empty,
             navigateToLoginScreen = {},

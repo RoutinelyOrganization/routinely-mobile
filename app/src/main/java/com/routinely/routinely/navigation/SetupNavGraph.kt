@@ -72,7 +72,7 @@ fun SetupNavGraph(
             },
             onHomeButtonPressed = {
                 navController.popBackStack()
-                navController.navigate(Screen.HomeScreen.route)
+//                navController.navigate(Screen.HomeScreen.route)
             },
             navigateToHomeScreen = {
                 navController.popBackStack()
@@ -300,10 +300,8 @@ fun NavGraphBuilder.addTaskScreenRoute(
     navigateToLoginScreen: () -> Unit,
 ) {
     composable(route = Screen.AddTaskScreen.route) {
-        // TODO change this viewmodel for it own viewmodel
         val viewModel: AddTaskViewModel = koinViewModel()
         val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
-        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
@@ -326,15 +324,18 @@ fun NavGraphBuilder.addTaskScreenRoute(
             ),
         )
 
+        val apiResponse by viewModel.apiResponse.collectAsState()
+
         AddTaskScreen(
             onBackButtonPressed = onBackButtonPressed,
             onHomeButtonPressed = onHomeButtonPressed,
             navigateToHomeScreen = navigateToHomeScreen,
             onAddTaskClick = { newTask ->
-                viewModel.verifyAllConditions(newTask)
+                viewModel.addTask(newTask)
+//                viewModel.verifyAllConditions(newTask)
             },
             shouldGoToNextScreen = shouldGoToNextScreen,
-            apiErrorMessage = apiErrorMessage,
+//            apiErrorMessage = apiErrorMessage,
             taskNameStateValidation = { taskName ->
                 viewModel.taskNameState(taskName)
             },
@@ -344,19 +345,20 @@ fun NavGraphBuilder.addTaskScreenRoute(
             taskTimeStateValidation = { taskTime ->
                 viewModel.taskTimeState(taskTime)
             },
-            taskDropdownPriorityStateValidation = { priority ->
-                viewModel.taskPriorityState(priority)
-            },
-            taskDropdownTagsStateValidation = { tag ->
-                viewModel.taskTagState(tag)
-            },
-            taskDropdownCategoryStateValidation = { category ->
-                viewModel.taskCategoryState(category)
-            },
+//            taskDropdownPriorityStateValidation = { priority ->
+//                viewModel.taskPriorityState(priority)
+//            },
+//            taskDropdownTagsStateValidation = { tag ->
+//                viewModel.taskTagState(tag)
+//            },
+//            taskDropdownCategoryStateValidation = { category ->
+//                viewModel.taskCategoryState(category)
+//            },
             taskDescriptionStateValidation = { description ->
                 viewModel.taskDescriptionState(description)
             },
             menuItems = menuItems,
+            addTaskResult = apiResponse,
         )
     }
 }
@@ -404,15 +406,15 @@ fun NavGraphBuilder.editTaskScreenRoute(
             taskTimeStateValidation = { taskTime ->
                 viewModel.taskTimeState(taskTime)
             },
-            taskDropdownPriorityStateValidation = { priority ->
-                viewModel.taskPriorityState(priority)
-            },
-            taskDropdownTagsStateValidation = { tag ->
-                viewModel.taskTagState(tag)
-            },
-            taskDropdownCategoryStateValidation = { category ->
-                viewModel.taskCategoryState(category)
-            },
+//            taskDropdownPriorityStateValidation = { priority ->
+//                viewModel.taskPriorityState(priority)
+//            },
+//            taskDropdownTagsStateValidation = { tag ->
+//                viewModel.taskTagState(tag)
+//            },
+//            taskDropdownCategoryStateValidation = { category ->
+//                viewModel.taskCategoryState(category)
+//            },
             taskDescriptionStateValidation = { description ->
                 viewModel.taskDescriptionState(description)
             },

@@ -33,19 +33,20 @@ import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.DatePickerDiag
 import com.routinely.routinely.ui.components.DescriptionTextField
 import com.routinely.routinely.ui.components.DropdownRoutinely
+import com.routinely.routinely.ui.components.DropdownRoutinelyPriorities
 import com.routinely.routinely.ui.components.RoutinelyTaskButton
 import com.routinely.routinely.ui.components.TaskAlertDialog
 import com.routinely.routinely.ui.components.TaskNameTextField
 import com.routinely.routinely.ui.components.TimePickerDialog
 import com.routinely.routinely.ui.components.TopAppBarRoutinely
-import com.routinely.routinely.ui.theme.HighPriority
-import com.routinely.routinely.ui.theme.LowPriority
-import com.routinely.routinely.ui.theme.MediumPriority
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.ui.theme.RedRoutinely
-import com.routinely.routinely.ui.theme.UrgentPriority
 import com.routinely.routinely.util.BottomNavItems
+import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.MenuItem
+import com.routinely.routinely.util.TaskFields
+import com.routinely.routinely.util.TaskPriorities
+import com.routinely.routinely.util.TaskTag
 import com.routinely.routinely.util.validators.DateTimeInputValid
 import com.routinely.routinely.util.validators.DescriptionInputValid
 import com.routinely.routinely.util.validators.DropdownInputValid
@@ -61,9 +62,9 @@ fun EditTaskScreen(
     taskNameStateValidation: (nameTask: String) -> TaskNameInputValid,
     taskDateStateValidation: (dateTask: String) -> DateTimeInputValid,
     taskTimeStateValidation: (timeTask: String) -> DateTimeInputValid,
-    taskDropdownPriorityStateValidation: (priorityTask: String) -> DropdownInputValid,
-    taskDropdownTagsStateValidation: (tagTask: String) -> DropdownInputValid,
-    taskDropdownCategoryStateValidation: (categoryTask: String) -> DropdownInputValid,
+//    taskDropdownPriorityStateValidation: (priorityTask: String) -> DropdownInputValid,
+//    taskDropdownTagsStateValidation: (tagTask: TaskTag) -> DropdownInputValid,
+//    taskDropdownCategoryStateValidation: (categoryTask: String) -> DropdownInputValid,
     taskDescriptionStateValidation: (descriptionTask: String) -> DescriptionInputValid,
     menuItems: List<MenuItem>,
 ) {
@@ -108,7 +109,7 @@ fun EditTaskScreen(
         },
         content = { innerPadding ->
             val contentPadding = PaddingValues(
-                top = innerPadding.calculateTopPadding() + 32.dp, // Adicione padding na parte superior
+                top = innerPadding.calculateTopPadding() + 32.dp,
                 start = 16.dp,
                 end = 16.dp,
                 bottom = innerPadding.calculateBottomPadding()
@@ -120,10 +121,9 @@ fun EditTaskScreen(
                     .padding(contentPadding)
                     .verticalScroll(rememberScrollState())
             ) {
-                // O conteúdo da tela
                 Text(
                     color = PurpleRoutinely,
-                    text = "Editar tarefa",
+                    text = stringResource(id = R.string.title_edit_task),
                     style = TextStyle(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
@@ -148,7 +148,7 @@ fun EditTaskScreen(
                             taskDate = newTaskDate
                             taskDateState = taskDateStateValidation(taskDate)
                         },
-                        labelRes = "Date",
+                        labelRes = stringResource(id = R.string.label_date_picker),
                         error = taskDateState,
                         modifier = Modifier.weight(1f)
                     )
@@ -157,7 +157,7 @@ fun EditTaskScreen(
                             taskTime = newTaskTime
                             taskTimeState = taskTimeStateValidation(taskTime)
                         },
-                        labelRes = "Hora",
+                        labelRes = stringResource(id = R.string.label_time_picker),
                         error = taskTimeState,
                         modifier = Modifier.weight(1f)
                     )
@@ -166,43 +166,54 @@ fun EditTaskScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
 
-                    DropdownRoutinely(
-                        labelRes = "Prioridade",
-                        onValueChange = { newDropDown: String ->
-                            dropdownPriority = newDropDown
-                            dropdownPriorityState = taskDropdownPriorityStateValidation(dropdownPriority)
-                        },
-                        list = listOf("Urgente", "Alta", "Média", "Baixa"),
-                        optionColors = mapOf(
-                            "Baixa" to LowPriority,
-                            "Média" to MediumPriority,
-                            "Alta" to HighPriority,
-                            "Urgente" to UrgentPriority
-                        )
+                    DropdownRoutinelyPriorities(
+                        labelRes = R.string.label_priority_dropdown,
+                        onValueChange = { },
+                        list = TaskPriorities.getAllTaskPriorities(),
                     )
+//                    DropdownRoutinely(
+//                        labelRes = stringResource(id = R.string.label_priority_dropdown),
+//                        onValueChange = { newDropDown: String ->
+//                            dropdownPriority = newDropDown
+//                            dropdownPriorityState = taskDropdownPriorityStateValidation(dropdownPriority)
+//                        },
+//                        optionsList = TaskPriorities.getAllStringWithColor(),
+//                    )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         DropdownRoutinely(
-                            labelRes = "Categorias",
-                            onValueChange = { newDropDown: String ->
-                                dropdownCategory = newDropDown
-                                dropdownCategoryState = taskDropdownCategoryStateValidation(dropdownCategory)
-                            },
-                            list = listOf("Pessoal", "Estudos", "Finanças", "Carreira", "Saúde"),
-                            modifier = Modifier.weight(1f)
+                            labelRes = R.string.label_category_dropdown,
+                            onValueChange = {},
+                            list = TaskFields.getAllOptions<TaskCategory>(),
+                            modifier = Modifier.weight(1f),
                         )
+//                        DropdownRoutinely(
+//                            labelRes = stringResource(id = R.string.label_category_dropdown),
+//                            onValueChange = { newDropDown: String ->
+//                                dropdownCategory = newDropDown
+//                                dropdownCategoryState = taskDropdownCategoryStateValidation(dropdownCategory)
+//                            },
+//                            list = TaskCategory.allStringIds.map { stringResource(id = it) },
+//                            modifier = Modifier.weight(1f),
+//                        )
                         DropdownRoutinely(
-                            labelRes = "Tags",
-                            onValueChange = { newDropDown: String ->
-                                dropdownTags = newDropDown
-                                dropdownTagsState = taskDropdownTagsStateValidation(dropdownTags)
-                            },
-                            list = listOf("Candidatura", "Conta", "Exercicio", "Beleza", "Literatura"),
-                            modifier = Modifier.weight(1f)
+                            labelRes = R.string.label_tag_dropdown,
+                            onValueChange = {},
+                            list = TaskFields.getAllOptions<TaskTag>(),
+                            modifier = Modifier.weight(1f),
                         )
+//                        DropdownRoutinely(
+//                            labelRes = stringResource(id = R.string.label_tag_dropdown),
+//                            onValueChange = { newDropDown: String ->
+//                                dropdownTags = newDropDown
+////                                dropdownTagsState = taskDropdownTagsStateValidation(dropdownTags)
+//                            },
+//                            list = TaskTag.allStringIds.map { stringResource(id = it) },
+//                            modifier = Modifier.weight(1f),
+//                        )
                     }
                     DescriptionTextField(
                         value = taskDescription,
@@ -210,7 +221,7 @@ fun EditTaskScreen(
                             taskDescription = newTaskDescription
                             taskDescriptionState = taskDescriptionStateValidation(taskDescription)
                         },
-                        labelRes = "Descrição",
+                        labelRes = stringResource(id = R.string.label_task_description),
                         error = taskDescriptionState,
                     )
                     RoutinelyTaskButton(
@@ -287,16 +298,3 @@ fun EditTaskScreen(
         },
     )
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun EditTaskScreenPreview() {
-//    RoutinelyTheme {
-//        EditTaskScreen(
-//            onMenuClicked = { },
-//            onNotificationClicked = { },
-//            onHomeButtonPressed = { },
-//            onBackButtonPressed = { }
-//        )
-//    }
-//}

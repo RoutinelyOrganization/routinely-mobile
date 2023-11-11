@@ -1,4 +1,4 @@
-package com.routinely.routinely.data.auth.api
+package com.routinely.routinely.data.task.api
 
 import com.routinely.routinely.data.auth.model.AddTaskRequest
 import com.routinely.routinely.data.auth.model.ApiResponse

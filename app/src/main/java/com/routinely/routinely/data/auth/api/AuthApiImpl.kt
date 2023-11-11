@@ -4,7 +4,6 @@ import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.HttpRoutes
 import com.routinely.routinely.data.auth.extensions.toCreateAccountResult
 import com.routinely.routinely.data.auth.extensions.toSignInResult
-import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.CreateAccountResult
 import com.routinely.routinely.data.auth.model.LoginRequest
 import com.routinely.routinely.data.auth.model.RegisterRequest
@@ -44,11 +43,6 @@ internal class AuthApiImpl(
         } catch(e: Exception){
             handleSignInErrorResponse(HttpStatusCode(900, e.message ?: "Unknown Exception"))
         }
-    }
-
-    private fun handleErrorResponse(httpStatusCode: HttpStatusCode): ApiResponse {
-        println("Error: ${httpStatusCode.description}")
-        return ApiResponse(listOf("Unknown Exception"), httpStatusCode)
     }
     private fun handleSignInErrorResponse(httpStatusCode: HttpStatusCode): SignInResult {
         println("Error SignIn: ${httpStatusCode.description}")

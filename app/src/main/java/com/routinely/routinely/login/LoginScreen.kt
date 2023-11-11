@@ -82,7 +82,7 @@ fun LoginScreen(
         ) {
             Image(
                 painter = painterResource(R.drawable.logo_horizontal),
-                contentDescription = "Image",
+                contentDescription = stringResource(R.string.desc_horizontal_logo),
                 modifier = Modifier
                     .size(224.dp)
                     .align(Alignment.CenterHorizontally)
@@ -98,7 +98,7 @@ fun LoginScreen(
             LoginHeaderText()
             Spacer(modifier = Modifier.height(42.dp))
             Text(
-                text = "Acessar conta",
+                text = stringResource(R.string.title_login),
                 color = Color.Black,
                 fontSize = 25.sp
             )
@@ -177,15 +177,12 @@ fun LoginScreen(
         }
 
         LaunchedEffect(key1 = authenticated) {
-            Log.d("LoginScreen", "Authenticated value changed")
             if(authenticated) {
-                Log.d("LoginScreen", "Authenticated = true")
                 navigateToHomeScreen()
             }
         }
 
         LaunchedEffect(key1 = signInResult) {
-            Log.d("LoginScreen", "SignIn value changed")
             when(signInResult) {
                 is SignInResult.Success -> {
                     showApiErrors = false
