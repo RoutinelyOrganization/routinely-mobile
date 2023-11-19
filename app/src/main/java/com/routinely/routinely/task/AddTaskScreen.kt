@@ -1,6 +1,7 @@
 package com.routinely.routinely.task
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,10 +32,11 @@ import com.routinely.routinely.data.auth.model.AddTaskRequest
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.ui.components.AddTaskButton
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
-import com.routinely.routinely.ui.components.DatePickerDiag
+import com.routinely.routinely.ui.components.DatePickerDialogRoutinely
 import com.routinely.routinely.ui.components.DescriptionTextField
 import com.routinely.routinely.ui.components.DropdownRoutinely
 import com.routinely.routinely.ui.components.DropdownRoutinelyPriorities
+import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.ui.components.LabelError
 import com.routinely.routinely.ui.components.TaskNameTextField
 import com.routinely.routinely.ui.components.TimePickerDialog
@@ -57,13 +59,9 @@ import com.routinely.routinely.util.validators.TaskNameInputValid
 fun AddTaskScreen(
     onBackButtonPressed: () -> Unit,
     onHomeButtonPressed: () -> Unit,
-    shouldGoToNextScreen: Boolean,
     taskNameStateValidation: (nameTask: String) -> TaskNameInputValid,
     taskDateStateValidation: (dateTask: String) -> DateTimeInputValid,
     taskTimeStateValidation: (timeTask: String) -> DateTimeInputValid,
-//    taskDropdownPriorityStateValidation: (priorityTask: TaskPriorities) -> DropdownInputValid,
-//    taskDropdownTagsStateValidation: (tagTask: TaskTag) -> DropdownInputValid,
-//    taskDropdownCategoryStateValidation: (categoryTask: String) -> DropdownInputValid,
     taskDescriptionStateValidation: (descriptionTask: String) -> DescriptionInputValid,
     navigateToHomeScreen: () -> Unit,
     onAddTaskClick: (AddTaskRequest) -> Unit,
@@ -87,10 +85,10 @@ fun AddTaskScreen(
 
     var apiErrorMessage by rememberSaveable { mutableIntStateOf(0) }
     var showApiErrors by rememberSaveable { mutableStateOf(false) }
-
-
     val bottomBarItems = listOf(BottomNavItems.Home)
     var expanded by remember { mutableStateOf(false) }
+    var showLoading by rememberSaveable { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBarRoutinely(
@@ -143,9 +141,8 @@ fun AddTaskScreen(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    //modifier = Modifier.fillMaxWidth()
                 ) {
-                    DatePickerDiag(
+                    DatePickerDialogRoutinely(
                         onValueChange = { newTaskDate: String ->
                             taskDate = newTaskDate
                             taskDateState = taskDateStateValidation(taskDate)
@@ -175,28 +172,10 @@ fun AddTaskScreen(
                         },
                         list = TaskPriorities.getAllTaskPriorities(),
                     )
-//                    DropdownRoutinely(
-//                        labelRes = stringResource(id = R.string.label_priority_dropdown),
-//                        onValueChange = { newDropDown: String ->
-//                            dropdownPriority = newDropDown
-//                            dropdownPriorityState = taskDropdownPriorityStateValidation(dropdownPriority)
-//                        },
-//                        optionsList = TaskPriorities.getAllStringWithColor()
-//                    )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-//                        DropdownRoutinely(
-//                            labelRes = stringResource(id = R.string.label_category_dropdown),
-//                            onValueChange = { newDropDown: String ->
-//                                dropdownCategory = newDropDown
-//                                dropdownCategoryState =
-//                                    taskDropdownCategoryStateValidation(dropdownCategory)
-//                            },
-//                            list = TaskCategory.allStringIds.map { stringResource(id = it) },
-//                            modifier = Modifier.weight(1f),
-//                            )
                         DropdownRoutinely(
                             labelRes = R.string.label_category_dropdown,
                             onValueChange = { stringId ->
@@ -206,16 +185,6 @@ fun AddTaskScreen(
                             list = TaskFields.getAllOptions<TaskCategory>(),
                             modifier = Modifier.weight(1f),
                         )
-//                        DropdownWithId(
-//                            labelRes = R.string.label_tag_dropdown,
-//                            onValueChange = { stringId: Int ->
-//                                dropdownTags = TaskTag.getTaskTagByStringId(stringId)
-//                                dropdownTagsState = taskDropdownTagsStateValidation(dropdownTags)
-////                                dropdownTagsState = taskDropdownTagsStateValidation(dropdownTags)
-//                            },
-//                            list = TaskTag.entries,
-//                            modifier = Modifier.weight(1f),
-//                        )
                         DropdownRoutinely(
                             labelRes = R.string.label_tag_dropdown,
                             onValueChange = { stringId ->
@@ -265,35 +234,37 @@ fun AddTaskScreen(
             }
         },
     )
-
-//    LaunchedEffect(key1 = shouldGoToNextScreen) {
-//        if(shouldGoToNextScreen) {
-//            delay(3000)
-//            navigateToHomeScreen()
-//        }
-//    }
     LaunchedEffect(key1 = addTaskResult) {
         when(addTaskResult) {
             is ApiResponse.Success -> {
                 showApiErrors = false
-//                showLoading = false
+                showLoading = false
                 navigateToHomeScreen()
             }
             is ApiResponse.Error -> {
                 apiErrorMessage = addTaskResult.message
                 showApiErrors = true
-//                showLoading = false
+                showLoading = false
             }
             is ApiResponse.DefaultError -> {
                 apiErrorMessage = R.string.api_unexpected_error
                 showApiErrors = true
-//                showLoading = false
+                showLoading = false
             }
             is ApiResponse.Loading -> {
-//                showLoading = true
+                showLoading = true
                 showApiErrors = false
             }
             else -> Unit
+        }
+    }
+    if(showLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+
+        ) {
+            IndeterminateCircularIndicator()
         }
     }
 }

@@ -144,12 +144,11 @@ fun CreateAccountScreen(
 
             TermsCheckbox(
                 isChecked = privacy,
-                onCheckedChange = {
-                    privacy = !privacy
-                    privacyState = if(it) PrivacyPolicyInputValid.Error else PrivacyPolicyInputValid.Valid
-                },
-                modifier = Modifier,
-            )
+            ) {
+                privacy = !privacy
+                privacyState =
+                    if (it) PrivacyPolicyInputValid.Error else PrivacyPolicyInputValid.Valid
+            }
             if(showApiErrors) {
                 LabelError(
                     labelRes = stringResource(apiErrorMessage)

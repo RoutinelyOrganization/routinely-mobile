@@ -14,10 +14,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import com.routinely.routinely.R
 import com.routinely.routinely.ui.theme.Gray80
 
 
@@ -53,7 +55,7 @@ fun TimeTextField(
         },
         label = {
             Text(
-                text = "Hora",
+                text = stringResource(id = R.string.hour),
                 style = TextStyle(color = Color.Black)
             )
         },

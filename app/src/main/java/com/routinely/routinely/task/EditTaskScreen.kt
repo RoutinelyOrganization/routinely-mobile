@@ -2,6 +2,7 @@ package com.routinely.routinely.task
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,7 +16,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,11 +32,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
+import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
-import com.routinely.routinely.ui.components.DatePickerDiag
+import com.routinely.routinely.ui.components.DatePickerDialogRoutinely
 import com.routinely.routinely.ui.components.DescriptionTextField
 import com.routinely.routinely.ui.components.DropdownRoutinely
 import com.routinely.routinely.ui.components.DropdownRoutinelyPriorities
+import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.ui.components.RoutinelyTaskButton
 import com.routinely.routinely.ui.components.TaskAlertDialog
 import com.routinely.routinely.ui.components.TaskNameTextField
@@ -52,7 +57,6 @@ import com.routinely.routinely.util.validators.DescriptionInputValid
 import com.routinely.routinely.util.validators.DropdownInputValid
 import com.routinely.routinely.util.validators.TaskNameInputValid
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTaskScreen(
@@ -62,11 +66,9 @@ fun EditTaskScreen(
     taskNameStateValidation: (nameTask: String) -> TaskNameInputValid,
     taskDateStateValidation: (dateTask: String) -> DateTimeInputValid,
     taskTimeStateValidation: (timeTask: String) -> DateTimeInputValid,
-//    taskDropdownPriorityStateValidation: (priorityTask: String) -> DropdownInputValid,
-//    taskDropdownTagsStateValidation: (tagTask: TaskTag) -> DropdownInputValid,
-//    taskDropdownCategoryStateValidation: (categoryTask: String) -> DropdownInputValid,
     taskDescriptionStateValidation: (descriptionTask: String) -> DescriptionInputValid,
     menuItems: List<MenuItem>,
+    editTaskResult: ApiResponse,
 ) {
     val bottomBarItems = listOf(BottomNavItems.Home)
     var showDialog by rememberSaveable { mutableStateOf(false) }
@@ -78,16 +80,19 @@ fun EditTaskScreen(
     var taskDateState by rememberSaveable { mutableStateOf<DateTimeInputValid>(DateTimeInputValid.Empty) }
     var taskTime by rememberSaveable { mutableStateOf("") }
     var taskTimeState by rememberSaveable { mutableStateOf<DateTimeInputValid>(DateTimeInputValid.Empty) }
-    var dropdownPriority by rememberSaveable { mutableStateOf("") }
+    var dropdownPriority by rememberSaveable { mutableStateOf<TaskPriorities?>(null) }
     var dropdownPriorityState by rememberSaveable { mutableStateOf<DropdownInputValid>(DropdownInputValid.Empty) }
-    var dropdownTags by rememberSaveable { mutableStateOf("") }
+    var dropdownTags by rememberSaveable { mutableStateOf<TaskTag?>(null) }
     var dropdownTagsState by rememberSaveable { mutableStateOf<DropdownInputValid>(DropdownInputValid.Empty) }
-    var dropdownCategory by rememberSaveable { mutableStateOf("") }
+    var dropdownCategory by rememberSaveable { mutableStateOf<TaskCategory?>(null) }
     var dropdownCategoryState by rememberSaveable { mutableStateOf<DropdownInputValid>(DropdownInputValid.Empty) }
     var taskDescription by rememberSaveable { mutableStateOf("") }
     var taskDescriptionState by rememberSaveable { mutableStateOf<DescriptionInputValid>(DescriptionInputValid.Empty) }
 
     var expanded by remember { mutableStateOf(false) }
+    var apiErrorMessage by rememberSaveable { mutableIntStateOf(0) }
+    var showApiErrors by rememberSaveable { mutableStateOf(false) }
+    var showLoading by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -143,7 +148,7 @@ fun EditTaskScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    DatePickerDiag(
+                    DatePickerDialogRoutinely(
                         onValueChange = { newTaskDate: String ->
                             taskDate = newTaskDate
                             taskDateState = taskDateStateValidation(taskDate)
@@ -168,17 +173,12 @@ fun EditTaskScreen(
 
                     DropdownRoutinelyPriorities(
                         labelRes = R.string.label_priority_dropdown,
-                        onValueChange = { },
+                        onValueChange = { stringId ->
+                            dropdownPriority = TaskFields.getTaskFieldByStringId<TaskPriorities>(stringId = stringId)
+                            dropdownPriorityState = DropdownInputValid.Valid
+                        },
                         list = TaskPriorities.getAllTaskPriorities(),
                     )
-//                    DropdownRoutinely(
-//                        labelRes = stringResource(id = R.string.label_priority_dropdown),
-//                        onValueChange = { newDropDown: String ->
-//                            dropdownPriority = newDropDown
-//                            dropdownPriorityState = taskDropdownPriorityStateValidation(dropdownPriority)
-//                        },
-//                        optionsList = TaskPriorities.getAllStringWithColor(),
-//                    )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -186,34 +186,22 @@ fun EditTaskScreen(
                     ) {
                         DropdownRoutinely(
                             labelRes = R.string.label_category_dropdown,
-                            onValueChange = {},
+                            onValueChange = { stringId ->
+                                dropdownCategory = TaskFields.getTaskFieldByStringId<TaskCategory>(stringId = stringId)
+                                dropdownCategoryState = DropdownInputValid.Valid
+                            },
                             list = TaskFields.getAllOptions<TaskCategory>(),
                             modifier = Modifier.weight(1f),
                         )
-//                        DropdownRoutinely(
-//                            labelRes = stringResource(id = R.string.label_category_dropdown),
-//                            onValueChange = { newDropDown: String ->
-//                                dropdownCategory = newDropDown
-//                                dropdownCategoryState = taskDropdownCategoryStateValidation(dropdownCategory)
-//                            },
-//                            list = TaskCategory.allStringIds.map { stringResource(id = it) },
-//                            modifier = Modifier.weight(1f),
-//                        )
                         DropdownRoutinely(
                             labelRes = R.string.label_tag_dropdown,
-                            onValueChange = {},
+                            onValueChange = { stringId ->
+                                dropdownTags = TaskFields.getTaskFieldByStringId<TaskTag>(stringId = stringId)
+                                dropdownTagsState = DropdownInputValid.Valid
+                            },
                             list = TaskFields.getAllOptions<TaskTag>(),
                             modifier = Modifier.weight(1f),
                         )
-//                        DropdownRoutinely(
-//                            labelRes = stringResource(id = R.string.label_tag_dropdown),
-//                            onValueChange = { newDropDown: String ->
-//                                dropdownTags = newDropDown
-////                                dropdownTagsState = taskDropdownTagsStateValidation(dropdownTags)
-//                            },
-//                            list = TaskTag.allStringIds.map { stringResource(id = it) },
-//                            modifier = Modifier.weight(1f),
-//                        )
                     }
                     DescriptionTextField(
                         value = taskDescription,
@@ -297,4 +285,38 @@ fun EditTaskScreen(
             }
         },
     )
+    LaunchedEffect(key1 = editTaskResult) {
+        when(editTaskResult) {
+            is ApiResponse.Success -> {
+                showApiErrors = false
+                showLoading = false
+                onHomeButtonPressed()
+            }
+            is ApiResponse.Error -> {
+                apiErrorMessage = editTaskResult.message
+                showApiErrors = true
+                showLoading = false
+            }
+            is ApiResponse.DefaultError -> {
+                apiErrorMessage = R.string.api_unexpected_error
+                showApiErrors = true
+                showLoading = false
+            }
+            is ApiResponse.Loading -> {
+                showLoading = true
+                showApiErrors = false
+            }
+            else -> Unit
+        }
+    }
+
+    if(showLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+
+        ) {
+            IndeterminateCircularIndicator()
+        }
+    }
 }

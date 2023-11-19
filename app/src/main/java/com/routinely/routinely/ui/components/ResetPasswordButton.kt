@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import com.routinely.routinely.R
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 
 @Composable
@@ -24,7 +26,7 @@ fun ResetPasswordButton(
         shape = MaterialTheme.shapes.small,
     ) {
         Text(
-            text = "Redefinir senha", color = Color.White
+            text = stringResource(id = R.string.reset_password), color = Color.White
         )
     }
 }

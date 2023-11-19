@@ -301,7 +301,6 @@ fun NavGraphBuilder.addTaskScreenRoute(
 ) {
     composable(route = Screen.AddTaskScreen.route) {
         val viewModel: AddTaskViewModel = koinViewModel()
-        val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
@@ -332,10 +331,7 @@ fun NavGraphBuilder.addTaskScreenRoute(
             navigateToHomeScreen = navigateToHomeScreen,
             onAddTaskClick = { newTask ->
                 viewModel.addTask(newTask)
-//                viewModel.verifyAllConditions(newTask)
             },
-            shouldGoToNextScreen = shouldGoToNextScreen,
-//            apiErrorMessage = apiErrorMessage,
             taskNameStateValidation = { taskName ->
                 viewModel.taskNameState(taskName)
             },
@@ -345,15 +341,6 @@ fun NavGraphBuilder.addTaskScreenRoute(
             taskTimeStateValidation = { taskTime ->
                 viewModel.taskTimeState(taskTime)
             },
-//            taskDropdownPriorityStateValidation = { priority ->
-//                viewModel.taskPriorityState(priority)
-//            },
-//            taskDropdownTagsStateValidation = { tag ->
-//                viewModel.taskTagState(tag)
-//            },
-//            taskDropdownCategoryStateValidation = { category ->
-//                viewModel.taskCategoryState(category)
-//            },
             taskDescriptionStateValidation = { description ->
                 viewModel.taskDescriptionState(description)
             },
@@ -392,6 +379,7 @@ fun NavGraphBuilder.editTaskScreenRoute(
                 }
             ),
         )
+        val apiResponse by viewModel.apiResponse.collectAsState()
         EditTaskScreen(
             onBackButtonPressed = { onBackButtonPressed() },
             onHomeButtonPressed = { onHomeButtonPressed() },
@@ -406,18 +394,10 @@ fun NavGraphBuilder.editTaskScreenRoute(
             taskTimeStateValidation = { taskTime ->
                 viewModel.taskTimeState(taskTime)
             },
-//            taskDropdownPriorityStateValidation = { priority ->
-//                viewModel.taskPriorityState(priority)
-//            },
-//            taskDropdownTagsStateValidation = { tag ->
-//                viewModel.taskTagState(tag)
-//            },
-//            taskDropdownCategoryStateValidation = { category ->
-//                viewModel.taskCategoryState(category)
-//            },
             taskDescriptionStateValidation = { description ->
                 viewModel.taskDescriptionState(description)
             },
+            editTaskResult = apiResponse,
         )
     }
 }

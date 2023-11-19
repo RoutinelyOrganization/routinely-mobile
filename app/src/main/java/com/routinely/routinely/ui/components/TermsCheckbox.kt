@@ -13,17 +13,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
+import com.routinely.routinely.R
 
 @Composable
 fun TermsCheckbox(
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -41,8 +42,8 @@ fun TermsCheckbox(
                 checkmarkColor = Color.White
             ),
         )
-        Row() {
-            Column() {
+        Row {
+            Column {
                 Text(
                     text = buildAnnotatedString {
                         withStyle(
@@ -51,7 +52,7 @@ fun TermsCheckbox(
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Normal
                             )
-                        ) { append("Declaro que li e concordo com os ") }
+                        ) { append(stringResource(id = R.string.terms_text_0) + " ") }
                     }
                 )
                 Text(
@@ -62,7 +63,7 @@ fun TermsCheckbox(
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Normal
                             )
-                        ) { append("termos de uso e política de privacidade.") }
+                        ) { append(stringResource(id = R.string.terms_text_1)) }
                     },
                     modifier = Modifier
                         .clickable { /* Ação ao clicar no link */ }

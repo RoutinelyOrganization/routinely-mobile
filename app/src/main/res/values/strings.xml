@@ -46,7 +46,7 @@
     <string name="yes">Yes</string>
     <string name="delete_task_confirmation">Are you sure you want to delete the task?</string>
     <string name="no">No</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">Cancela</string>
     <string name="duplicate_task_confirmation">Are you sure you want to duplicate this task?</string>
     <string name="menu_configuration">Configurações</string>
     <string name="menu_goal">Metas</string>
@@ -82,5 +82,29 @@
     <string name="text_tag_literature">Literature</string>
     <string name="text_tag_exercise">Exercise</string>
     <string name="title_edit_task">Edit task</string>
+    <string name="continue_with_email_button">Continuar com e-mail e senha</string>
+    <string name="create_account_button">Criar conta</string>
+    <string name="already_have_account">Já possui uma conta?</string>
+    <string name="login">Entrar</string>
+    <string name="confirm">Confirma</string>
+    <string name="invalid_date_format">Formato inválido!</string>
+    <string name="i_forgot_your_password">Esqueci minha senha</string>
+    <string name="login_with_google">Continuar com o Google</string>
+    <string name="do_login">Fazer login</string>
+    <string name="login_header_text_0">Gerencie</string>
+    <string name="login_header_text_1">suas tarefas,</string>
+    <string name="login_header_text_2">organize</string>
+    <string name="login_header_text_3">sua rotina e</string>
+    <string name="login_header_text_4">aproveite</string>
+    <string name="login_header_text_5">seu tempo com o que desejar.</string>
+    <string name="remember_login">Lembrar meu acesso</string>
+    <string name="sign_up_text">Cadastre-se</string>
+    <string name="terms_text_0">Declaro que li e concordo com os</string>
+    <string name="terms_text_1">termos de uso e política de privacidade.</string>
+    <string name="dialog_close">Fechar</string>
+    <string name="dialog_select">Selecionar</string>
+    <string name="hour">Hora</string>
+    <string name="update_password">Atualizar senha</string>
+    <string name="verification_code_min_error">Quantidade de números máximo, 6!</string>
 
 </resources>

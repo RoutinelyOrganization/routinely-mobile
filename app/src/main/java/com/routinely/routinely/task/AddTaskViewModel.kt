@@ -1,7 +1,6 @@
 package com.routinely.routinely.task
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.routinely.routinely.R
@@ -11,7 +10,6 @@ import com.routinely.routinely.data.core.Session
 import com.routinely.routinely.data.task.api.AddTaskApi
 import com.routinely.routinely.util.validators.DateTimeInputValid
 import com.routinely.routinely.util.validators.DescriptionInputValid
-import com.routinely.routinely.util.validators.DropdownInputValid
 import com.routinely.routinely.util.validators.TaskNameInputValid
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,8 +46,6 @@ class AddTaskViewModel(
         }
     }
 
-    var shouldGoToNextScreen = mutableStateOf(false)
-        private set
     fun taskNameState(taskName: String) : TaskNameInputValid {
         return when {
             taskName.isEmpty() -> {
@@ -82,17 +78,6 @@ class AddTaskViewModel(
             }
             else -> {
                 DateTimeInputValid.Valid
-            }
-        }
-    }
-
-    fun taskCategoryState(category: String) : DropdownInputValid {
-        return when {
-            category.contains("Categorias") -> {
-                DropdownInputValid.Error(R.string.empty_field)
-            }
-            else -> {
-                DropdownInputValid.Valid
             }
         }
     }

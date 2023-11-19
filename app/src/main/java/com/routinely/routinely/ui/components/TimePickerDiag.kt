@@ -28,8 +28,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import com.routinely.routinely.R
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
@@ -85,7 +87,7 @@ fun TimePickerDialog(
                         horizontalArrangement = Arrangement.End
                     ) {
                         TextButton(onClick = { openAlertDialog.value = false }) {
-                            Text(text = "Fechar")
+                            Text(text = stringResource(id = R.string.dialog_close))
                         }
                         TextButton(
                             onClick = {
@@ -95,7 +97,7 @@ fun TimePickerDialog(
                                 onValueChange(timeFormatter(selectedHour.toString(), selectedMinute.toString()))
                             }
                         ) {
-                            Text(text = "Selecionar")
+                            Text(text = stringResource(id = R.string.dialog_select))
                         }
                     }
                 }
@@ -123,7 +125,7 @@ fun TimePickerDialog(
             if (error is DateTimeInputValid.Error) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Formato inválido!",
+                    text = stringResource(id = R.string.invalid_date_format),
                     color = MaterialTheme.colorScheme.error
                 )
             }
@@ -141,15 +143,15 @@ fun TimePickerDialog(
 fun timeFormatter(hourParam: String, minuteParam: String): String {
     var hour = ""
     var minute = ""
-    if (hourParam.length == 1) {
-        hour = "0$hourParam"
+    hour = if (hourParam.length == 1) {
+        "0$hourParam"
     }else {
-        hour = hourParam
+        hourParam
     }
-    if (minuteParam.length == 1) {
-        minute = "0$minuteParam"
+    minute = if (minuteParam.length == 1) {
+        "0$minuteParam"
     }else{
-        minute = minuteParam
+        minuteParam
     }
     return "$hour:$minute"
 }

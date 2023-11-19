@@ -67,6 +67,6 @@ fun DescriptionTextField(
         minLines = 3,
         maxLines = 4,
         modifier = Modifier
-            .fillMaxWidth() //Preencher toda a largura disponível no Row
+            .fillMaxWidth()
     )
 }
