@@ -122,7 +122,7 @@ fun TopAppBarRoutinely(
                             ) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_close),
-                                    contentDescription = "Teste",
+                                    contentDescription = "",
                                     tint = Color.Black
                                 )
                             }

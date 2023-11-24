@@ -5,6 +5,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
+// todo Check if another device language gets mm/dd/yyyy format
 fun Long.toBrazilianDateFormat(
     pattern: String = "dd/MM/yyyy"
 ): String {

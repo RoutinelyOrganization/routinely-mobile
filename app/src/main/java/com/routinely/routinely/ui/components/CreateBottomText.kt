@@ -6,15 +6,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
+import com.routinely.routinely.R
 
 @Composable
 fun CreateBottomText(onLoginClick: () -> Unit) {
-    Row() {
+    Row {
         Text(
             text = buildAnnotatedString {
                 withStyle(
@@ -23,7 +25,7 @@ fun CreateBottomText(onLoginClick: () -> Unit) {
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Normal
                     )
-                ) { append("Já possui uma conta? ") }
+                ) { append(stringResource(id = R.string.already_have_account) + " ") }
             }
         )
         Text(
@@ -34,7 +36,7 @@ fun CreateBottomText(onLoginClick: () -> Unit) {
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
                     )
-                ) { append("Entrar") }
+                ) { append(stringResource(id = R.string.login)) }
             },
             modifier = Modifier.clickable { onLoginClick() }
         )

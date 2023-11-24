@@ -1,6 +1,5 @@
 package com.routinely.routinely.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.routinely.routinely.R
@@ -21,9 +20,6 @@ class LoginViewModel(
 ) : ViewModel() {
     private val _authenticated = MutableStateFlow(false)
     val authenticated = _authenticated.asStateFlow()
-
-    private val _apiErrorMessage = MutableStateFlow(listOf<String>())
-    val apiErrorMessage = _apiErrorMessage.asStateFlow()
 
     private val _signInResult = MutableStateFlow<SignInResult>(SignInResult.Empty)
     val signInResult = _signInResult.asStateFlow()
@@ -57,9 +53,8 @@ class LoginViewModel(
             _signInResult.value = SignInResult.Loading
             try{
                 _signInResult.value = authApi.loginUser(loginRequest)
-                Log.d("LoginViewModel", "loginWithEmailAndPassword: signInResult ${signInResult.value}")
             } catch (e: Exception) {
-                _signInResult.value = SignInResult.Error.stringMessage(e.localizedMessage ?: "Unknown error")
+                _signInResult.value = SignInResult.DefaultError
             }
         }
     }

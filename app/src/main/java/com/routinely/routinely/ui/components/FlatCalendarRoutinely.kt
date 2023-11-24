@@ -127,7 +127,7 @@ fun HeadlineDatePickerRoutinely(
         modifier = Modifier
             .semantics {
                 liveRegion = LiveRegionMode.Polite
-                contentDescription = "teste"
+                contentDescription = ""
             }
             .padding(start = 24.dp, end = 16.dp, top = 16.dp, bottom = 12.dp)
         ,

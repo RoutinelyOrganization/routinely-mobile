@@ -1,8 +1,6 @@
 package com.routinely.routinely.login
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -34,6 +33,7 @@ import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.LoginRequest
 import com.routinely.routinely.data.auth.model.SignInResult
 import com.routinely.routinely.ui.components.ForgotPasswordText
+import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.ui.components.LabelError
 import com.routinely.routinely.ui.components.LoginButton
 import com.routinely.routinely.ui.components.LoginHeaderText
@@ -42,7 +42,6 @@ import com.routinely.routinely.ui.components.PasswordTextField
 import com.routinely.routinely.ui.components.RememberCheckbox
 import com.routinely.routinely.ui.components.SignUpButton
 import com.routinely.routinely.ui.theme.RoutinelyTheme
-import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.util.validators.EmailInputValid
 import com.routinely.routinely.util.validators.PasswordInputValid
 import kotlinx.coroutines.launch
@@ -67,8 +66,9 @@ fun LoginScreen(
     val coroutineScope = rememberCoroutineScope()
     var showApiErrors by rememberSaveable { mutableStateOf(false) }
     var showLoading by rememberSaveable { mutableStateOf(false) }
-    var apiErrorMessage by rememberSaveable { mutableStateOf<List<String>>(listOf()) }
+    var apiErrorMessage by rememberSaveable { mutableIntStateOf(0) }
     val rememberLoginCheck = rememberSaveable { mutableStateOf(false) }
+    var showFieldError by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -82,7 +82,7 @@ fun LoginScreen(
         ) {
             Image(
                 painter = painterResource(R.drawable.logo_horizontal),
-                contentDescription = "Image",
+                contentDescription = stringResource(R.string.desc_horizontal_logo),
                 modifier = Modifier
                     .size(224.dp)
                     .align(Alignment.CenterHorizontally)
@@ -98,7 +98,7 @@ fun LoginScreen(
             LoginHeaderText()
             Spacer(modifier = Modifier.height(42.dp))
             Text(
-                text = "Acessar conta",
+                text = stringResource(R.string.title_login),
                 color = Color.Black,
                 fontSize = 25.sp
             )
@@ -107,20 +107,24 @@ fun LoginScreen(
                 onValueChange = { newEmail ->
                     email = newEmail
                     emailState = emailStateValidation(email)
+                    if(showFieldError) showFieldError = false
                 },
                 labelRes = stringResource(R.string.email),
                 value = email,
                 error = emailState,
+                apiError = showFieldError,
             )
 
             PasswordTextField(
                 onValueChange = { newPass: String ->
                     password = newPass
                     passwordState = passwordStateValidation(password)
+                    if(showFieldError) showFieldError = false
                 },
                 labelRes = stringResource(id = R.string.password),
                 value = password,
                 error = passwordState,
+                apiError = showFieldError,
             )
 
             Row(
@@ -143,9 +147,7 @@ fun LoginScreen(
                 )
             }
             if(showApiErrors) {
-                apiErrorMessage.forEach {
-                    LabelError(it)
-                }
+                LabelError(stringResource(apiErrorMessage))
             }
             Spacer(modifier = Modifier .height(16.dp))
 
@@ -175,19 +177,17 @@ fun LoginScreen(
         }
 
         LaunchedEffect(key1 = authenticated) {
-            Log.d("LoginScreen", "Authenticated value changed")
             if(authenticated) {
-                Log.d("LoginScreen", "Authenticated = true")
                 navigateToHomeScreen()
             }
         }
 
         LaunchedEffect(key1 = signInResult) {
-            Log.d("LoginScreen", "SignIn value changed")
             when(signInResult) {
                 is SignInResult.Success -> {
                     showApiErrors = false
                     showLoading = false
+                    showFieldError = false
                     saveUser(signInResult.token, rememberLoginCheck.value)
                     navigateToHomeScreen()
                 }
@@ -195,10 +195,17 @@ fun LoginScreen(
                     apiErrorMessage = signInResult.message
                     showApiErrors = true
                     showLoading = false
+                    showFieldError = true
+                }
+                is SignInResult.DefaultError -> {
+                    apiErrorMessage = R.string.api_unexpected_error
+                    showApiErrors = true
+                    showLoading = false
                 }
                 is SignInResult.Loading -> {
                     showLoading = true
                     showApiErrors = false
+                    showFieldError = false
                 }
                 else -> Unit
             }
@@ -214,9 +221,6 @@ fun LoginScreen(
             IndeterminateCircularIndicator()
         }
     }
-}
-fun showToast(context: Context, message: String) {
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
 @Preview(showBackground = true)

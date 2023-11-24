@@ -42,6 +42,7 @@ fun CreateNewPasswordScreen(
     var confirmPassword by rememberSaveable { mutableStateOf("") }
     var passwordState by rememberSaveable { mutableStateOf<PasswordInputValid>(PasswordInputValid.Empty) }
     var confirmPasswordState by rememberSaveable { mutableStateOf<PasswordInputValid>(PasswordInputValid.Empty) }
+
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -54,7 +55,7 @@ fun CreateNewPasswordScreen(
         ){
             Image(
                 painter = painterResource(R.drawable.logo_vertical),
-                contentDescription = "vertical logotype",
+                contentDescription = stringResource(R.string.desc_vertical_logo),
                 modifier = Modifier
                     .size(168.dp)
                     .align(Alignment.CenterHorizontally)
@@ -81,7 +82,6 @@ fun CreateNewPasswordScreen(
                 labelRes = stringResource(id = R.string.password),
                 value = password,
                 error = passwordState,
-                passwordMatch = passwordState == PasswordInputValid.Valid
             )
 
             PasswordTextField(
@@ -89,10 +89,9 @@ fun CreateNewPasswordScreen(
                     confirmPassword = newPassConfirm
                     confirmPasswordState = confirmPasswordStateValidation(password, confirmPassword)
                 },
-                labelRes = "Repetir Senha",
+                labelRes = stringResource(R.string.label_repeat_password),
                 value = confirmPassword,
                 error = confirmPasswordState,
-                passwordMatch = confirmPasswordState == PasswordInputValid.Valid
             )
             apiErrorMessage.forEach {
                 LabelError(

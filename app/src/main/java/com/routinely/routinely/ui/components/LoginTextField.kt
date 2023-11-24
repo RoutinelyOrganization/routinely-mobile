@@ -21,6 +21,7 @@ fun LoginTextField(
     labelRes: String,
     value: String,
     error: EmailInputValid,
+    apiError: Boolean = false,
 ) {
     OutlinedTextField(
         value = value,
@@ -33,7 +34,7 @@ fun LoginTextField(
         },
         singleLine = true,
         modifier = Modifier.fillMaxWidth(),
-        isError = error is EmailInputValid.Error,
+        isError = error is EmailInputValid.Error || apiError,
         supportingText = {
             if(error is EmailInputValid.Error) {
                 Text(

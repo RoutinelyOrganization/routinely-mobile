@@ -46,7 +46,7 @@ import com.routinely.routinely.R
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.ui.theme.SecondaryYellowRoutinely
 import com.routinely.routinely.util.ActionItem
-import com.routinely.routinely.util.Categories
+import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.TaskItems
 
 @Composable
@@ -155,8 +155,8 @@ private fun TaskItem(
                     enabled = false,
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = taskItem.taskPriority.icon),
-                        contentDescription = stringResource(id = taskItem.taskPriority.description),
+                        imageVector = ImageVector.vectorResource(id = taskItem.taskPriorities.icon),
+                        contentDescription = stringResource(id = taskItem.taskPriorities.contentDescription),
                         tint = Color.Unspecified,
                     )
                 }
@@ -211,8 +211,8 @@ private fun ConcludedTaskItem(
                     enabled = false,
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = taskItem.taskPriority.icon),
-                        contentDescription = stringResource(id = taskItem.taskPriority.description),
+                        imageVector = ImageVector.vectorResource(id = taskItem.taskPriorities.icon),
+                        contentDescription = stringResource(id = taskItem.taskPriorities.contentDescription),
                         tint = Color.Unspecified,
                     )
                 }
@@ -222,7 +222,7 @@ private fun ConcludedTaskItem(
 }
 
 @Composable
-private fun CategoryItem(category: Categories) {
+private fun CategoryItem(category: TaskCategory) {
     Column(
         modifier = Modifier
             .padding(start = 12.dp, end = 6.dp)
@@ -231,7 +231,7 @@ private fun CategoryItem(category: Categories) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(category.nameId),
+            text = stringResource(category.stringId),
             modifier = Modifier
                 .padding(horizontal = 6.dp, vertical = 8.dp),
             textAlign = TextAlign.Center

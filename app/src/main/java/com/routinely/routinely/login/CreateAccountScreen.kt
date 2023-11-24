@@ -1,8 +1,8 @@
 package com.routinely.routinely.login
 
-import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -27,9 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.auth.model.CreateAccountResult
 import com.routinely.routinely.data.auth.model.RegisterRequest
 import com.routinely.routinely.ui.components.CreateAccountButton
 import com.routinely.routinely.ui.components.CreateBottomText
+import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.ui.components.LabelError
 import com.routinely.routinely.ui.components.LoginTextField
 import com.routinely.routinely.ui.components.NameTextField
@@ -39,25 +42,19 @@ import com.routinely.routinely.ui.theme.RoutinelyTheme
 import com.routinely.routinely.util.validators.EmailInputValid
 import com.routinely.routinely.util.validators.NameInputValid
 import com.routinely.routinely.util.validators.PasswordInputValid
-import io.ktor.http.HttpStatusCode
-import kotlinx.coroutines.delay
+import com.routinely.routinely.util.validators.PrivacyPolicyInputValid
 
 @Composable
 fun CreateAccountScreen(
     onCreateAccountClicked: (RegisterRequest) -> Unit,
     onAlreadyHaveAnAccountClicked: () -> Unit,
-    shouldGoToNextScreen: Boolean,
+    createAccountResult: CreateAccountResult,
     navigateToLoginScreen: () -> Unit,
     nameStateValidation: (name: String) -> NameInputValid,
     emailStateValidation: (email: String) -> EmailInputValid,
     passwordStateValidation: (password: String) -> PasswordInputValid,
     confirmPasswordStateValidation: (password: String, confirmPassword: String) -> PasswordInputValid,
-    intentForPrivacy: Intent,
-    apiErrorMessage: List<String>,
 ) {
-    var passwordHidden by rememberSaveable { mutableStateOf(true) }
-    var confirmPasswordHidden by rememberSaveable { mutableStateOf(true) }
-
     var name by rememberSaveable { mutableStateOf("") }
     var nameState by rememberSaveable { mutableStateOf<NameInputValid>(NameInputValid.Empty) }
     var email by rememberSaveable { mutableStateOf("") }
@@ -67,7 +64,11 @@ fun CreateAccountScreen(
     var confirmPassword by rememberSaveable { mutableStateOf("") }
     var confirmPasswordState by rememberSaveable { mutableStateOf<PasswordInputValid>(PasswordInputValid.Empty) }
     var privacy by rememberSaveable { mutableStateOf(false) }
-    var privacyState by rememberSaveable { mutableStateOf(true) }
+    var privacyState by rememberSaveable { mutableStateOf<PrivacyPolicyInputValid>(PrivacyPolicyInputValid.Empty) }
+    var apiErrorMessage by rememberSaveable { mutableIntStateOf(0) }
+    var showApiErrors by rememberSaveable { mutableStateOf(false) }
+    var showLoading by rememberSaveable { mutableStateOf(false) }
+    var showFieldError by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -81,7 +82,7 @@ fun CreateAccountScreen(
         ){
             Image(
                 painter = painterResource(R.drawable.logo_horizontal),
-                contentDescription = "Image",
+                contentDescription = stringResource(R.string.desc_horizontal_logo),
                 modifier = Modifier
                     .size(224.dp)
                     .align(Alignment.CenterHorizontally)
@@ -94,7 +95,7 @@ fun CreateAccountScreen(
                 .fillMaxWidth(),
         ){
             Text(
-                text = "Criar conta", color = Color.Black, fontSize = 25.sp
+                text = stringResource(R.string.title_create_account), color = Color.Black, fontSize = 25.sp
             )
             Spacer(modifier = Modifier.height(16.dp))
             NameTextField(
@@ -111,45 +112,46 @@ fun CreateAccountScreen(
                 onValueChange = { newEmail ->
                     email = newEmail
                     emailState = emailStateValidation(email)
+                    if(showFieldError) showFieldError = false
                 },
                 labelRes = stringResource(R.string.email),
                 value = email,
                 error = emailState,
+                apiError = showFieldError
             )
 
             PasswordTextField(
                 onValueChange = { newPass: String ->
                     password = newPass
                     passwordState = passwordStateValidation(password)
+                    if(showFieldError) showFieldError = false
                 },
                 labelRes = stringResource(id = R.string.password),
                 value = password,
                 error = passwordState,
-                passwordMatch = passwordState == PasswordInputValid.Valid
             )
 
             PasswordTextField(
                 onValueChange = { newPassConfirm ->
                     confirmPassword = newPassConfirm
                     confirmPasswordState = confirmPasswordStateValidation(password, confirmPassword)
+                    if(showFieldError) showFieldError = false
                 },
-                labelRes = "Repetir Senha",
+                labelRes = stringResource(R.string.label_repeat_password),
                 value = confirmPassword,
                 error = confirmPasswordState,
-                passwordMatch = confirmPasswordState == PasswordInputValid.Valid
             )
 
             TermsCheckbox(
                 isChecked = privacy,
-                onCheckedChange = {
-                    privacy = !privacy
-                    privacyState = privacy
-                },
-                modifier = Modifier,
-            )
-            apiErrorMessage.forEach {
+            ) {
+                privacy = !privacy
+                privacyState =
+                    if (it) PrivacyPolicyInputValid.Error else PrivacyPolicyInputValid.Valid
+            }
+            if(showApiErrors) {
                 LabelError(
-                    labelRes = it
+                    labelRes = stringResource(apiErrorMessage)
                 )
             }
         }
@@ -169,8 +171,11 @@ fun CreateAccountScreen(
                         )
                     )
                 },
-                nameState == NameInputValid.Valid && emailState == EmailInputValid.Valid &&
-                        passwordState == PasswordInputValid.Valid
+                nameState == NameInputValid.Valid
+                        && emailState == EmailInputValid.Valid
+                        && passwordState == PasswordInputValid.Valid
+                        && confirmPasswordState == PasswordInputValid.Valid
+                        && privacyState == PrivacyPolicyInputValid.Valid
             )
 
             CreateBottomText(onLoginClick = {
@@ -178,10 +183,41 @@ fun CreateAccountScreen(
             })
         }
     }
-    LaunchedEffect(key1 = shouldGoToNextScreen) {
-        if(shouldGoToNextScreen) {
-            delay(3000)
-            navigateToLoginScreen()
+
+    LaunchedEffect(key1 = createAccountResult) {
+        when(createAccountResult) {
+            is CreateAccountResult.Success -> {
+                showApiErrors = false
+                showLoading = false
+                showFieldError = false
+                navigateToLoginScreen()
+            }
+            is CreateAccountResult.Error -> {
+                apiErrorMessage = createAccountResult.message
+                showApiErrors = true
+                showLoading = false
+                showFieldError = true
+            }
+            is CreateAccountResult.DefaultError -> {
+                apiErrorMessage = R.string.api_unexpected_error
+                showApiErrors = true
+                showLoading = false
+            }
+            is CreateAccountResult.Loading -> {
+                showLoading = true
+                showApiErrors = false
+                showFieldError = false
+            }
+            else -> Unit
+        }
+    }
+    if(showLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+
+        ) {
+            IndeterminateCircularIndicator()
         }
     }
 }
@@ -191,11 +227,10 @@ fun CreateAccountScreen(
 fun CreateScreenPreview() {
     RoutinelyTheme {
         CreateAccountScreen(
-            onCreateAccountClicked = { ApiResponse(message = listOf(), HttpStatusCode.OK) },
+            onCreateAccountClicked = { ApiResponse.DefaultError },
             onAlreadyHaveAnAccountClicked = {},
-            shouldGoToNextScreen = false,
+            createAccountResult = CreateAccountResult.Empty,
             navigateToLoginScreen = {},
-            intentForPrivacy = Intent(Intent.ACTION_VIEW),
             nameStateValidation = {
                 NameInputValid.Error(R.string.invalid_name)
             },
@@ -205,9 +240,6 @@ fun CreateScreenPreview() {
             passwordStateValidation = {
                 PasswordInputValid.Valid
             },
-            apiErrorMessage = listOf(
-//            "Email inválido", "Senha deve ser maior", "Gênero não existe"
-            ),
             confirmPasswordStateValidation = { password, confirmPassword ->
                 PasswordInputValid.Valid
             },

@@ -40,9 +40,9 @@ fun PasswordTextField(
     labelRes: String,
     value: String,
     error: PasswordInputValid,
-    passwordMatch: Boolean = true
+    apiError: Boolean = false,
 ) {
-    var isPasswordValid by rememberSaveable { mutableStateOf(true) }
+    val isPasswordValid by rememberSaveable { mutableStateOf(true) }
     var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
     OutlinedTextField(
         value = value,
@@ -55,9 +55,9 @@ fun PasswordTextField(
                 style = TextStyle(color = Color.Black)
             )
         },
-        isError = error is PasswordInputValid.ErrorList || error is PasswordInputValid.Error,
+        isError = error is PasswordInputValid.ErrorList || error is PasswordInputValid.Error || apiError,
         supportingText = {
-            Column() {
+            Column {
                 if (error is PasswordInputValid.Error) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),

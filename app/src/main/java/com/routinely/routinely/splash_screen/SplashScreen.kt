@@ -54,7 +54,7 @@ fun SplashScreen(
             ) {
                 Image(
                     imageVector = ImageVector.vectorResource(id = R.drawable.logo_vertical),
-                    contentDescription = "Teste",
+                    contentDescription = stringResource(R.string.desc_vertical_logo),
                     modifier = Modifier
                         .padding(bottom = 32.dp)
                 )

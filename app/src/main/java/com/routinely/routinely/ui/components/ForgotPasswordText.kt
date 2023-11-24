@@ -12,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.routinely.routinely.R
 
 @Composable
 fun ForgotPasswordText(onLoginClick: () -> Unit) {
@@ -21,13 +23,13 @@ fun ForgotPasswordText(onLoginClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.End, // Alinha à direita
+        horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
 
         ) {
         Text(
             fontSize = 12.sp,
-            text = "Esqueci minha senha",
+            text = stringResource(id = R.string.i_forgot_your_password),
             color = Color.Black,
             modifier = Modifier
                 .clickable { onLoginClick() }

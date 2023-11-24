@@ -17,21 +17,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import com.routinely.routinely.R
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.util.validators.DateTimeInputValid
 
-@OptIn(ExperimentalComposeUiApi::class)
 @ExperimentalMaterial3Api
 @Composable
-fun DatePickerDiag(
+fun DatePickerDialogRoutinely(
     onValueChange: (String) -> Unit,
     labelRes: String,
     error: DateTimeInputValid,
@@ -66,7 +66,7 @@ fun DatePickerDiag(
                         },
                         enabled = confirmEnabled
                     ) {
-                        Text(text = "Confirma")
+                        Text(text = stringResource(id = R.string.confirm))
                     }
                 },
                 dismissButton = {
@@ -74,7 +74,7 @@ fun DatePickerDiag(
                         onClick = {
                             showDatePickerDialog = false
                         }) {
-                        Text(text = "Cancela")
+                        Text(text = stringResource(id = R.string.cancel))
                     }
                 },
             ) {
@@ -100,7 +100,7 @@ fun DatePickerDiag(
             if (error is DateTimeInputValid.Error) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Formato inválido!",
+                    text = stringResource(id = R.string.invalid_date_format),
                     color = MaterialTheme.colorScheme.error
                 )
             }

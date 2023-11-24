@@ -1,18 +1,13 @@
 package com.routinely.routinely.navigation
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.routinely.routinely.R
 import com.routinely.routinely.changepassword.CreateNewPasswordScreen
 import com.routinely.routinely.changepassword.CreateNewPasswordViewModel
@@ -77,7 +72,7 @@ fun SetupNavGraph(
             },
             onHomeButtonPressed = {
                 navController.popBackStack()
-                navController.navigate(Screen.HomeScreen.route)
+//                navController.navigate(Screen.HomeScreen.route)
             },
             navigateToHomeScreen = {
                 navController.popBackStack()
@@ -172,16 +167,15 @@ fun NavGraphBuilder.createAccountRoute(
 ) {
     composable(route = Screen.CreateAccount.route) {
         val viewModel: CreateAccountViewModel = koinViewModel()
-        val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
-        val intentForPrivacyPolicy = Intent(Intent.ACTION_VIEW)
-        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
-        intentForPrivacyPolicy.setData(Uri.parse("swap.link.do.pdf"))
+
+        val createAccountResult by viewModel.createAccountResult.collectAsState()
+
         CreateAccountScreen(
             onCreateAccountClicked = { userRegister ->
-                viewModel.verifyAllConditions(userRegister)
+                viewModel.createAccount(userRegister)
             },
-            onAlreadyHaveAnAccountClicked = onAlreadyHaveAnAccountClicked ,
-            shouldGoToNextScreen = shouldGoToNextScreen,
+            onAlreadyHaveAnAccountClicked = onAlreadyHaveAnAccountClicked,
+            createAccountResult = createAccountResult,
             navigateToLoginScreen = navigateToLoginScreen,
             nameStateValidation = {
                 viewModel.nameState(it)
@@ -195,8 +189,6 @@ fun NavGraphBuilder.createAccountRoute(
             passwordStateValidation = {
                 viewModel.passwordState(it)
             },
-            intentForPrivacy = intentForPrivacyPolicy,
-            apiErrorMessage = apiErrorMessage,
         )
     }
 }
@@ -308,10 +300,7 @@ fun NavGraphBuilder.addTaskScreenRoute(
     navigateToLoginScreen: () -> Unit,
 ) {
     composable(route = Screen.AddTaskScreen.route) {
-        // TODO change this viewmodel for it own viewmodel
         val viewModel: AddTaskViewModel = koinViewModel()
-        val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
-        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
@@ -334,15 +323,15 @@ fun NavGraphBuilder.addTaskScreenRoute(
             ),
         )
 
+        val apiResponse by viewModel.apiResponse.collectAsState()
+
         AddTaskScreen(
             onBackButtonPressed = onBackButtonPressed,
             onHomeButtonPressed = onHomeButtonPressed,
             navigateToHomeScreen = navigateToHomeScreen,
             onAddTaskClick = { newTask ->
-                viewModel.verifyAllConditions(newTask)
+                viewModel.addTask(newTask)
             },
-            shouldGoToNextScreen = shouldGoToNextScreen,
-            apiErrorMessage = apiErrorMessage,
             taskNameStateValidation = { taskName ->
                 viewModel.taskNameState(taskName)
             },
@@ -352,19 +341,11 @@ fun NavGraphBuilder.addTaskScreenRoute(
             taskTimeStateValidation = { taskTime ->
                 viewModel.taskTimeState(taskTime)
             },
-            taskDropdownPriorityStateValidation = { priority ->
-                viewModel.taskPriorityState(priority)
-            },
-            taskDropdownTagsStateValidation = { tag ->
-                viewModel.taskTagState(tag)
-            },
-            taskDropdownCategoryStateValidation = { category ->
-                viewModel.taskCategoryState(category)
-            },
             taskDescriptionStateValidation = { description ->
                 viewModel.taskDescriptionState(description)
             },
             menuItems = menuItems,
+            addTaskResult = apiResponse,
         )
     }
 }
@@ -398,6 +379,7 @@ fun NavGraphBuilder.editTaskScreenRoute(
                 }
             ),
         )
+        val apiResponse by viewModel.apiResponse.collectAsState()
         EditTaskScreen(
             onBackButtonPressed = { onBackButtonPressed() },
             onHomeButtonPressed = { onHomeButtonPressed() },
@@ -412,18 +394,10 @@ fun NavGraphBuilder.editTaskScreenRoute(
             taskTimeStateValidation = { taskTime ->
                 viewModel.taskTimeState(taskTime)
             },
-            taskDropdownPriorityStateValidation = { priority ->
-                viewModel.taskPriorityState(priority)
-            },
-            taskDropdownTagsStateValidation = { tag ->
-                viewModel.taskTagState(tag)
-            },
-            taskDropdownCategoryStateValidation = { category ->
-                viewModel.taskCategoryState(category)
-            },
             taskDescriptionStateValidation = { description ->
                 viewModel.taskDescriptionState(description)
             },
+            editTaskResult = apiResponse,
         )
     }
 }

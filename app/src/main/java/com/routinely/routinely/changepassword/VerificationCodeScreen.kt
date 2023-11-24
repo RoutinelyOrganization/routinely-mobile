@@ -55,7 +55,7 @@ fun VerificationCodeScreen(
         ) {
             Image(
                 painter = painterResource(R.drawable.logo_vertical),
-                contentDescription = "Image",
+                contentDescription = stringResource(R.string.desc_vertical_logo),
                 modifier = Modifier
                     .size(168.dp)
                     .align(Alignment.CenterHorizontally)
@@ -82,7 +82,7 @@ fun VerificationCodeScreen(
                     code = newCode
                     codeState = codeStateValidation(code)
                 },
-                labelRes = "Código",
+                labelRes = stringResource(R.string.label_verification_code),
                 error = codeState,
             )
             Text(
@@ -92,6 +92,7 @@ fun VerificationCodeScreen(
                             color = Color(0xff171a21), fontSize = 12.sp
                         )
                     ) { append(stringResource(R.string.didnt_receive)) }
+                    append(" ")
                     withStyle(
                         style = SpanStyle(
                             color = Color(0xff171a21),

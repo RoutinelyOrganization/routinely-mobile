@@ -12,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import com.routinely.routinely.R
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
@@ -42,7 +44,7 @@ fun VerificationCodeTextField(
             if (error is CodeInputValid.Error) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Quantidade de números máximo, 6!",
+                    text = stringResource(id = R.string.verification_code_min_error),
                     color = MaterialTheme.colorScheme.error
                 )
             }

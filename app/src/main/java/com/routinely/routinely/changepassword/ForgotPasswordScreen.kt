@@ -40,6 +40,7 @@ fun ForgotPasswordScreen(
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var emailState by rememberSaveable { mutableStateOf<EmailInputValid>(EmailInputValid.Empty) }
+
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -52,7 +53,7 @@ fun ForgotPasswordScreen(
         ){
             Image(
                 painter = painterResource(R.drawable.logo_vertical),
-                contentDescription = "Image",
+                contentDescription = stringResource(R.string.desc_vertical_logo),
                 modifier = Modifier
                     .size(168.dp)
                     .align(Alignment.CenterHorizontally)

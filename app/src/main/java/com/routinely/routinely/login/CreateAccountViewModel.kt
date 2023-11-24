@@ -1,46 +1,25 @@
 package com.routinely.routinely.login
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.api.AuthApi
-import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.auth.model.CreateAccountResult
 import com.routinely.routinely.data.auth.model.RegisterRequest
 import com.routinely.routinely.ui.components.isPasswordValid
 import com.routinely.routinely.util.validators.EmailInputValid
 import com.routinely.routinely.util.validators.NameInputValid
 import com.routinely.routinely.util.validators.PasswordInputValid
-
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class CreateAccountViewModel(
     private val authApi: AuthApi,
 ) : ViewModel() {
 
-    private val _apiErrorMessage = MutableStateFlow(listOf<String>())
-    val apiErrorMessage = _apiErrorMessage.asStateFlow()
-    private suspend fun createNewAccount(createAccount: RegisterRequest): ApiResponse {
-        return withContext(Dispatchers.IO) {
-            val response: ApiResponse
-
-            val registerRequest = RegisterRequest(
-                name = createAccount.name,
-                email = createAccount.email,
-                password = createAccount.password,
-                acceptedTerms = createAccount.acceptedTerms
-            )
-            response = authApi.registerUser(registerRequest)
-            return@withContext response
-        }
-    }
-
-    var shouldGoToNextScreen = mutableStateOf(false)
-        private set
+    private val _createAccountResult = MutableStateFlow<CreateAccountResult>(CreateAccountResult.Empty)
+    val createAccountResult = _createAccountResult.asStateFlow()
 
     fun passwordState(password: String) : PasswordInputValid {
         if (password.isBlank()) {
@@ -100,13 +79,13 @@ class CreateAccountViewModel(
         }
     }
 
-    fun verifyAllConditions(createAccount: RegisterRequest) {
+    fun createAccount(registerRequest: RegisterRequest) {
         viewModelScope.launch {
-            val response = createNewAccount(createAccount)
-            if(response.serverStatusCode.value < 300) {
-                shouldGoToNextScreen.value = true
-            } else {
-                _apiErrorMessage.value = response.message
+            _createAccountResult.value = CreateAccountResult.Loading
+            try{
+                _createAccountResult.value = authApi.registerUser(registerRequest)
+            } catch (e: Exception) {
+                _createAccountResult.value = CreateAccountResult.Error(R.string.api_unexpected_error)
             }
         }
     }

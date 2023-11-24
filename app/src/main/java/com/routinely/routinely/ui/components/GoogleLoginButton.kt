@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.routinely.routinely.R
@@ -36,10 +37,13 @@ fun GoogleLoginButton() {
         Image(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_google),
             contentDescription = "Vector",
-            modifier = Modifier.padding(end = 22.dp).height(24.dp).width(24.dp)
+            modifier = Modifier
+                .padding(end = 22.dp)
+                .height(24.dp)
+                .width(24.dp)
         )
         Text(
-            text = "Continuar com o Google",
+            text = stringResource(id = R.string.login_with_google),
             color = Color.DarkGray,
         )
     }
