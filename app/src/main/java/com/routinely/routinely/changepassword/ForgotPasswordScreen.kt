@@ -2,6 +2,7 @@ package com.routinely.routinely.changepassword
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -19,27 +21,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
+import com.routinely.routinely.data.auth.model.ForgotPasswordRequest
+import com.routinely.routinely.data.auth.model.ForgotPasswordResult
+import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.ui.components.LabelError
 import com.routinely.routinely.ui.components.LoginTextField
 import com.routinely.routinely.ui.components.ResetPasswordButton
-import com.routinely.routinely.ui.theme.RoutinelyTheme
 import com.routinely.routinely.util.validators.EmailInputValid
-import kotlinx.coroutines.delay
 
 @Composable
 fun ForgotPasswordScreen(
-    navigateToCodeVerificationScreen: () -> Unit,
-    onResetPasswordClicked: (String) -> Unit,
+    navigateToCodeVerificationScreen: (accountId: String) -> Unit,
+    onResetPasswordClicked: (ForgotPasswordRequest) -> Unit,
     emailStateValidation: (email: String) -> EmailInputValid,
-    shouldGoToNextScreen: Boolean,
-    apiErrorMessage: List<String>,
+    forgotPasswordResult: ForgotPasswordResult,
 ) {
     var email by rememberSaveable { mutableStateOf("") }
     var emailState by rememberSaveable { mutableStateOf<EmailInputValid>(EmailInputValid.Empty) }
+    var showApiErrors by rememberSaveable { mutableStateOf(false) }
+    var showFieldError by rememberSaveable { mutableStateOf(false) }
+    var showLoading by rememberSaveable { mutableStateOf(false) }
+    var apiErrorMessage by rememberSaveable { mutableIntStateOf(0) }
+
 
     Column(
         modifier = Modifier
@@ -78,19 +84,19 @@ fun ForgotPasswordScreen(
                 onValueChange = { newEmail ->
                     email = newEmail
                     emailState = emailStateValidation(email)
+                    if(showFieldError) showFieldError = false
                 },
                 labelRes = stringResource(R.string.email),
                 value = email,
                 error = emailState,
+                apiError = showFieldError,
             )
             Text(
                 text = stringResource(R.string.you_will_receive_the_code),
                 fontSize = 12.sp
             )
-            apiErrorMessage.forEach {
-                LabelError(
-                    labelRes = it
-                )
+            if(showApiErrors) {
+                LabelError(stringResource(apiErrorMessage))
             }
         }
         //Espaço no final
@@ -100,33 +106,66 @@ fun ForgotPasswordScreen(
         ) {
             ResetPasswordButton(
                 onResetPasswordClick = {
-                    onResetPasswordClicked(email)
+                    onResetPasswordClicked(ForgotPasswordRequest(email = email))
                 },
                 isEmailValid = emailState == EmailInputValid.Valid,
             )
         }
     }
-    LaunchedEffect(key1 = shouldGoToNextScreen) {
-        if(shouldGoToNextScreen) {
-            delay(2000)
-            navigateToCodeVerificationScreen()
+
+    LaunchedEffect(key1 = forgotPasswordResult) {
+        when(forgotPasswordResult) {
+            is ForgotPasswordResult.Success -> {
+                showApiErrors = false
+                showLoading = false
+                showFieldError = false
+                navigateToCodeVerificationScreen(forgotPasswordResult.accountId)
+            }
+            is ForgotPasswordResult.Error -> {
+                apiErrorMessage = forgotPasswordResult.message
+                showApiErrors = true
+                showLoading = false
+                showFieldError = true
+            }
+            is ForgotPasswordResult.DefaultError -> {
+                apiErrorMessage = R.string.api_unexpected_error
+                showApiErrors = true
+                showLoading = false
+                showFieldError = false
+            }
+            is ForgotPasswordResult.Loading -> {
+                showLoading = true
+                showApiErrors = false
+                showFieldError = false
+            }
+            else -> Unit
+        }
+    }
+
+    if(showLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+
+        ) {
+            IndeterminateCircularIndicator()
         }
     }
 }
-@Preview(showBackground = true)
-@Composable
-fun ForgotPasswordScreenPreview() {
-    RoutinelyTheme {
-        ForgotPasswordScreen(
-            emailStateValidation = {
-                EmailInputValid.Empty
-            },
-            shouldGoToNextScreen = false,
-            navigateToCodeVerificationScreen = {},
-            onResetPasswordClicked = {},
-            apiErrorMessage = listOf(
+//@Preview(showBackground = true)
+//@Composable
+//fun ForgotPasswordScreenPreview() {
+//    RoutinelyTheme {
+//        ForgotPasswordScreen(
+//            emailStateValidation = {
+//                EmailInputValid.Empty
+//            },
+//            shouldGoToNextScreen = false,
+//            navigateToCodeVerificationScreen = {},
+//            onResetPasswordClicked = {},
+//            apiErrorMessage = listOf(
 //            "Email inválido"
-            )
-        )
-    }
-}
+//            )
+//        )
+//    }
+//}

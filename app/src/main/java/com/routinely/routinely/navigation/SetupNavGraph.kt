@@ -15,6 +15,7 @@ import com.routinely.routinely.changepassword.ForgotPasswordScreen
 import com.routinely.routinely.changepassword.ForgotPasswordViewModel
 import com.routinely.routinely.changepassword.VerificationCodeScreen
 import com.routinely.routinely.changepassword.VerificationCodeViewModel
+import com.routinely.routinely.data.auth.model.ForgotPasswordRequest
 import com.routinely.routinely.home.HomeScreen
 import com.routinely.routinely.home.HomeViewModel
 import com.routinely.routinely.login.CreateAccountScreen
@@ -216,22 +217,21 @@ fun NavGraphBuilder.newPasswordRoute(
     }
 }
 fun NavGraphBuilder.forgotPasswordRoute(
-    navigateToCodeVerificationScreen: () -> Unit,
+    navigateToCodeVerificationScreen: (accountId: String) -> Unit,
 ) {
     composable(route = Screen.ForgotPasswordScreen.route) {
         val viewModel: ForgotPasswordViewModel = koinViewModel()
-        val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
-        val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
+        val forgotPasswordResult by viewModel.forgotPasswordResult.collectAsState()
+
         ForgotPasswordScreen(
             navigateToCodeVerificationScreen = navigateToCodeVerificationScreen,
-            onResetPasswordClicked = { email :String ->
-                viewModel.verifyAllConditions(email)
+            onResetPasswordClicked = { forgotPasswordRequest: ForgotPasswordRequest ->
+                viewModel.sendEmail(forgotPasswordRequest)
             },
             emailStateValidation = {
                 viewModel.emailState(it)
             },
-            shouldGoToNextScreen = shouldGoToNextScreen,
-            apiErrorMessage = apiErrorMessage
+            forgotPasswordResult = forgotPasswordResult
         )
     }
 }

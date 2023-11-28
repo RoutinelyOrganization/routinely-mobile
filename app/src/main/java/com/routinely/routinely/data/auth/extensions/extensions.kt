@@ -2,6 +2,8 @@ package com.routinely.routinely.data.auth.extensions
 
 import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.CreateAccountResult
+import com.routinely.routinely.data.auth.model.ForgotPasswordResponse
+import com.routinely.routinely.data.auth.model.ForgotPasswordResult
 import com.routinely.routinely.data.auth.model.LoginResponse
 import com.routinely.routinely.data.auth.model.SignInResult
 import io.ktor.client.call.body
@@ -40,6 +42,21 @@ fun HttpResponse.toCreateAccountResult() : CreateAccountResult {
         }
         else -> {
             CreateAccountResult.DefaultError
+        }
+    }
+}
+
+suspend fun HttpResponse.toForgotPasswordResult() : ForgotPasswordResult {
+    return when(this.status) {
+        HttpStatusCode.Created -> {
+            val response = this.body<ForgotPasswordResponse>()
+            ForgotPasswordResult.Success(response.accountId)
+        }
+        HttpStatusCode.NotFound -> {
+            ForgotPasswordResult.Error(R.string.api_forgot_password_account_not_found)
+        }
+        else -> {
+            ForgotPasswordResult.DefaultError
         }
     }
 }
