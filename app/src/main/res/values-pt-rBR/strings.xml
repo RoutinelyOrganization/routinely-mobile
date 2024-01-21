@@ -37,6 +37,8 @@
     <string name="didnt_receive">Não recebeu?</string>
     <string name="send_again">Enviar novamente</string>
     <string name="password">Senha</string>
+    <string name="show_password_text">EXIBIR</string>
+    <string name="hide_password_text">ESCONDER</string>
     <string name="login_invalid_password">Senha inválida</string>
     <string name="save_changes">Salvar mudanças</string>
     <string name="delete_task">Deletar tarefa</string>

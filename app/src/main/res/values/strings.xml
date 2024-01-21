@@ -39,6 +39,8 @@
     <string name="didnt_receive">Didn\'t receive?</string>
     <string name="send_again">Send again</string>
     <string name="password">Password</string>
+    <string name="show_password_text">SHOW</string>
+    <string name="hide_password_text">HIDE</string>
     <string name="login_invalid_password">Invalid Password</string>
     <string name="save_changes">Save Changes</string>
     <string name="delete_task">Delete Task</string>

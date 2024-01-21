@@ -29,6 +29,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.routinely.routinely.R
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
@@ -77,7 +78,7 @@ fun PasswordTextField(
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 0.dp)
                 ) {
                     Text(
-                        text = if (isPasswordVisible) "ESCONDER" else "EXIBIR",
+                        text = if (isPasswordVisible) stringResource(id = R.string.hide_password_text) else stringResource(id = R.string.show_password_text),
                         color = Color.Black,
                         fontSize = 12.sp,
                         textAlign = TextAlign.Center
