@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import java.time.Instant
+import java.time.LocalDate
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
@@ -92,16 +93,12 @@ fun DatePickerRoutinely(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun datePickerState(): DatePickerState {
-    val initialDate: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    val initialDate: Long =
         Instant.now().toEpochMilli()
-    } else {
-        val calendar = Calendar.getInstance(TimeZone.getDefault())
-        calendar.timeInMillis
-    }
 
     return rememberDatePickerState(
         initialDisplayMode = DisplayMode.Picker,
-        yearRange = IntRange(2013, 2023), // TODO Add this automatically
+        yearRange = LocalDate.now().year - 10 .. LocalDate.now().year,
         initialSelectedDateMillis = initialDate
     )
 }

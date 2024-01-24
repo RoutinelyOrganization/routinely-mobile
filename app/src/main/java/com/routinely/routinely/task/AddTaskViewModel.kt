@@ -32,8 +32,7 @@ class AddTaskViewModel(
             accountId = getTokenSession(),
             priority = newTask.priority,
             category = newTask.category,
-            // TODO CHANGE AFTER BACKEND FIX THIS
-            tag = newTask.category,
+            tag = newTask.tag,
         )
 
         viewModelScope.launch {

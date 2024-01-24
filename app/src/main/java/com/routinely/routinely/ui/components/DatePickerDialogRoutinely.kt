@@ -28,6 +28,7 @@ import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.util.validators.DateTimeInputValid
+import java.time.LocalDate
 
 @ExperimentalMaterial3Api
 @Composable
@@ -40,7 +41,9 @@ fun DatePickerDialogRoutinely(
     var showDatePickerDialog by remember {
         mutableStateOf(false)
     }
-    val datePickerState = rememberDatePickerState(yearRange = 2013..2023)
+    val datePickerState = rememberDatePickerState(
+        yearRange = LocalDate.now().year - 1 .. LocalDate.now().year + 1
+    )
     var selectedDate by remember {
         mutableStateOf("")
     }

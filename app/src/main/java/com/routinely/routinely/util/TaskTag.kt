@@ -6,9 +6,9 @@ import kotlinx.parcelize.Parcelize
 
 sealed class TaskTag(stringId: Int, apiString: String) : TaskFields(stringId, apiString) {
     @Parcelize
-    data object Candidacy : TaskTag(R.string.text_tag_candidacy, "candidacy")
+    data object Candidacy : TaskTag(R.string.text_tag_candidacy, "application")
     @Parcelize
-    data object Bill : TaskTag(R.string.text_tag_bill, "bill")
+    data object Bill : TaskTag(R.string.text_tag_bill, "account")
     @Parcelize
     data object Exercise : TaskTag(R.string.text_tag_exercise, "exercise")
     @Parcelize

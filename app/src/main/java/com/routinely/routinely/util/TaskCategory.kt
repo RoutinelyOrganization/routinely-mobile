@@ -7,6 +7,8 @@ sealed class TaskCategory(stringId: Int, apiString: String) : TaskFields(stringI
     @Parcelize
     data object Career : TaskCategory(R.string.category_career_text, "career")
     @Parcelize
+    data object Personal : TaskCategory(R.string.category_personal_text, "personal")
+    @Parcelize
     data object Health : TaskCategory(R.string.category_health_text, "health")
     @Parcelize
     data object Finances : TaskCategory(R.string.category_finances_text, "finance")

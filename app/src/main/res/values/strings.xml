@@ -108,4 +108,5 @@
     <string name="hour">Hour</string>
     <string name="update_password">Update Password</string>
     <string name="verification_code_min_error">Maximum number of digits, 6!</string>
+    <string name="category_personal_text">Personal</string>
 </resources>
