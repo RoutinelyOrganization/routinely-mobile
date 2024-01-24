@@ -232,6 +232,7 @@ private fun CategoryItem(category: TaskCategory) {
     ) {
         Text(
             text = stringResource(category.stringId),
+            fontSize = 12.sp,
             modifier = Modifier
                 .padding(horizontal = 6.dp, vertical = 8.dp),
             textAlign = TextAlign.Center

@@ -8,6 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,12 +20,12 @@ import com.routinely.routinely.ui.components.DatePickerRoutinely
 import com.routinely.routinely.ui.components.TasksViewerRoutinely
 import com.routinely.routinely.ui.components.TopAppBarRoutinely
 import com.routinely.routinely.ui.components.datePickerState
-import com.routinely.routinely.util.ActionItem
 import com.routinely.routinely.util.BottomNavItems
-import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.MenuItem
+import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.TaskItems
 import com.routinely.routinely.util.TaskPriorities
+import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,14 +34,17 @@ fun HomeScreen(
     onNewTaskClicked: () -> Unit,
     onEditTaskClicked: () -> Unit,
     menuItems: List<MenuItem>,
+    tasksList: List<TaskItems>,
+    onSelectDayChange: (Int, Int) -> Unit
 ) {
     val bottomBarItems = listOf(BottomNavItems.NewTask)
     val datePickerState = datePickerState()
 
-    val listOfTasks = taskItemsDumb(onEditTaskClicked)
     val listOfConcludedTasks = concludedTaskItemsDumb()
 
     var expanded by remember { mutableStateOf(false) }
+
+
 
     Scaffold(
         topBar = {
@@ -71,91 +75,31 @@ fun HomeScreen(
                  * To use de date of date picker use this
                  * val dateSelected = Date(datePickerState.selectedDateMillis!!)
                  */
-                DatePickerRoutinely(datePickerState)
+                DatePickerRoutinely(
+                    datePickerState,
+                )
 
                 TasksViewerRoutinely(
-                    listOfTaskItems = listOfTasks,
+                    listOfTaskItems = tasksList,
                     listOfConcludedTaskItems = listOfConcludedTasks
                 )
             }
-        })
-}
-
-@Composable
-private fun taskItemsDumb(
-    onEditTaskClicked: () -> Unit,
-): List<TaskItems> {
-    return listOf(
-        TaskItems(
-            nameOfTask = "Enviar email cv para Jean",
-            category = TaskCategory.Career,
-            taskPriorities = TaskPriorities.Urgent,
-            listOfActions = listOf(
-                ActionItem.Edit(
-                    onClick = {
-                        onEditTaskClicked()
-                    }
-                ),
-                ActionItem.Exclude(
-                    onClick = {
-
-                    }
-                )
-            )
-        ),
-        TaskItems(
-            nameOfTask = "Ir ao médico",
-            category = TaskCategory.Health,
-            taskPriorities = TaskPriorities.Low,
-            listOfActions = listOf(
-                ActionItem.Edit(
-                    onClick = {
-                        onEditTaskClicked()
-                    }
-                ),
-                ActionItem.Exclude(
-                    onClick = {
-
-                    }
-                )
-            )
-        ),
-        TaskItems(
-            nameOfTask = "Pagar luz",
-            category = TaskCategory.Finances,
-            taskPriorities = TaskPriorities.High,
-            listOfActions = listOf(
-                ActionItem.Edit(
-                    onClick = {
-                        onEditTaskClicked()
-                    }
-                ),
-                ActionItem.Exclude(
-                    onClick = {
-
-                    }
-                )
-            )
-        ),
-        TaskItems(
-            nameOfTask = "Estudar Inglês",
-            category = TaskCategory.Studies,
-            taskPriorities = TaskPriorities.High,
-            listOfActions = listOf(
-                ActionItem.Edit(
-                    onClick = {
-                        onEditTaskClicked()
-                    }
-                ),
-                ActionItem.Exclude(
-                    onClick = {
-
-                    }
-                )
-            )
-        )
+        }
     )
+
+    LaunchedEffect(key1 = datePickerState.selectedDateMillis) {
+        if(datePickerState.selectedDateMillis == null) return@LaunchedEffect
+
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = datePickerState.selectedDateMillis!!
+
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH) + 1
+
+        onSelectDayChange(month, year)
+    }
 }
+
 
 fun concludedTaskItemsDumb(): List<TaskItems> {
     return listOf(
@@ -187,6 +131,8 @@ fun HomeScreenPreview() {
         onNotificationClicked = { },
         onNewTaskClicked = { },
         onEditTaskClicked = { },
-        menuItems = listOf()
+        menuItems = listOf(),
+        tasksList = listOf(),
+        onSelectDayChange = { _, _ -> }
     )
 }

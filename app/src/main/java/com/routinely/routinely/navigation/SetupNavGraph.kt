@@ -284,11 +284,17 @@ fun NavGraphBuilder.homeScreenRoute(
             ),
         )
 
+        val tasksList by viewModel.tasksList.collectAsState(initial = emptyList())
+
         HomeScreen(
             onNotificationClicked = { onNotificationClicked() },
             onNewTaskClicked = { onNewTaskClicked() },
             onEditTaskClicked = { onEditTaskClicked() },
-            menuItems = menuItems
+            menuItems = menuItems,
+            tasksList = tasksList,
+            onSelectDayChange = { month, year ->
+                viewModel.getUserTasks(month, year)
+            }
         )
     }
 }

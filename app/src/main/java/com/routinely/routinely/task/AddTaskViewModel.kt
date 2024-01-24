@@ -7,7 +7,7 @@ import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.AddTaskRequest
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.core.Session
-import com.routinely.routinely.data.task.api.AddTaskApi
+import com.routinely.routinely.data.task.api.TaskApi
 import com.routinely.routinely.util.validators.DateTimeInputValid
 import com.routinely.routinely.util.validators.DescriptionInputValid
 import com.routinely.routinely.util.validators.TaskNameInputValid
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AddTaskViewModel(
-    private val addTaskApi: AddTaskApi,
+    private val taskApi: TaskApi,
     private val session: Session,
 ) : ViewModel() {
 
@@ -38,7 +38,7 @@ class AddTaskViewModel(
         viewModelScope.launch {
             _apiResponse.value = ApiResponse.Loading
             try {
-                _apiResponse.value = addTaskApi.addTask(newTaskData)
+                _apiResponse.value = taskApi.addTask(newTaskData)
             } catch(e: Exception) {
                 _apiResponse.value = ApiResponse.DefaultError
             }
