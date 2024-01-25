@@ -23,7 +23,7 @@ import com.routinely.routinely.ui.components.datePickerState
 import com.routinely.routinely.util.BottomNavItems
 import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskCategory
-import com.routinely.routinely.util.TaskItems
+import com.routinely.routinely.util.TaskItem
 import com.routinely.routinely.util.TaskPriorities
 import java.util.Calendar
 
@@ -32,15 +32,16 @@ import java.util.Calendar
 fun HomeScreen(
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
-    onEditTaskClicked: () -> Unit,
+    onEditTaskClicked: (taskItem: TaskItem) -> Unit,
+    onDeleteTaskClicked: (taskItem: TaskItem) -> Unit,
     menuItems: List<MenuItem>,
-    tasksList: List<TaskItems>,
-    onSelectDayChange: (Int, Int) -> Unit
+    tasksList: List<TaskItem>,
+    onSelectDayChange: (Int, Int) -> Unit,
 ) {
     val bottomBarItems = listOf(BottomNavItems.NewTask)
     val datePickerState = datePickerState()
 
-    val listOfConcludedTasks = concludedTaskItemsDumb()
+//    val listOfConcludedTasks = concludedTaskItemsDumb()
 
     var expanded by remember { mutableStateOf(false) }
 
@@ -81,14 +82,16 @@ fun HomeScreen(
 
                 TasksViewerRoutinely(
                     listOfTaskItems = tasksList,
-                    listOfConcludedTaskItems = listOfConcludedTasks
+                    listOfConcludedTaskItems = emptyList(),
+                    onEditButtonClicked = onEditTaskClicked,
+                    onDeleteButtonClicked = onDeleteTaskClicked,
                 )
             }
         }
     )
 
     LaunchedEffect(key1 = datePickerState.selectedDateMillis) {
-        if(datePickerState.selectedDateMillis == null) return@LaunchedEffect
+        if (datePickerState.selectedDateMillis == null) return@LaunchedEffect
 
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = datePickerState.selectedDateMillis!!
@@ -101,28 +104,28 @@ fun HomeScreen(
 }
 
 
-fun concludedTaskItemsDumb(): List<TaskItems> {
-    return listOf(
-        TaskItems(
-            nameOfTask = "Enviar email cv para Jean",
-            category = TaskCategory.Career,
-            taskPriorities = TaskPriorities.Urgent,
-            listOfActions = emptyList()
-        ),
-        TaskItems(
-            nameOfTask = "Ir ao médico",
-            category = TaskCategory.Health,
-            taskPriorities = TaskPriorities.Low,
-            listOfActions = emptyList()
-        ),
-        TaskItems(
-            nameOfTask = "Pagar luz",
-            category = TaskCategory.Finances,
-            taskPriorities = TaskPriorities.High,
-            listOfActions = emptyList()
-        )
-    )
-}
+//fun concludedTaskItemsDumb(): List<TaskItem> {
+//    return listOf(
+//        TaskItem(
+//            nameOfTask = "Enviar email cv para Jean",
+//            category = TaskCategory.Career,
+//            priority = TaskPriorities.Urgent,
+//            listOfActions = emptyList()
+//        ),
+//        TaskItem(
+//            nameOfTask = "Ir ao médico",
+//            category = TaskCategory.Health,
+//            priority = TaskPriorities.Low,
+//            listOfActions = emptyList()
+//        ),
+//        TaskItem(
+//            nameOfTask = "Pagar luz",
+//            category = TaskCategory.Finances,
+//            priority = TaskPriorities.High,
+//            listOfActions = emptyList()
+//        )
+//    )
+//}
 
 @Preview(showBackground = true)
 @Composable
@@ -131,6 +134,7 @@ fun HomeScreenPreview() {
         onNotificationClicked = { },
         onNewTaskClicked = { },
         onEditTaskClicked = { },
+        onDeleteTaskClicked = { },
         menuItems = listOf(),
         tasksList = listOf(),
         onSelectDayChange = { _, _ -> }

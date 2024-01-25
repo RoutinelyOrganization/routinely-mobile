@@ -57,9 +57,6 @@ fun SetupNavGraph(
             onNewTaskClicked = {
                 navController.navigate(Screen.AddTaskScreen.route)
             },
-            onEditTaskClicked = {
-                navController.navigate(Screen.EditTaskScreen.route)
-            },
             navigateToLoginScreen = {
                 navController.navigate(Screen.Login.route) {
                     popUpTo(0)
@@ -155,12 +152,13 @@ fun NavGraphBuilder.loginRoute(
                 viewModel.passwordState(it)
             },
             signInResult = signInResult,
-            saveUser =  { token, remember ->
+            saveUser = { token, remember ->
                 viewModel.saveUser(token, remember)
             }
         )
     }
 }
+
 fun NavGraphBuilder.createAccountRoute(
     navigateToLoginScreen: () -> Unit,
     onAlreadyHaveAnAccountClicked: () -> Unit,
@@ -192,6 +190,7 @@ fun NavGraphBuilder.createAccountRoute(
         )
     }
 }
+
 fun NavGraphBuilder.newPasswordRoute(
     navigateToLoginScreen: () -> Unit
 ) {
@@ -200,7 +199,7 @@ fun NavGraphBuilder.newPasswordRoute(
         val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
         val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
         CreateNewPasswordScreen(
-            onUpdatePasswordClicked = { password :String, confirmPassword :String ->
+            onUpdatePasswordClicked = { password: String, confirmPassword: String ->
                 viewModel.verifyAllConditions(password, confirmPassword)
             },
             passwordStateValidation = {
@@ -215,6 +214,7 @@ fun NavGraphBuilder.newPasswordRoute(
         )
     }
 }
+
 fun NavGraphBuilder.forgotPasswordRoute(
     navigateToCodeVerificationScreen: () -> Unit,
 ) {
@@ -224,7 +224,7 @@ fun NavGraphBuilder.forgotPasswordRoute(
         val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
         ForgotPasswordScreen(
             navigateToCodeVerificationScreen = navigateToCodeVerificationScreen,
-            onResetPasswordClicked = { email :String ->
+            onResetPasswordClicked = { email: String ->
                 viewModel.verifyAllConditions(email)
             },
             emailStateValidation = {
@@ -235,6 +235,7 @@ fun NavGraphBuilder.forgotPasswordRoute(
         )
     }
 }
+
 fun NavGraphBuilder.verificationCodeRoute(
     navigateToSetNewPasswordScreen: () -> Unit
 ) {
@@ -242,10 +243,10 @@ fun NavGraphBuilder.verificationCodeRoute(
         val viewModel: VerificationCodeViewModel = koinViewModel()
         val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
         VerificationCodeScreen(
-            onConfirmResetPasswordClicked = { code :String ->
+            onConfirmResetPasswordClicked = { code: String ->
                 viewModel.verifyAllConditions(code)
             },
-            codeStateValidation = { code :String ->
+            codeStateValidation = { code: String ->
                 viewModel.codeState(code)
             },
             navigateToSetNewPasswordScreen = navigateToSetNewPasswordScreen,
@@ -257,7 +258,6 @@ fun NavGraphBuilder.verificationCodeRoute(
 fun NavGraphBuilder.homeScreenRoute(
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
-    onEditTaskClicked: () -> Unit,
     navigateToLoginScreen: () -> Unit,
 ) {
     composable(route = Screen.HomeScreen.route) {
@@ -289,7 +289,10 @@ fun NavGraphBuilder.homeScreenRoute(
         HomeScreen(
             onNotificationClicked = { onNotificationClicked() },
             onNewTaskClicked = { onNewTaskClicked() },
-            onEditTaskClicked = { onEditTaskClicked() },
+            onEditTaskClicked = { },
+            onDeleteTaskClicked = {
+                viewModel.excludeTask(it)
+            },
             menuItems = menuItems,
             tasksList = tasksList,
             onSelectDayChange = { month, year ->

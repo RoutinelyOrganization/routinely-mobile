@@ -45,14 +45,15 @@ import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.ui.theme.SecondaryYellowRoutinely
-import com.routinely.routinely.util.ActionItem
 import com.routinely.routinely.util.TaskCategory
-import com.routinely.routinely.util.TaskItems
+import com.routinely.routinely.util.TaskItem
 
 @Composable
 fun TasksViewerRoutinely(
-    listOfTaskItems: List<TaskItems>,
-    listOfConcludedTaskItems: List<TaskItems>
+    listOfTaskItems: List<TaskItem>,
+    listOfConcludedTaskItems: List<TaskItem>,
+    onEditButtonClicked: (taskItem: TaskItem) -> Unit,
+    onDeleteButtonClicked: (taskItem: TaskItem) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -76,16 +77,17 @@ fun TasksViewerRoutinely(
             Modifier
                 .fillMaxWidth(),
         ) {
-            for(item in listOfTaskItems) {
-                TaskItem(item)
+            for (item in listOfTaskItems) {
+                TaskItem(item, onEditButtonClicked, onDeleteButtonClicked)
             }
         }
 
 
-        Spacer(modifier = Modifier
-            .border(1.dp, PurpleRoutinely)
-            .fillMaxWidth()
-            .height(1.dp)
+        Spacer(
+            modifier = Modifier
+                .border(1.dp, PurpleRoutinely)
+                .fillMaxWidth()
+                .height(1.dp)
         )
 
         Text(
@@ -101,21 +103,18 @@ fun TasksViewerRoutinely(
                 .fillMaxWidth()
                 .padding(bottom = 12.dp),
         ) {
-            for(item in listOfConcludedTaskItems) {
+            for (item in listOfConcludedTaskItems) {
                 ConcludedTaskItem(item)
             }
         }
     }
 }
 
-
-/**
- * If someone tries to fix the focus and I can't update the counter below with how many more hours you spent here
- * Counter: 3 hours
- */
 @Composable
 private fun TaskItem(
-    taskItem: TaskItems
+    taskItem: TaskItem,
+    onEditButtonClicked: (taskItem: TaskItem) -> Unit,
+    onDeleteButtonClicked: (taskItem: TaskItem) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -141,9 +140,9 @@ private fun TaskItem(
         ) {
         CheckButtonTasks(checkedState, focusManager, focusRequester)
 
-        TextWithMarquee(taskItem.nameOfTask, focusRequester)
+        TextWithMarquee(taskItem.name, focusRequester)
 
-        Row{
+        Row {
             CategoryItem(taskItem.category)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -155,13 +154,20 @@ private fun TaskItem(
                     enabled = false,
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = taskItem.taskPriorities.icon),
-                        contentDescription = stringResource(id = taskItem.taskPriorities.contentDescription),
+                        imageVector = ImageVector.vectorResource(id = taskItem.priority.icon),
+                        contentDescription = stringResource(id = taskItem.priority.contentDescription),
                         tint = Color.Unspecified,
                     )
                 }
 
-                ActionsForTask(listOfActions = taskItem.listOfActions!!)
+                ActionsForTask(
+                    onEditButtonClicked = {
+                        onEditButtonClicked(taskItem)
+                    },
+                    onDeleteButtonClicked = {
+                        onDeleteButtonClicked(taskItem)
+                    }
+                )
             }
         }
     }
@@ -169,7 +175,7 @@ private fun TaskItem(
 
 @Composable
 private fun ConcludedTaskItem(
-    taskItem: TaskItems
+    taskItem: TaskItem
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -194,11 +200,11 @@ private fun ConcludedTaskItem(
         ) {
         CheckButtonConcludedTask(focusManager, focusRequester)
 
-        TextConcludedWithMarquee(taskItem.nameOfTask, focusRequester)
+        TextConcludedWithMarquee(taskItem.name, focusRequester)
 
         Row(
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             CategoryItem(category = taskItem.category)
 
             Row(
@@ -211,8 +217,8 @@ private fun ConcludedTaskItem(
                     enabled = false,
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(id = taskItem.taskPriorities.icon),
-                        contentDescription = stringResource(id = taskItem.taskPriorities.contentDescription),
+                        imageVector = ImageVector.vectorResource(id = taskItem.priority.icon),
+                        contentDescription = stringResource(id = taskItem.priority.contentDescription),
                         tint = Color.Unspecified,
                     )
                 }
@@ -241,19 +247,29 @@ private fun CategoryItem(category: TaskCategory) {
 }
 
 @Composable
-private fun ActionsForTask(listOfActions: List<ActionItem>) {
-    for(action in listOfActions) {
-        IconButton(
-            onClick = action.onClick
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = action.imageVectorId),
-                contentDescription = stringResource(id = action.contentDescriptionId),
-                tint = Color.Unspecified
-            )
-        }
+private fun ActionsForTask(
+    onEditButtonClicked: () -> Unit,
+    onDeleteButtonClicked: () -> Unit
+) {
+    IconButton(
+        onClick = { onEditButtonClicked() }
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_edit),
+            contentDescription = stringResource(id = R.string.desc_high_priority),
+            tint = Color.Unspecified
+        )
     }
 
+    IconButton(
+        onClick = { onDeleteButtonClicked() }
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_trash),
+            contentDescription = stringResource(id = R.string.desc_high_priority),
+            tint = Color.Unspecified
+        )
+    }
 }
 
 @Composable

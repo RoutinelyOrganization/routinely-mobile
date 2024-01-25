@@ -3,13 +3,15 @@ package com.routinely.routinely.data.task.api
 import com.routinely.routinely.data.auth.HttpRoutes
 import com.routinely.routinely.data.auth.model.AddTaskRequest
 import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.task.extensions.excludeToApiResponse
 import com.routinely.routinely.data.task.extensions.taskToApiResponse
-import com.routinely.routinely.data.task.extensions.toTaskRemoteItemList
-import com.routinely.routinely.util.TaskRemoteItem
+import com.routinely.routinely.data.task.extensions.toTaskItemList
+import com.routinely.routinely.util.TaskItem
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.RedirectResponseException
 import io.ktor.client.plugins.ServerResponseException
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
@@ -17,6 +19,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
 import io.ktor.http.parameters
 
@@ -46,7 +49,7 @@ internal class TaskApiImpl(
         }
     }
 
-    override suspend fun getMonthTasks(month: Int, year: Int, userId: String): List<TaskRemoteItem> {
+    override suspend fun getMonthTasks(month: Int, year: Int, userId: String): List<TaskItem> {
         return try {
             client.get(HttpRoutes.TASK) {
                 parameters {
@@ -56,7 +59,7 @@ internal class TaskApiImpl(
                 headers {
                     append(HttpHeaders.Authorization, "Bearer $userId")
                 }
-            }.toTaskRemoteItemList()
+            }.toTaskItemList()
         } catch(e: RedirectResponseException){
             // 3xx - responses
             handleErrorApiErrorResponse()
@@ -72,6 +75,30 @@ internal class TaskApiImpl(
         } catch(e: Exception){
             handleErrorApiErrorResponse()
             emptyList()
+        }
+    }
+
+    override suspend fun excludeTask(taskId: Int, userId: String): ApiResponse {
+        return try {
+            client.delete((HttpRoutes.TASK)) {
+                url {
+                    appendPathSegments(taskId.toString())
+                }
+                headers {
+                    append(HttpHeaders.Authorization, "Bearer $userId")
+                }
+            }.excludeToApiResponse()
+        } catch(e: RedirectResponseException){
+            // 3xx - responses
+            handleErrorApiErrorResponse()
+        } catch(e: ClientRequestException){
+            // 4xx - responses
+            handleErrorApiErrorResponse()
+        } catch(e: ServerResponseException){
+            // 5xx - responses
+            handleErrorApiErrorResponse()
+        } catch(e: Exception){
+            handleErrorApiErrorResponse()
         }
     }
 
