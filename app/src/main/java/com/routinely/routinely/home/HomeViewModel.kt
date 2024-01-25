@@ -32,6 +32,8 @@ class HomeViewModel(
     }
 
     fun getUserTasks(month: Int, year: Int) = viewModelScope.launch {
+        if(month == lastMonth && year == lastYear) return@launch
+
         lastMonth = month
         lastYear = year
         _tasksList.value = getUserTasksFromMonthUseCase(month, year, session.getToken())

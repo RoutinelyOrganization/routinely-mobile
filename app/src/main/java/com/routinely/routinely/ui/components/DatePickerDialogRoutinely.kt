@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.util.validators.DateTimeInputValid
 import java.time.LocalDate
+import java.time.ZoneOffset
 
 @ExperimentalMaterial3Api
 @Composable
@@ -41,8 +43,18 @@ fun DatePickerDialogRoutinely(
     var showDatePickerDialog by remember {
         mutableStateOf(false)
     }
+    val localDateNow = LocalDate.now()
     val datePickerState = rememberDatePickerState(
-        yearRange = LocalDate.now().year - 1 .. LocalDate.now().year + 1
+        yearRange = localDateNow.year..localDateNow.plusYears(1).year,
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                val today = localDateNow.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+                val oneYearFromNow =
+                    localDateNow.plusYears(1).atStartOfDay(ZoneOffset.UTC).toInstant()
+                        .toEpochMilli()
+                return utcTimeMillis in (today + 1) until oneYearFromNow
+            }
+        }
     )
     var selectedDate by remember {
         mutableStateOf("")
@@ -83,7 +95,7 @@ fun DatePickerDialogRoutinely(
             ) {
                 DatePicker(
                     state = datePickerState,
-                    showModeToggle = false
+                    showModeToggle = false,
                 )
             }
         }
