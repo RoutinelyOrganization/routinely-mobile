@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
 import com.routinely.routinely.ui.theme.PurpleRoutinely
+import com.routinely.routinely.ui.theme.containerBorder
+import com.routinely.routinely.ui.theme.textGrayColor
 
 @Composable
 fun TaskAlertDialog(
@@ -36,7 +38,7 @@ fun TaskAlertDialog(
         onDismissRequest = onDismissRequest,
         shape = RoundedCornerShape(8.dp),
         title = { Text(text = stringResource(textRes),
-            fontSize = 12.sp) },
+            fontSize = 16.sp) },
         text = {
             Column() {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -62,10 +64,10 @@ fun TaskAlertDialog(
                     RoutinelyTaskButton(
                         onClick = onCancel,
                         textRes = R.string.no,
-                        textColor = Color.Black,
+                        textColor = textGrayColor,
                         buttonColor = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
                         modifier = Modifier.width(104.dp).height(40.dp),
-                        borderStroke = BorderStroke(1.dp, Color.Gray)
+                        borderStroke = BorderStroke(1.dp, containerBorder)
                     )
                 }
             }
