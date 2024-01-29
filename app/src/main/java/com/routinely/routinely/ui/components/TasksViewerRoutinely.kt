@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
@@ -158,10 +159,11 @@ private fun TaskItem(
                         imageVector = ImageVector.vectorResource(id = taskItem.taskPriorities.icon),
                         contentDescription = stringResource(id = taskItem.taskPriorities.contentDescription),
                         tint = Color.Unspecified,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
 
-                ActionsForTask(listOfActions = taskItem.listOfActions!!)
+                ActionsForTask(listOfActions = taskItem.listOfActions!!,)
             }
         }
     }
@@ -227,13 +229,15 @@ private fun CategoryItem(category: TaskCategory) {
         modifier = Modifier
             .padding(start = 12.dp, end = 6.dp)
             .background(SecondaryYellowRoutinely, shape = RoundedCornerShape(20))
-            .width(70.dp),
+            .width(70.dp)
+            ,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = stringResource(category.stringId),
+            fontSize = 12.sp,
             modifier = Modifier
-                .padding(horizontal = 6.dp, vertical = 8.dp),
+                .padding(horizontal = 8.dp, vertical = 8.dp),
             textAlign = TextAlign.Center
         )
     }
@@ -248,7 +252,8 @@ private fun ActionsForTask(listOfActions: List<ActionItem>) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = action.imageVectorId),
                 contentDescription = stringResource(id = action.contentDescriptionId),
-                tint = Color.Unspecified
+                tint = Color.Unspecified,
+                modifier = Modifier.size(18.dp)
             )
         }
     }

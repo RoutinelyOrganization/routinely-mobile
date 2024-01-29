@@ -70,6 +70,7 @@ fun VerificationCodeScreen(
             Text(
                 text = stringResource(R.string.reset_password),
                 color = Color.Black,
+                fontWeight = FontWeight.Bold,
                 fontSize = 25.sp
             )
             Text(

@@ -101,7 +101,7 @@ fun datePickerState(): DatePickerState {
 
     return rememberDatePickerState(
         initialDisplayMode = DisplayMode.Picker,
-        yearRange = IntRange(2013, 2023), // TODO Add this automatically
+        yearRange = IntRange(2014, 2024), // TODO Add this automatically
         initialSelectedDateMillis = initialDate
     )
 }

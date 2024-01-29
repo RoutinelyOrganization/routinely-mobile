@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
@@ -74,6 +75,7 @@ fun ForgotPasswordScreen(
             Text(
                 text = stringResource(R.string.forgot_your_password),
                 color = Color.Black,
+                fontWeight = FontWeight.Bold,
                 fontSize = 25.sp
             )
             Text(
