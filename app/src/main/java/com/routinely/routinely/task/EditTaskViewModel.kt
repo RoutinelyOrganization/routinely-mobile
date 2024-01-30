@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class EditTaskViewModel(
     private val session: Session,
@@ -63,14 +65,26 @@ class EditTaskViewModel(
     }
 
     fun duplicateTask() {
+        val hourFormatter = DateTimeFormatter.ISO_DATE_TIME
+
+        val dateTime = LocalDateTime.parse(task!!.hour, hourFormatter)
+        val hour = dateTime.hour.toString()
+        var minute = dateTime.minute.toString()
+        if(minute.length == 1) {
+            minute = "0$minute"
+        }
+
+        val name = duplicateItem(task!!.name)
+
+
         viewModelScope.launch {
             _apiResponse.value = ApiResponse.Loading
             try {
                 _apiResponse.value = taskApi.addTask(
                     TaskRequest(
-                        name = task!!.name,
+                        name = name,
                         date = task!!.date,
-                        hour = task!!.hour,
+                        hour = "${hour}:${minute}",
                         description = task!!.description,
                         accountId = session.getToken(),
                         priority = task!!.priority.apiString,
@@ -95,6 +109,19 @@ class EditTaskViewModel(
         return runBlocking {
             task = getTaskByIdUseCase(taskId, month, year)!!
             task!!
+        }
+    }
+
+    fun duplicateItem(name: String): String {
+        val regex = """(.*)\s\((\d+)\)""".toRegex()
+        val matchResult = regex.find(name)
+
+        return if (matchResult != null) {
+            val baseName = matchResult.groupValues[1]
+            val number = matchResult.groupValues[2].toInt()
+            "$baseName (${number + 1})"
+        } else {
+            "$name (1)"
         }
     }
 
