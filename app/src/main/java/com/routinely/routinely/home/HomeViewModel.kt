@@ -24,13 +24,6 @@ class HomeViewModel(
     var lastMonth = 0
     var lastYear = 0
 
-    init {
-        runBlocking {
-            val userId = session.getToken()
-            _tasksList.value = getUserTasksFromMonthUseCase(lastMonth, lastYear, userId)
-        }
-    }
-
     fun logout() {
         Log.d("HomeViewModel", "logout: Calling")
         viewModelScope.launch {

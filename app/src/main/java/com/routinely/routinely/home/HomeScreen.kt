@@ -41,8 +41,6 @@ fun HomeScreen(
     val bottomBarItems = listOf(BottomNavItems.NewTask)
     val datePickerState = datePickerState()
 
-//    val listOfConcludedTasks = concludedTaskItemsDumb()
-
     var expanded by remember { mutableStateOf(false) }
 
 
