@@ -60,6 +60,7 @@
     <string name="api_login_unauthorized">Invalid email and/or password</string>
     <string name="api_unexpected_error">Oops!!! Something went wrong. Please try again later</string>
     <string name="api_create_account_already_exist_email">This email is already in use</string>
+    <string name="api_forgot_password_account_not_found">Account not found</string>
     <string name="desc_vertical_logo">Vertical Logo</string>
     <string name="label_repeat_password">Repeat Password</string>
     <string name="label_verification_code">Code</string>

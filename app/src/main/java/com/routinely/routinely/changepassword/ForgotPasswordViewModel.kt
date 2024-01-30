@@ -1,9 +1,11 @@
 package com.routinely.routinely.changepassword
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.routinely.routinely.R
+import com.routinely.routinely.data.auth.api.AuthApi
+import com.routinely.routinely.data.auth.model.ForgotPasswordRequest
+import com.routinely.routinely.data.auth.model.ForgotPasswordResult
 import com.routinely.routinely.login.isValidEmailFormat
 import com.routinely.routinely.util.validators.EmailInputValid
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,13 +13,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ForgotPasswordViewModel(
-    //forgotPasswordApi: ForgotPasswordRequest
+    private val authApi: AuthApi,
 ) : ViewModel() {
 
-    private val _apiErrorMessage = MutableStateFlow(listOf<String>())
-    val apiErrorMessage = _apiErrorMessage.asStateFlow()
-
-    var shouldGoToNextScreen = mutableStateOf(false)
+    private val _forgotPasswordResult = MutableStateFlow<ForgotPasswordResult>(ForgotPasswordResult.Empty)
+    val forgotPasswordResult = _forgotPasswordResult.asStateFlow()
 
     fun emailState(email: String) : EmailInputValid {
         return when {
@@ -33,10 +33,14 @@ class ForgotPasswordViewModel(
         }
     }
 
-    fun verifyAllConditions(email: String) {
+    fun sendEmail(forgotPasswordRequest: ForgotPasswordRequest) {
         viewModelScope.launch {
-            /* TODO something before */
-            shouldGoToNextScreen.value = true
+            _forgotPasswordResult.value = ForgotPasswordResult.Loading
+            try{
+                _forgotPasswordResult.value = authApi.forgotPassword(forgotPasswordRequest)
+            } catch (e: Exception) {
+                _forgotPasswordResult.value = ForgotPasswordResult.DefaultError
+            }
         }
     }
 }

@@ -14,13 +14,16 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
 import com.routinely.routinely.ui.theme.PurpleRoutinely
-import com.routinely.routinely.ui.theme.RedRoutinely
+import com.routinely.routinely.ui.theme.containerBorder
+import com.routinely.routinely.ui.theme.textGrayColor
 
 @Composable
 fun TaskAlertDialog(
@@ -30,24 +33,30 @@ fun TaskAlertDialog(
     onDismissRequest: () -> Unit
 ) {
     AlertDialog(
+        containerColor = Color.White,
+        modifier = Modifier.shadow(3.dp),
         onDismissRequest = onDismissRequest,
         shape = RoundedCornerShape(8.dp),
-        title = { Text(text = stringResource(textRes)) },
+        title = { Text(text = stringResource(textRes),
+            fontSize = 16.sp) },
         text = {
             Column {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier.fillMaxWidth()
                 ) {
+
+                    Spacer(modifier = Modifier.width(1.dp))
+
                     RoutinelyTaskButton(
-                        onClick = onDismissRequest,
-                        textRes = R.string.cancel,
-                        textColor = Color.Gray,
-                        buttonColor = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                        modifier = Modifier.weight(2f),
-                        borderStroke = BorderStroke(1.dp, Color.Gray),
+                        onClick = onConfirm,
+                        textRes = R.string.yes,
+                        textColor = Color.White,
+                        buttonColor = ButtonDefaults.buttonColors(PurpleRoutinely),
+                        modifier = Modifier.width(104.dp).height(40.dp),
+                        borderStroke = BorderStroke(1.dp, PurpleRoutinely),
                         enabled = true,
                     )
 
@@ -56,22 +65,10 @@ fun TaskAlertDialog(
                     RoutinelyTaskButton(
                         onClick = onCancel,
                         textRes = R.string.no,
-                        textColor = RedRoutinely,
+                        textColor = textGrayColor,
                         buttonColor = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
-                        modifier = Modifier,
-                        borderStroke = BorderStroke(1.dp, Color.Gray),
-                        enabled = true,
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    RoutinelyTaskButton(
-                        onClick = onConfirm,
-                        textRes = R.string.yes,
-                        textColor = Color.White,
-                        buttonColor = ButtonDefaults.buttonColors(PurpleRoutinely),
-                        modifier = Modifier,
-                        borderStroke = BorderStroke(1.dp, PurpleRoutinely),
+                        modifier = Modifier.width(104.dp).height(40.dp),
+                        borderStroke = BorderStroke(1.dp, containerBorder),
                         enabled = true,
                     )
                 }
