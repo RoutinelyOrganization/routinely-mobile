@@ -9,14 +9,30 @@ import com.routinely.routinely.util.TaskTag
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
+import kotlinx.serialization.Serializable
 
 
-fun HttpResponse.taskToApiResponse() : ApiResponse {
+suspend fun HttpResponse.taskToApiResponse() : ApiResponse {
     return when(this.status) {
         HttpStatusCode.Created -> {
             ApiResponse.Success
         }
         else -> {
+            val test = this.body<Error>()
+            println("Property ${test.errors?.property}  --  ${test.errors?.message}")
+            ApiResponse.DefaultError
+        }
+    }
+}
+
+suspend fun HttpResponse.taskUpdateToApiResponse() : ApiResponse {
+    return when(this.status) {
+        HttpStatusCode.OK -> {
+            ApiResponse.Success
+        }
+        else -> {
+            val test = this.body<Error>()
+            println("Property ${test.errors?.property}  --  ${test.errors?.message}")
             ApiResponse.DefaultError
         }
     }
@@ -44,6 +60,17 @@ suspend fun HttpResponse.toTaskItemList() : List<TaskItem> {
         }
     }
 }
+
+@Serializable
+data class Error(
+    val errors: Errors?
+)
+
+@Serializable
+data class Errors(
+    val property: String,
+    val message: String
+)
 
 fun HttpResponse.excludeToApiResponse() : ApiResponse {
     return when(this.status) {

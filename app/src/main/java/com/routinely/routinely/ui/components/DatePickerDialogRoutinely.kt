@@ -29,8 +29,10 @@ import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.util.validators.DateTimeInputValid
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.ZoneOffset
+import java.util.Locale
 
 @ExperimentalMaterial3Api
 @Composable
@@ -38,7 +40,8 @@ fun DatePickerDialogRoutinely(
     onValueChange: (String) -> Unit,
     labelRes: String,
     error: DateTimeInputValid,
-    modifier: Modifier
+    modifier: Modifier,
+    value: String? = null
 ) {
     var showDatePickerDialog by remember {
         mutableStateOf(false)
@@ -52,13 +55,23 @@ fun DatePickerDialogRoutinely(
                 val oneYearFromNow =
                     localDateNow.plusYears(1).atStartOfDay(ZoneOffset.UTC).toInstant()
                         .toEpochMilli()
-                return utcTimeMillis in (today + 1) until oneYearFromNow
+                return utcTimeMillis in (today) until oneYearFromNow
             }
         }
     )
     var selectedDate by remember {
         mutableStateOf("")
     }
+    value?.let {
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale("pt-br"))
+        val date = formatter.parse(it)
+        val timestampUTC = date?.time
+        if (timestampUTC != null) {
+            datePickerState.selectedDateMillis = timestampUTC
+            selectedDate = timestampUTC.toBrazilianDateFormat()
+        }
+    }
+
     val confirmEnabled by remember { derivedStateOf { datePickerState.selectedDateMillis != null } }
 
     when {

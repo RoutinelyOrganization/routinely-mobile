@@ -6,8 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.routinely.routinely.R
 import com.routinely.routinely.changepassword.CreateNewPasswordScreen
 import com.routinely.routinely.changepassword.CreateNewPasswordViewModel
@@ -25,6 +27,7 @@ import com.routinely.routinely.splash_screen.SplashScreen
 import com.routinely.routinely.task.AddTaskScreen
 import com.routinely.routinely.task.AddTaskViewModel
 import com.routinely.routinely.task.EditTaskScreen
+import com.routinely.routinely.task.EditTaskViewModel
 import com.routinely.routinely.util.MenuItem
 import org.koin.androidx.compose.koinViewModel
 
@@ -61,6 +64,9 @@ fun SetupNavGraph(
                 navController.navigate(Screen.Login.route) {
                     popUpTo(0)
                 }
+            },
+            navigateToEditScreen = { taskId, month, year ->
+                navController.navigate(Screen.EditTaskScreen.withArgs(taskId, month, year))
             }
         )
         addTaskScreenRoute(
@@ -259,6 +265,7 @@ fun NavGraphBuilder.homeScreenRoute(
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
     navigateToLoginScreen: () -> Unit,
+    navigateToEditScreen: (taskId: Int, month: Int, year: Int) -> Unit,
 ) {
     composable(route = Screen.HomeScreen.route) {
         val viewModel: HomeViewModel = koinViewModel()
@@ -289,7 +296,9 @@ fun NavGraphBuilder.homeScreenRoute(
         HomeScreen(
             onNotificationClicked = { onNotificationClicked() },
             onNewTaskClicked = { onNewTaskClicked() },
-            onEditTaskClicked = { },
+            onEditTaskClicked = {
+                navigateToEditScreen(it.id, viewModel.lastMonth, viewModel.lastYear)
+            },
             onDeleteTaskClicked = {
                 viewModel.excludeTask(it)
             },
@@ -365,8 +374,15 @@ fun NavGraphBuilder.editTaskScreenRoute(
     onHomeButtonPressed: () -> Unit,
     navigateToLoginScreen: () -> Unit,
 ) {
-    composable(route = Screen.EditTaskScreen.route) {
-        val viewModel: AddTaskViewModel = koinViewModel()
+    composable(
+        route = Screen.EditTaskScreen.route,
+        arguments = listOf(
+            navArgument("taskId") { type = NavType.IntType },
+            navArgument("month") { type = NavType.IntType },
+            navArgument("year") { type = NavType.IntType }
+        )
+    ) { backStackEntry ->
+        val viewModel: EditTaskViewModel = koinViewModel()
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
@@ -388,7 +404,16 @@ fun NavGraphBuilder.editTaskScreenRoute(
                 }
             ),
         )
+
+        viewModel.getTaskById(
+            taskId = backStackEntry.arguments!!.getInt("taskId"),
+            month = backStackEntry.arguments!!.getInt("month"),
+            year = backStackEntry.arguments!!.getInt("year")
+        )
+
         val apiResponse by viewModel.apiResponse.collectAsState()
+        val task by viewModel.task.collectAsState()
+
         EditTaskScreen(
             onBackButtonPressed = { onBackButtonPressed() },
             onHomeButtonPressed = { onHomeButtonPressed() },
@@ -407,6 +432,17 @@ fun NavGraphBuilder.editTaskScreenRoute(
                 viewModel.taskDescriptionState(description)
             },
             editTaskResult = apiResponse,
+            task = task,
+            onSaveChanges = { taskId, newTask ->
+                viewModel.saveTask(taskId, newTask)
+            },
+            onDeleteTask = {
+                viewModel.deleteTask(it)
+            },
+            onDuplicateTask = {
+                viewModel.duplicateTask()
+            }
+
         )
     }
 }

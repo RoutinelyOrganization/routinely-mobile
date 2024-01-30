@@ -10,7 +10,7 @@ import com.routinely.routinely.data.task.di.taskModule
 import com.routinely.routinely.home.homeModule
 import com.routinely.routinely.login.createNewAccountModule
 import com.routinely.routinely.login.loginModule
-import com.routinely.routinely.task.addTaskModule
+import com.routinely.routinely.task.di.addTaskModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

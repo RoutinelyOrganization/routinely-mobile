@@ -10,6 +10,7 @@ import com.routinely.routinely.util.TaskItem
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class HomeViewModel(
     private val session: Session,
@@ -20,8 +21,15 @@ class HomeViewModel(
     private val _tasksList = MutableStateFlow(listOf<TaskItem>())
     val tasksList = _tasksList.asStateFlow()
 
-    private var lastMonth = 0
-    private var lastYear = 0
+    var lastMonth = 0
+    var lastYear = 0
+
+    init {
+        runBlocking {
+            val userId = session.getToken()
+            _tasksList.value = getUserTasksFromMonthUseCase(lastMonth, lastYear, userId)
+        }
+    }
 
     fun logout() {
         Log.d("HomeViewModel", "logout: Calling")

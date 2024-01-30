@@ -36,6 +36,8 @@ import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.util.validators.DateTimeInputValid
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,10 +45,19 @@ fun TimePickerDialog(
     onValueChange: (String) -> Unit,
     labelRes: String,
     error: DateTimeInputValid,
-    modifier: Modifier
+    modifier: Modifier,
+    time: String? = null,
 ) {
     var selectedHour by rememberSaveable {  mutableIntStateOf(0) }
     var selectedMinute by rememberSaveable { mutableIntStateOf(0) }
+
+    time?.let {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
+        val data = LocalDateTime.parse(time, formatter)
+        selectedHour = data.hour
+        selectedMinute = data.minute
+    }
+
     val timePickerState = rememberTimePickerState(
         initialHour = selectedHour,
         initialMinute = selectedMinute,
@@ -141,14 +152,12 @@ fun TimePickerDialog(
     )
 }
 fun timeFormatter(hourParam: String, minuteParam: String): String {
-    var hour = ""
-    var minute = ""
-    hour = if (hourParam.length == 1) {
+    val hour: String = if (hourParam.length == 1) {
         "0$hourParam"
     }else {
         hourParam
     }
-    minute = if (minuteParam.length == 1) {
+    val minute: String = if (minuteParam.length == 1) {
         "0$minuteParam"
     }else{
         minuteParam

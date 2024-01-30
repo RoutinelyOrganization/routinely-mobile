@@ -103,30 +103,6 @@ fun HomeScreen(
     }
 }
 
-
-//fun concludedTaskItemsDumb(): List<TaskItem> {
-//    return listOf(
-//        TaskItem(
-//            nameOfTask = "Enviar email cv para Jean",
-//            category = TaskCategory.Career,
-//            priority = TaskPriorities.Urgent,
-//            listOfActions = emptyList()
-//        ),
-//        TaskItem(
-//            nameOfTask = "Ir ao médico",
-//            category = TaskCategory.Health,
-//            priority = TaskPriorities.Low,
-//            listOfActions = emptyList()
-//        ),
-//        TaskItem(
-//            nameOfTask = "Pagar luz",
-//            category = TaskCategory.Finances,
-//            priority = TaskPriorities.High,
-//            listOfActions = emptyList()
-//        )
-//    )
-//}
-
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {

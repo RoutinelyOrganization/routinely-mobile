@@ -47,7 +47,8 @@ fun TaskAlertDialog(
                         textColor = Color.Gray,
                         buttonColor = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
                         modifier = Modifier.weight(2f),
-                        borderStroke = BorderStroke(1.dp, Color.Gray)
+                        borderStroke = BorderStroke(1.dp, Color.Gray),
+                        enabled = true,
                     )
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -58,7 +59,8 @@ fun TaskAlertDialog(
                         textColor = RedRoutinely,
                         buttonColor = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
                         modifier = Modifier,
-                        borderStroke = BorderStroke(1.dp, Color.Gray)
+                        borderStroke = BorderStroke(1.dp, Color.Gray),
+                        enabled = true,
                     )
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -69,7 +71,8 @@ fun TaskAlertDialog(
                         textColor = Color.White,
                         buttonColor = ButtonDefaults.buttonColors(PurpleRoutinely),
                         modifier = Modifier,
-                        borderStroke = BorderStroke(1.dp, PurpleRoutinely)
+                        borderStroke = BorderStroke(1.dp, PurpleRoutinely),
+                        enabled = true,
                     )
                 }
             }
