@@ -1,15 +1,14 @@
 package com.routinely.routinely.data.task.api
 
 import com.routinely.routinely.data.auth.HttpRoutes
-import com.routinely.routinely.data.auth.model.TaskRequest
 import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.auth.model.TaskRequest
 import com.routinely.routinely.data.task.extensions.excludeToApiResponse
 import com.routinely.routinely.data.task.extensions.taskToApiResponse
 import com.routinely.routinely.data.task.extensions.taskUpdateToApiResponse
 import com.routinely.routinely.data.task.extensions.toTaskItemList
 import com.routinely.routinely.util.TaskItem
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.plugins.RedirectResponseException
 import io.ktor.client.plugins.ServerResponseException
@@ -22,7 +21,6 @@ import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
 import io.ktor.http.parameters

@@ -32,8 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
-import com.routinely.routinely.data.auth.model.TaskRequest
 import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.auth.model.TaskRequest
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.DatePickerDialogRoutinely
 import com.routinely.routinely.ui.components.DescriptionTextField
@@ -48,8 +48,8 @@ import com.routinely.routinely.ui.components.TopAppBarRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.ui.theme.RedRoutinely
 import com.routinely.routinely.util.BottomNavItems
-import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.MenuItem
+import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.TaskFields
 import com.routinely.routinely.util.TaskItem
 import com.routinely.routinely.util.TaskPriorities
@@ -73,7 +73,7 @@ fun EditTaskScreen(
     taskDescriptionStateValidation: (descriptionTask: String) -> DescriptionInputValid,
     menuItems: List<MenuItem>,
     editTaskResult: ApiResponse,
-    task: TaskItem?,
+    task: TaskItem,
     onSaveChanges: (Int, TaskRequest) -> Unit,
     onDeleteTask: (taskId: Int) -> Unit,
     onDuplicateTask: (taskId: Int) -> Unit
@@ -122,7 +122,7 @@ fun EditTaskScreen(
 
     val hourFormatter = DateTimeFormatter.ISO_DATE_TIME
 
-    task?.let {
+    task.let {
         taskName = it.name
         taskNameState = taskNameStateValidation(it.name)
 
@@ -152,6 +152,8 @@ fun EditTaskScreen(
 
         taskId = it.id
     }
+
+
 
 
     Scaffold(
@@ -218,7 +220,7 @@ fun EditTaskScreen(
                         labelRes = stringResource(id = R.string.label_date_picker),
                         error = taskDateState,
                         modifier = Modifier.weight(1f),
-                        value = task?.date
+                        value = task.date
                     )
                     TimePickerDialog(
                         onValueChange = { newTaskTime: String ->
@@ -229,7 +231,7 @@ fun EditTaskScreen(
                         labelRes = stringResource(id = R.string.label_time_picker),
                         error = taskTimeState,
                         modifier = Modifier.weight(1f),
-                        time = task?.hour,
+                        time = task.hour,
                     )
                 }
                 Column(
@@ -245,7 +247,7 @@ fun EditTaskScreen(
                             hasChanges = true
                         },
                         list = TaskPriorities.getAllTaskPriorities(),
-                        option = task?.priority?.stringId
+                        option = task.priority.stringId
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -262,7 +264,7 @@ fun EditTaskScreen(
                             },
                             list = TaskFields.getAllOptions<TaskCategory>(),
                             modifier = Modifier.weight(1f),
-                            option = task?.category?.stringId
+                            option = task.category.stringId
                         )
                         DropdownRoutinely(
                             labelRes = R.string.label_tag_dropdown,
@@ -274,7 +276,7 @@ fun EditTaskScreen(
                             },
                             list = TaskFields.getAllOptions<TaskTag>(),
                             modifier = Modifier.weight(1f),
-                            option = task?.tag?.stringId
+                            option = task.tag.stringId
                         )
                     }
                     DescriptionTextField(
@@ -341,7 +343,7 @@ fun EditTaskScreen(
                                 textRes = R.string.delete_task_confirmation,
                                 onConfirm = {
                                     showDialog = false
-                                    onDeleteTask(task?.id ?: -1)
+                                    onDeleteTask(taskId)
                                 },
                                 onCancel = {
                                     showDialog = false
@@ -369,7 +371,7 @@ fun EditTaskScreen(
                                 textRes = R.string.duplicate_task_confirmation,
                                 onConfirm = {
                                     showDuplicateDialog = false
-                                    onDuplicateTask(task?.id ?: -1)
+                                    onDuplicateTask(task.id)
                                 },
                                 onCancel = {
                                     showDuplicateDialog = false

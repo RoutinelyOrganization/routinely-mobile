@@ -1,9 +1,11 @@
 package com.routinely.routinely.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -291,12 +293,15 @@ fun NavGraphBuilder.homeScreenRoute(
             ),
         )
 
-        val tasksList by viewModel.tasksList.collectAsState(initial = emptyList())
+        val tasksList by viewModel.tasksList.collectAsStateWithLifecycle()
+
+        Log.d("homeScreenRoute", "tasksList updated: $tasksList")
 
         HomeScreen(
             onNotificationClicked = { onNotificationClicked() },
             onNewTaskClicked = { onNewTaskClicked() },
             onEditTaskClicked = {
+                Log.d("homeScreenRoute", "onEditTaskClicked: calling")
                 navigateToEditScreen(it.id, viewModel.lastMonth, viewModel.lastYear)
             },
             onDeleteTaskClicked = {
@@ -382,6 +387,7 @@ fun NavGraphBuilder.editTaskScreenRoute(
             navArgument("year") { type = NavType.IntType }
         )
     ) { backStackEntry ->
+        Log.d("editTaskScreenRoute", "editTaskScreenRoute: called")
         val viewModel: EditTaskViewModel = koinViewModel()
         val menuItems = listOf(
             MenuItem(
@@ -405,14 +411,13 @@ fun NavGraphBuilder.editTaskScreenRoute(
             ),
         )
 
-        viewModel.getTaskById(
-            taskId = backStackEntry.arguments!!.getInt("taskId"),
-            month = backStackEntry.arguments!!.getInt("month"),
-            year = backStackEntry.arguments!!.getInt("year")
-        )
+        val taskIdArg = backStackEntry.arguments!!.getInt("taskId")
+        val monthArg = backStackEntry.arguments!!.getInt("month")
+        val yearArg = backStackEntry.arguments!!.getInt("year")
+
+        val taskItem = viewModel.getTaskById(taskId = taskIdArg, month = monthArg, year = yearArg)
 
         val apiResponse by viewModel.apiResponse.collectAsState()
-        val task by viewModel.task.collectAsState()
 
         EditTaskScreen(
             onBackButtonPressed = { onBackButtonPressed() },
@@ -432,7 +437,7 @@ fun NavGraphBuilder.editTaskScreenRoute(
                 viewModel.taskDescriptionState(description)
             },
             editTaskResult = apiResponse,
-            task = task,
+            task = taskItem,
             onSaveChanges = { taskId, newTask ->
                 viewModel.saveTask(taskId, newTask)
             },

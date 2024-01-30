@@ -1,5 +1,6 @@
 package com.routinely.routinely.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,9 +23,7 @@ import com.routinely.routinely.ui.components.TopAppBarRoutinely
 import com.routinely.routinely.ui.components.datePickerState
 import com.routinely.routinely.util.BottomNavItems
 import com.routinely.routinely.util.MenuItem
-import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.TaskItem
-import com.routinely.routinely.util.TaskPriorities
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +41,6 @@ fun HomeScreen(
     val datePickerState = datePickerState()
 
     var expanded by remember { mutableStateOf(false) }
-
 
 
     Scaffold(
@@ -89,6 +87,7 @@ fun HomeScreen(
     )
 
     LaunchedEffect(key1 = datePickerState.selectedDateMillis) {
+        Log.d("HomeScreen", "LaunchedEffect selectedDateMillis: ${datePickerState.selectedDateMillis}")
         if (datePickerState.selectedDateMillis == null) return@LaunchedEffect
 
         val calendar = Calendar.getInstance()

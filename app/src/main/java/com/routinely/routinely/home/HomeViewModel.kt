@@ -7,16 +7,16 @@ import com.routinely.routinely.data.core.Session
 import com.routinely.routinely.home.data.ExcludeTaskUseCase
 import com.routinely.routinely.home.data.GetUserTasksFromMonthUseCase
 import com.routinely.routinely.util.TaskItem
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class HomeViewModel(
     private val session: Session,
     private val getUserTasksFromMonthUseCase: GetUserTasksFromMonthUseCase,
     private val excludeTaskUseCase: ExcludeTaskUseCase,
-): ViewModel() {
+) : ViewModel() {
 
     private val _tasksList = MutableStateFlow(listOf<TaskItem>())
     val tasksList = _tasksList.asStateFlow()
@@ -33,18 +33,25 @@ class HomeViewModel(
     }
 
     fun getUserTasks(month: Int, year: Int) = viewModelScope.launch {
-        if(month == lastMonth && year == lastYear) return@launch
+        Log.d(
+            TAG,
+            "getUserTasks: month $month - year $year // last month $lastMonth - last year $lastYear"
+        )
+        if (month == lastMonth && year == lastYear) return@launch
 
         lastMonth = month
         lastYear = year
+        delay(200)
         _tasksList.value = getUserTasksFromMonthUseCase(month, year, session.getToken())
     }
 
     fun excludeTask(task: TaskItem) = viewModelScope.launch {
         val userId = session.getToken()
         excludeTaskUseCase(userId, task.id)
-        _tasksList.value = getUserTasksFromMonthUseCase(lastMonth, lastYear, userId)
+    }
 
+    companion object {
+        private const val TAG = "HomeViewModel"
     }
 
 }

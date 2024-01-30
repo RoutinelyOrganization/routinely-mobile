@@ -1,5 +1,6 @@
 package com.routinely.routinely.data.task.extensions
 
+import android.util.Log
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.TaskItem
@@ -41,6 +42,7 @@ suspend fun HttpResponse.taskUpdateToApiResponse() : ApiResponse {
 suspend fun HttpResponse.toTaskItemList() : List<TaskItem> {
     return when(this.status) {
         HttpStatusCode.OK -> {
+            Log.d("toTaskItemList", "returning list")
             val remote = this.body<List<TaskItemRemote>>()
             return remote.map {
                 TaskItem(
