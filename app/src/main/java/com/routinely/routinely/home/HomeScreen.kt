@@ -13,11 +13,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.routinely.routinely.R
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.DatePickerRoutinely
+import com.routinely.routinely.ui.components.TaskAlertDialog
 import com.routinely.routinely.ui.components.TasksViewerRoutinely
 import com.routinely.routinely.ui.components.TopAppBarRoutinely
 import com.routinely.routinely.ui.components.datePickerState
@@ -41,6 +44,9 @@ fun HomeScreen(
     val datePickerState = datePickerState()
 
     var expanded by remember { mutableStateOf(false) }
+
+    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+    var temporaryDeleteId by rememberSaveable { mutableStateOf<TaskItem?>(null) }
 
 
     Scaffold(
@@ -80,14 +86,37 @@ fun HomeScreen(
                     listOfTaskItems = tasksList,
                     listOfConcludedTaskItems = emptyList(),
                     onEditButtonClicked = onEditTaskClicked,
-                    onDeleteButtonClicked = onDeleteTaskClicked,
+                    onDeleteButtonClicked = {
+                        showDeleteDialog = true
+                        temporaryDeleteId = it
+                    },
                 )
+
+                if (showDeleteDialog) {
+                    TaskAlertDialog(
+                        textRes = R.string.delete_task_confirmation,
+                        onConfirm = {
+                            showDeleteDialog = false
+                            temporaryDeleteId?.let { onDeleteTaskClicked(it) }
+                            datePickerState.selectedDateMillis = datePickerState.selectedDateMillis
+                        },
+                        onCancel = {
+                            showDeleteDialog = false
+                        },
+                        onDismissRequest = {
+                            showDeleteDialog = false
+                        }
+                    )
+                }
             }
         }
     )
 
     LaunchedEffect(key1 = datePickerState.selectedDateMillis) {
-        Log.d("HomeScreen", "LaunchedEffect selectedDateMillis: ${datePickerState.selectedDateMillis}")
+        Log.d(
+            "HomeScreen",
+            "LaunchedEffect selectedDateMillis: ${datePickerState.selectedDateMillis}"
+        )
         if (datePickerState.selectedDateMillis == null) return@LaunchedEffect
 
         val calendar = Calendar.getInstance()

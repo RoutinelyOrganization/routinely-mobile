@@ -53,7 +53,7 @@ fun TasksViewerRoutinely(
     listOfTaskItems: List<TaskItem>,
     listOfConcludedTaskItems: List<TaskItem>,
     onEditButtonClicked: (taskItem: TaskItem) -> Unit,
-    onDeleteButtonClicked: (taskItem: TaskItem) -> Unit
+    onDeleteButtonClicked: (taskItem: TaskItem) -> Unit,
 ) {
     Column(
         modifier = Modifier
