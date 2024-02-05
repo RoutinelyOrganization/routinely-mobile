@@ -2,6 +2,7 @@ package com.routinely.routinely.navigation
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
@@ -32,6 +33,8 @@ import com.routinely.routinely.task.AddTaskViewModel
 import com.routinely.routinely.task.EditTaskScreen
 import com.routinely.routinely.task.EditTaskViewModel
 import com.routinely.routinely.util.MenuItem
+import com.routinely.routinely.util.TaskItem
+import kotlinx.coroutines.runBlocking
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -294,8 +297,11 @@ fun NavGraphBuilder.homeScreenRoute(
         )
 
         val tasksList by viewModel.tasksList.collectAsStateWithLifecycle()
+        val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsStateWithLifecycle()
 
-        Log.d("homeScreenRoute", "tasksList updated: $tasksList")
+        LaunchedEffect(key1 = deleteTaskResponse) {
+            viewModel.getUserTasks(viewModel.lastMonth, viewModel.lastYear)
+        }
 
         HomeScreen(
             onNotificationClicked = { onNotificationClicked() },
@@ -415,7 +421,11 @@ fun NavGraphBuilder.editTaskScreenRoute(
         val monthArg = backStackEntry.arguments!!.getInt("month")
         val yearArg = backStackEntry.arguments!!.getInt("year")
 
-        val taskItem = viewModel.getTaskById(taskId = taskIdArg, month = monthArg, year = yearArg)
+        var taskItem : TaskItem
+
+        runBlocking {
+            taskItem = viewModel.getTaskById(taskId = taskIdArg, month = monthArg, year = yearArg)
+        }
 
         val apiResponse by viewModel.apiResponse.collectAsState()
 

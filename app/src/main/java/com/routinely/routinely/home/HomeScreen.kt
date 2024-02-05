@@ -1,6 +1,5 @@
 package com.routinely.routinely.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -46,8 +45,7 @@ fun HomeScreen(
     var expanded by remember { mutableStateOf(false) }
 
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
-    var temporaryDeleteId by rememberSaveable { mutableStateOf<TaskItem?>(null) }
-
+    var temporaryDeleteId by remember { mutableStateOf<TaskItem?>(null) }
 
     Scaffold(
         topBar = {
@@ -112,11 +110,16 @@ fun HomeScreen(
         }
     )
 
+    LaunchedEffect(Unit) {
+        val calendar = Calendar.getInstance()
+
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH) + 1
+
+        onSelectDayChange(month, year)
+    }
+
     LaunchedEffect(key1 = datePickerState.selectedDateMillis) {
-        Log.d(
-            "HomeScreen",
-            "LaunchedEffect selectedDateMillis: ${datePickerState.selectedDateMillis}"
-        )
         if (datePickerState.selectedDateMillis == null) return@LaunchedEffect
 
         val calendar = Calendar.getInstance()
