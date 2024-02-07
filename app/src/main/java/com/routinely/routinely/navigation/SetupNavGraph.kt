@@ -296,8 +296,8 @@ fun NavGraphBuilder.homeScreenRoute(
             ),
         )
 
-        val tasksList by viewModel.tasksList.collectAsStateWithLifecycle()
         val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsStateWithLifecycle()
+        val getTasksResponse by viewModel.getTasksResponse.collectAsStateWithLifecycle()
 
         LaunchedEffect(key1 = deleteTaskResponse) {
             viewModel.getUserTasks(viewModel.lastMonth, viewModel.lastYear)
@@ -314,10 +314,10 @@ fun NavGraphBuilder.homeScreenRoute(
                 viewModel.excludeTask(it)
             },
             menuItems = menuItems,
-            tasksList = tasksList,
             onSelectDayChange = { month, year ->
                 viewModel.getUserTasks(month, year)
-            }
+            },
+            getTasksResponse = getTasksResponse,
         )
     }
 }
@@ -421,7 +421,7 @@ fun NavGraphBuilder.editTaskScreenRoute(
         val monthArg = backStackEntry.arguments!!.getInt("month")
         val yearArg = backStackEntry.arguments!!.getInt("year")
 
-        var taskItem : TaskItem
+        val taskItem : TaskItem
 
         runBlocking {
             taskItem = viewModel.getTaskById(taskId = taskIdArg, month = monthArg, year = yearArg)

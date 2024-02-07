@@ -1,5 +1,6 @@
 package com.routinely.routinely.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,15 +11,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.routinely.routinely.R
+import com.routinely.routinely.data.auth.model.ApiResponseWithData
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.DatePickerRoutinely
+import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.ui.components.TaskAlertDialog
 import com.routinely.routinely.ui.components.TasksViewerRoutinely
 import com.routinely.routinely.ui.components.TopAppBarRoutinely
@@ -36,8 +41,8 @@ fun HomeScreen(
     onEditTaskClicked: (taskItem: TaskItem) -> Unit,
     onDeleteTaskClicked: (taskItem: TaskItem) -> Unit,
     menuItems: List<MenuItem>,
-    tasksList: List<TaskItem>,
     onSelectDayChange: (Int, Int) -> Unit,
+    getTasksResponse: ApiResponseWithData,
 ) {
     val bottomBarItems = listOf(BottomNavItems.NewTask)
     val datePickerState = datePickerState()
@@ -46,6 +51,11 @@ fun HomeScreen(
 
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
     var temporaryDeleteId by remember { mutableStateOf<TaskItem?>(null) }
+
+    var showLoading by rememberSaveable { mutableStateOf(false) }
+
+    var tasksList by remember { mutableStateOf(emptyList<TaskItem>()) }
+
 
     Scaffold(
         topBar = {
@@ -79,16 +89,17 @@ fun HomeScreen(
                 DatePickerRoutinely(
                     datePickerState,
                 )
-
-                TasksViewerRoutinely(
-                    listOfTaskItems = tasksList,
-                    listOfConcludedTaskItems = emptyList(),
-                    onEditButtonClicked = onEditTaskClicked,
-                    onDeleteButtonClicked = {
-                        showDeleteDialog = true
-                        temporaryDeleteId = it
-                    },
-                )
+                key(tasksList) {
+                    TasksViewerRoutinely(
+                        listOfTaskItems = tasksList,
+                        listOfConcludedTaskItems = emptyList(),
+                        onEditButtonClicked = onEditTaskClicked,
+                        onDeleteButtonClicked = {
+                            showDeleteDialog = true
+                            temporaryDeleteId = it
+                        },
+                    )
+                }
 
                 if (showDeleteDialog) {
                     TaskAlertDialog(
@@ -110,6 +121,16 @@ fun HomeScreen(
         }
     )
 
+    if (showLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+
+        ) {
+            IndeterminateCircularIndicator()
+        }
+    }
+
     LaunchedEffect(Unit) {
         val calendar = Calendar.getInstance()
 
@@ -130,6 +151,29 @@ fun HomeScreen(
 
         onSelectDayChange(month, year)
     }
+    
+    LaunchedEffect(key1 = getTasksResponse) {
+        when(getTasksResponse) {
+            is ApiResponseWithData.Success -> {
+                showLoading = false
+                val data = getTasksResponse.data as List<TaskItem>
+                if(tasksList != data) tasksList = data
+            }
+            is ApiResponseWithData.Error -> {
+                showLoading = false
+            }
+            is ApiResponseWithData.EmptyData -> {
+                tasksList = emptyList()
+                showLoading = false
+            }
+            is ApiResponseWithData.Loading -> {
+                showLoading = true
+            }
+            else -> {
+                showLoading = false
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)
@@ -141,7 +185,7 @@ fun HomeScreenPreview() {
         onEditTaskClicked = { },
         onDeleteTaskClicked = { },
         menuItems = listOf(),
-        tasksList = listOf(),
-        onSelectDayChange = { _, _ -> }
+        onSelectDayChange = { _, _ -> },
+        getTasksResponse = ApiResponseWithData.Default
     )
 }

@@ -77,8 +77,16 @@ fun TasksViewerRoutinely(
             Modifier
                 .fillMaxWidth(),
         ) {
-            for (item in listOfTaskItems) {
-                TaskItem(item, onEditButtonClicked, onDeleteButtonClicked)
+            if(listOfTaskItems.isNotEmpty()) {
+                for (item in listOfTaskItems) {
+                    TaskItem(item, onEditButtonClicked, onDeleteButtonClicked)
+                }
+            } else {
+                Text(
+                    text = "Sem Tasks",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
         }
 

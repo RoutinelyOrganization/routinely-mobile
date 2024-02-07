@@ -1,5 +1,9 @@
 package com.routinely.routinely.util
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class TaskItem(
     val id: Int,
     val name: String,
@@ -9,7 +13,7 @@ data class TaskItem(
     val priority: TaskPriorities,
     val category: TaskCategory,
     val description: String
-)
+) : Parcelable
 
 data class TaskItemRemote(
     val id: Int,
