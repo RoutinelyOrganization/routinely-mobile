@@ -99,15 +99,9 @@ class EditTaskViewModel(
     }
 
 
-    fun getTaskById(taskId: Int, month: Int, year: Int): TaskItem {
-        Log.d("EditTaskViewModel", "getTaskById | TaskId $taskId | Month $month | Year $year")
-        if(task != null) {
-            Log.d("EditTaskViewModel", "getTaskById | Task cache is not null")
-            return task!!
-        }
-
+    fun getTaskById(taskId: Int): TaskItem {
         return runBlocking {
-            task = getTaskByIdUseCase(taskId, month, year)!!
+            task = getTaskByIdUseCase(taskId)
             task!!
         }
     }

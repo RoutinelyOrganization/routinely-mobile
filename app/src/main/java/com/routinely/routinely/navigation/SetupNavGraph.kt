@@ -1,10 +1,15 @@
 package com.routinely.routinely.navigation
 
-import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -20,6 +25,7 @@ import com.routinely.routinely.changepassword.ForgotPasswordScreen
 import com.routinely.routinely.changepassword.ForgotPasswordViewModel
 import com.routinely.routinely.changepassword.VerificationCodeScreen
 import com.routinely.routinely.changepassword.VerificationCodeViewModel
+import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.ForgotPasswordRequest
 import com.routinely.routinely.home.HomeScreen
 import com.routinely.routinely.home.HomeViewModel
@@ -32,9 +38,9 @@ import com.routinely.routinely.task.AddTaskScreen
 import com.routinely.routinely.task.AddTaskViewModel
 import com.routinely.routinely.task.EditTaskScreen
 import com.routinely.routinely.task.EditTaskViewModel
+import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskItem
-import kotlinx.coroutines.runBlocking
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -71,8 +77,8 @@ fun SetupNavGraph(
                     popUpTo(0)
                 }
             },
-            navigateToEditScreen = { taskId, month, year ->
-                navController.navigate(Screen.EditTaskScreen.withArgs(taskId, month, year))
+            navigateToEditScreen = { taskId ->
+                navController.navigate(Screen.EditTaskScreen.withArgs(taskId))
             }
         )
         addTaskScreenRoute(
@@ -270,7 +276,7 @@ fun NavGraphBuilder.homeScreenRoute(
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
     navigateToLoginScreen: () -> Unit,
-    navigateToEditScreen: (taskId: Int, month: Int, year: Int) -> Unit,
+    navigateToEditScreen: (taskId: Int) -> Unit,
 ) {
     composable(route = Screen.HomeScreen.route) {
         val viewModel: HomeViewModel = koinViewModel()
@@ -297,18 +303,19 @@ fun NavGraphBuilder.homeScreenRoute(
         )
 
         val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsStateWithLifecycle()
-        val getTasksResponse by viewModel.getTasksResponse.collectAsStateWithLifecycle()
+        val getTasksResponse = viewModel.getTasksResponse.collectAsStateWithLifecycle()
 
         LaunchedEffect(key1 = deleteTaskResponse) {
-            viewModel.getUserTasks(viewModel.lastMonth, viewModel.lastYear)
+            if(deleteTaskResponse == ApiResponse.Success) {
+                viewModel.getUserTasks(viewModel.lastMonth, viewModel.lastYear, force = true)
+            }
         }
 
         HomeScreen(
             onNotificationClicked = { onNotificationClicked() },
             onNewTaskClicked = { onNewTaskClicked() },
             onEditTaskClicked = {
-                Log.d("homeScreenRoute", "onEditTaskClicked: calling")
-                navigateToEditScreen(it.id, viewModel.lastMonth, viewModel.lastYear)
+                navigateToEditScreen(it.id)
             },
             onDeleteTaskClicked = {
                 viewModel.excludeTask(it)
@@ -317,7 +324,7 @@ fun NavGraphBuilder.homeScreenRoute(
             onSelectDayChange = { month, year ->
                 viewModel.getUserTasks(month, year)
             },
-            getTasksResponse = getTasksResponse,
+            getTasksResponse = getTasksResponse.value,
         )
     }
 }
@@ -389,11 +396,8 @@ fun NavGraphBuilder.editTaskScreenRoute(
         route = Screen.EditTaskScreen.route,
         arguments = listOf(
             navArgument("taskId") { type = NavType.IntType },
-            navArgument("month") { type = NavType.IntType },
-            navArgument("year") { type = NavType.IntType }
         )
     ) { backStackEntry ->
-        Log.d("editTaskScreenRoute", "editTaskScreenRoute: called")
         val viewModel: EditTaskViewModel = koinViewModel()
         val menuItems = listOf(
             MenuItem(
@@ -418,47 +422,55 @@ fun NavGraphBuilder.editTaskScreenRoute(
         )
 
         val taskIdArg = backStackEntry.arguments!!.getInt("taskId")
-        val monthArg = backStackEntry.arguments!!.getInt("month")
-        val yearArg = backStackEntry.arguments!!.getInt("year")
 
-        val taskItem : TaskItem
+        val taskItem = remember { mutableStateOf<TaskItem?>(null) }
 
-        runBlocking {
-            taskItem = viewModel.getTaskById(taskId = taskIdArg, month = monthArg, year = yearArg)
+        LaunchedEffect(taskIdArg) {
+            taskItem.value = viewModel.getTaskById(taskIdArg)
         }
 
         val apiResponse by viewModel.apiResponse.collectAsState()
 
-        EditTaskScreen(
-            onBackButtonPressed = { onBackButtonPressed() },
-            onHomeButtonPressed = { onHomeButtonPressed() },
-            onNotificationClicked = { onNotificationClicked() },
-            menuItems = menuItems,
-            taskNameStateValidation = { taskName ->
-                viewModel.taskNameState(taskName)
-            },
-            taskDateStateValidation = { taskDate ->
-                viewModel.taskDateState(taskDate)
-            },
-            taskTimeStateValidation = { taskTime ->
-                viewModel.taskTimeState(taskTime)
-            },
-            taskDescriptionStateValidation = { description ->
-                viewModel.taskDescriptionState(description)
-            },
-            editTaskResult = apiResponse,
-            task = taskItem,
-            onSaveChanges = { taskId, newTask ->
-                viewModel.saveTask(taskId, newTask)
-            },
-            onDeleteTask = {
-                viewModel.deleteTask(it)
-            },
-            onDuplicateTask = {
-                viewModel.duplicateTask()
-            }
+        if(taskItem.value != null) {
+            EditTaskScreen(
+                onBackButtonPressed = { onBackButtonPressed() },
+                onHomeButtonPressed = { onHomeButtonPressed() },
+                onNotificationClicked = { onNotificationClicked() },
+                menuItems = menuItems,
+                taskNameStateValidation = { taskName ->
+                    viewModel.taskNameState(taskName)
+                },
+                taskDateStateValidation = { taskDate ->
+                    viewModel.taskDateState(taskDate)
+                },
+                taskTimeStateValidation = { taskTime ->
+                    viewModel.taskTimeState(taskTime)
+                },
+                taskDescriptionStateValidation = { description ->
+                    viewModel.taskDescriptionState(description)
+                },
+                editTaskResult = apiResponse,
+                task = taskItem.value!!,
+                onSaveChanges = { taskId, newTask ->
+                    viewModel.saveTask(taskId, newTask)
+                },
+                onDeleteTask = {
+                    viewModel.deleteTask(it)
+                },
+                onDuplicateTask = {
+                    viewModel.duplicateTask()
+                }
 
-        )
+            )
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+
+            ) {
+                IndeterminateCircularIndicator()
+            }
+        }
     }
 }
 

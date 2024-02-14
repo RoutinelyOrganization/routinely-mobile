@@ -1,10 +1,10 @@
 package com.routinely.routinely.data.auth.model
 
-sealed class ApiResponseWithData {
-    data class Success(val data: Any) : ApiResponseWithData()
-    data object Error : ApiResponseWithData()
-    data object DefaultError : ApiResponseWithData()
-    data object Loading : ApiResponseWithData()
-    data object EmptyData : ApiResponseWithData()
-    data object Default : ApiResponseWithData()
+sealed class ApiResponseWithData<T>(val data: T? = null){
+    class Success<T>(result: T) : ApiResponseWithData<T>(data = result)
+    class Error<T> : ApiResponseWithData<T>()
+    class DefaultError<T> : ApiResponseWithData<T>()
+    class Loading<T> : ApiResponseWithData<T>()
+    class EmptyData<T> : ApiResponseWithData<T>()
+    class Default<T> : ApiResponseWithData<T>()
 }

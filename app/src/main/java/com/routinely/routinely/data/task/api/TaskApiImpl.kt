@@ -1,11 +1,14 @@
 package com.routinely.routinely.data.task.api
 
+import android.util.Log
 import com.routinely.routinely.data.auth.HttpRoutes
 import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.auth.model.ApiResponseWithData
 import com.routinely.routinely.data.auth.model.TaskRequest
 import com.routinely.routinely.data.task.extensions.excludeToApiResponse
 import com.routinely.routinely.data.task.extensions.taskToApiResponse
 import com.routinely.routinely.data.task.extensions.taskUpdateToApiResponse
+import com.routinely.routinely.data.task.extensions.toTaskItem
 import com.routinely.routinely.data.task.extensions.toTaskItemList
 import com.routinely.routinely.util.TaskItem
 import io.ktor.client.HttpClient
@@ -24,6 +27,9 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
 import io.ktor.http.parameters
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flow
 
 internal class TaskApiImpl(
     private val client: HttpClient
@@ -51,32 +57,39 @@ internal class TaskApiImpl(
         }
     }
 
-    override suspend fun getMonthTasks(month: Int, year: Int, userId: String): List<TaskItem> {
+    override suspend fun getMonthTasks(month: Int, year: Int, userId: String): Flow<ApiResponseWithData<List<TaskItem>>> = flow {
+        emit(ApiResponseWithData.Loading())
+        try {
+            emit(
+                client.get(HttpRoutes.TASK) {
+                    parameters {
+                        parameter("month", month)
+                        parameter("year", year)
+                    }
+                    headers {
+                        append(HttpHeaders.Authorization, "Bearer $userId")
+                    }
+                }.toTaskItemList()
+            )
+        } catch (e:Exception){
+            e.printStackTrace()
+            emit(ApiResponseWithData.Error())
+        }
+    }
+
+    override suspend fun getTaskById(userId: String, taskId: Int): TaskItem? {
         return try {
             client.get(HttpRoutes.TASK) {
-                parameters {
-                    parameter("month", month)
-                    parameter("year", year)
+                url {
+                    appendPathSegments(taskId.toString())
                 }
                 headers {
                     append(HttpHeaders.Authorization, "Bearer $userId")
                 }
-            }.toTaskItemList()
-        } catch(e: RedirectResponseException){
-            // 3xx - responses
-            handleErrorApiErrorResponse()
-            emptyList()
-        } catch(e: ClientRequestException){
-            // 4xx - responses
-            handleErrorApiErrorResponse()
-            emptyList()
-        } catch(e: ServerResponseException){
-            // 5xx - responses
-            handleErrorApiErrorResponse()
-            emptyList()
-        } catch(e: Exception){
-            handleErrorApiErrorResponse()
-            emptyList()
+            }.toTaskItem()
+        } catch (e:Exception){
+            e.printStackTrace()
+            null
         }
     }
 

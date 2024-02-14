@@ -2,6 +2,7 @@ package com.routinely.routinely.data.task.extensions
 
 import android.util.Log
 import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.auth.model.ApiResponseWithData
 import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.TaskItem
 import com.routinely.routinely.util.TaskItemRemote
@@ -10,6 +11,7 @@ import com.routinely.routinely.util.TaskTag
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 
 
@@ -39,12 +41,38 @@ suspend fun HttpResponse.taskUpdateToApiResponse() : ApiResponse {
     }
 }
 
-suspend fun HttpResponse.toTaskItemList() : List<TaskItem> {
+suspend fun HttpResponse.toTaskItemList() : ApiResponseWithData<List<TaskItem>> {
     return when(this.status) {
         HttpStatusCode.OK -> {
-            Log.d("toTaskItemList", "returning list")
-            val remote = this.body<List<TaskItemRemote>>()
-            return remote.map {
+            val remote = this.body<List<TaskItemRemote>?>() ?: return ApiResponseWithData.EmptyData()
+
+            return ApiResponseWithData.Success(
+                remote.map {
+                    TaskItem(
+                        id = it.id,
+                        name = it.name,
+                        date = it.date,
+                        hour = it.hour,
+                        description = it.description,
+                        tag = mapApiStringToTag(it.tag),
+                        priority = mapApiStringToPriority(it.priority),
+                        category = mapApiStringToCategory(it.category)
+                    )
+                }
+            )
+        }
+        else -> {
+            ApiResponseWithData.DefaultError()
+        }
+    }
+}
+
+suspend fun HttpResponse.toTaskItem() : TaskItem? {
+    return when(this.status) {
+        HttpStatusCode.OK -> {
+            val remote = this.body<TaskItemRemote?>()
+            if(remote == null) return remote
+            remote.let {
                 TaskItem(
                     id = it.id,
                     name = it.name,
@@ -58,7 +86,8 @@ suspend fun HttpResponse.toTaskItemList() : List<TaskItem> {
             }
         }
         else -> {
-            emptyList()
+            println(this.status)
+            null
         }
     }
 }
