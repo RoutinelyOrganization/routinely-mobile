@@ -1,6 +1,5 @@
 package com.routinely.routinely.data.task.extensions
 
-import android.util.Log
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.ApiResponseWithData
 import com.routinely.routinely.util.TaskCategory
@@ -11,7 +10,6 @@ import com.routinely.routinely.util.TaskTag
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
-import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 
 
@@ -45,6 +43,7 @@ suspend fun HttpResponse.toTaskItemList() : ApiResponseWithData<List<TaskItem>> 
     return when(this.status) {
         HttpStatusCode.OK -> {
             val remote = this.body<List<TaskItemRemote>?>() ?: return ApiResponseWithData.EmptyData()
+            if(remote.isEmpty()) return ApiResponseWithData.EmptyData()
 
             return ApiResponseWithData.Success(
                 remote.map {

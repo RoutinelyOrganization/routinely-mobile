@@ -108,4 +108,6 @@
     <string name="verification_code_min_error">Quantidade de números máximo, 6!</string>
     <string name="api_forgot_password_account_not_found">Conta não encontrada</string>
     <string name="category_personal_text">Pessoal</string>
+    <string name="no_tasks_available">Ainda não há nenhuma tarefa</string>
+    <string name="no_tasks_completed">Nenhuma tarefa foi concluída</string>
 </resources>

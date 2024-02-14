@@ -110,4 +110,6 @@
     <string name="update_password">Update Password</string>
     <string name="verification_code_min_error">Maximum number of digits, 6!</string>
     <string name="category_personal_text">Personal</string>
+    <string name="no_tasks_available">There are no tasks yet</string>
+    <string name="no_tasks_completed">No tasks were completed</string>
 </resources>

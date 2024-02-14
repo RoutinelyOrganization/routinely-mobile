@@ -1,6 +1,5 @@
 package com.routinely.routinely.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MarqueeAnimationMode
 import androidx.compose.foundation.background
@@ -27,11 +26,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -52,6 +48,7 @@ import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.ApiResponseWithData
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.ui.theme.SecondaryYellowRoutinely
+import com.routinely.routinely.ui.theme.textGrayColor
 import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.TaskItem
 
@@ -83,25 +80,35 @@ fun TasksViewerRoutinely(
         )
         Column(
             Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(bottom = 12.dp),
         ) {
-            when(getTasksResponse) {
+            when (getTasksResponse) {
                 is ApiResponseWithData.Success -> {
                     val data = getTasksResponse.data
                     for (item in data!!) {
                         TaskItem(item, onEditButtonClicked, onDeleteButtonClicked)
                     }
                 }
+
                 is ApiResponseWithData.Error -> {
 
                 }
+
                 is ApiResponseWithData.EmptyData -> {
-                    Text(
-                        text = "Sem Tasks",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    Column(
+                        modifier = Modifier.padding(
+                            horizontal = 16.dp
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.no_tasks_available),
+                            fontSize = 16.sp,
+                            color = textGrayColor,
+                        )
+                    }
                 }
+
                 is ApiResponseWithData.Loading -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -111,6 +118,7 @@ fun TasksViewerRoutinely(
                         IndeterminateCircularIndicator()
                     }
                 }
+
                 else -> {
 
                 }
@@ -138,8 +146,22 @@ fun TasksViewerRoutinely(
                 .fillMaxWidth()
                 .padding(bottom = 12.dp),
         ) {
-            for (item in listOfConcludedTaskItems) {
-                ConcludedTaskItem(item)
+            if(listOfConcludedTaskItems.isEmpty()) {
+                Column(
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp
+                    )
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.no_tasks_completed),
+                        fontSize = 16.sp,
+                        color = textGrayColor,
+                    )
+                }
+            } else {
+                for (item in listOfConcludedTaskItems) {
+                    ConcludedTaskItem(item)
+                }
             }
         }
     }
