@@ -9,6 +9,7 @@ import androidx.datastore.preferences.preferencesDataStoreFile
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.ANDROID
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -22,7 +23,7 @@ val coreModule = module {
         HttpClient(Android){
             install(Logging){
                 level = LogLevel.ALL
-                logger = Logger.DEFAULT
+                logger = Logger.ANDROID
             }
             install(ContentNegotiation){
                 gson {

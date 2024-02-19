@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.routinely.routinely.R
-import com.routinely.routinely.data.auth.model.AddTaskRequest
+import com.routinely.routinely.data.auth.model.TaskRequest
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.core.Session
-import com.routinely.routinely.data.task.api.AddTaskApi
+import com.routinely.routinely.data.task.api.TaskApi
 import com.routinely.routinely.util.validators.DateTimeInputValid
 import com.routinely.routinely.util.validators.DescriptionInputValid
 import com.routinely.routinely.util.validators.TaskNameInputValid
@@ -16,15 +16,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class AddTaskViewModel(
-    private val addTaskApi: AddTaskApi,
+    private val taskApi: TaskApi,
     private val session: Session,
 ) : ViewModel() {
 
     private val _apiResponse = MutableStateFlow<ApiResponse>(ApiResponse.Empty)
     val apiResponse = _apiResponse.asStateFlow()
 
-    fun addTask(newTask: AddTaskRequest) {
-        val newTaskData = AddTaskRequest(
+    fun addTask(newTask: TaskRequest) {
+        val newTaskData = TaskRequest(
             name = newTask.name,
             date = newTask.date,
             hour = newTask.hour,
@@ -32,14 +32,13 @@ class AddTaskViewModel(
             accountId = getTokenSession(),
             priority = newTask.priority,
             category = newTask.category,
-            // TODO CHANGE AFTER BACKEND FIX THIS
-            tag = newTask.category,
+            tag = newTask.tag,
         )
 
         viewModelScope.launch {
             _apiResponse.value = ApiResponse.Loading
             try {
-                _apiResponse.value = addTaskApi.addTask(newTaskData)
+                _apiResponse.value = taskApi.addTask(newTaskData)
             } catch(e: Exception) {
                 _apiResponse.value = ApiResponse.DefaultError
             }

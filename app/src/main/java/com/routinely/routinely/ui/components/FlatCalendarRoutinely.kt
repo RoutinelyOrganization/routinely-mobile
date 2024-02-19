@@ -1,6 +1,5 @@
 package com.routinely.routinely.ui.components
 
-import android.os.Build
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -26,9 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import java.time.Instant
-import java.util.Calendar
+import java.time.LocalDate
 import java.util.Locale
-import java.util.TimeZone
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,16 +90,12 @@ fun DatePickerRoutinely(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun datePickerState(): DatePickerState {
-    val initialDate: Long = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    val initialDate: Long =
         Instant.now().toEpochMilli()
-    } else {
-        val calendar = Calendar.getInstance(TimeZone.getDefault())
-        calendar.timeInMillis
-    }
 
     return rememberDatePickerState(
         initialDisplayMode = DisplayMode.Picker,
-        yearRange = IntRange(2014, 2024), // TODO Add this automatically
+        yearRange = LocalDate.now().minusYears(1).year .. LocalDate.now().plusYears(1).year,
         initialSelectedDateMillis = initialDate
     )
 }

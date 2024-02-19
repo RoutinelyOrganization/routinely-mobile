@@ -39,6 +39,8 @@
     <string name="didnt_receive">Didn\'t receive?</string>
     <string name="send_again">Send again</string>
     <string name="password">Password</string>
+    <string name="show_password_text">SHOW</string>
+    <string name="hide_password_text">HIDE</string>
     <string name="login_invalid_password">Invalid Password</string>
     <string name="save_changes">Save Changes</string>
     <string name="delete_task">Delete Task</string>
@@ -107,4 +109,7 @@
     <string name="hour">Hour</string>
     <string name="update_password">Update Password</string>
     <string name="verification_code_min_error">Maximum number of digits, 6!</string>
+    <string name="category_personal_text">Personal</string>
+    <string name="no_tasks_available">There are no tasks yet</string>
+    <string name="no_tasks_completed">No tasks were completed</string>
 </resources>

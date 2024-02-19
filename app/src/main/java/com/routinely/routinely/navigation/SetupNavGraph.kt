@@ -1,13 +1,23 @@
 package com.routinely.routinely.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.routinely.routinely.R
 import com.routinely.routinely.changepassword.CreateNewPasswordScreen
 import com.routinely.routinely.changepassword.CreateNewPasswordViewModel
@@ -15,6 +25,7 @@ import com.routinely.routinely.changepassword.ForgotPasswordScreen
 import com.routinely.routinely.changepassword.ForgotPasswordViewModel
 import com.routinely.routinely.changepassword.VerificationCodeScreen
 import com.routinely.routinely.changepassword.VerificationCodeViewModel
+import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.ForgotPasswordRequest
 import com.routinely.routinely.home.HomeScreen
 import com.routinely.routinely.home.HomeViewModel
@@ -26,7 +37,10 @@ import com.routinely.routinely.splash_screen.SplashScreen
 import com.routinely.routinely.task.AddTaskScreen
 import com.routinely.routinely.task.AddTaskViewModel
 import com.routinely.routinely.task.EditTaskScreen
+import com.routinely.routinely.task.EditTaskViewModel
+import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.util.MenuItem
+import com.routinely.routinely.util.TaskItem
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -58,13 +72,13 @@ fun SetupNavGraph(
             onNewTaskClicked = {
                 navController.navigate(Screen.AddTaskScreen.route)
             },
-            onEditTaskClicked = {
-                navController.navigate(Screen.EditTaskScreen.route)
-            },
             navigateToLoginScreen = {
                 navController.navigate(Screen.Login.route) {
                     popUpTo(0)
                 }
+            },
+            navigateToEditScreen = { taskId ->
+                navController.navigate(Screen.EditTaskScreen.withArgs(taskId))
             }
         )
         addTaskScreenRoute(
@@ -156,12 +170,13 @@ fun NavGraphBuilder.loginRoute(
                 viewModel.passwordState(it)
             },
             signInResult = signInResult,
-            saveUser =  { token, remember ->
+            saveUser = { token, remember ->
                 viewModel.saveUser(token, remember)
             }
         )
     }
 }
+
 fun NavGraphBuilder.createAccountRoute(
     navigateToLoginScreen: () -> Unit,
     onAlreadyHaveAnAccountClicked: () -> Unit,
@@ -193,6 +208,7 @@ fun NavGraphBuilder.createAccountRoute(
         )
     }
 }
+
 fun NavGraphBuilder.newPasswordRoute(
     navigateToLoginScreen: () -> Unit
 ) {
@@ -201,7 +217,7 @@ fun NavGraphBuilder.newPasswordRoute(
         val apiErrorMessage by viewModel.apiErrorMessage.collectAsState()
         val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
         CreateNewPasswordScreen(
-            onUpdatePasswordClicked = { password :String, confirmPassword :String ->
+            onUpdatePasswordClicked = { password: String, confirmPassword: String ->
                 viewModel.verifyAllConditions(password, confirmPassword)
             },
             passwordStateValidation = {
@@ -216,6 +232,7 @@ fun NavGraphBuilder.newPasswordRoute(
         )
     }
 }
+
 fun NavGraphBuilder.forgotPasswordRoute(
     navigateToCodeVerificationScreen: (accountId: String) -> Unit,
 ) {
@@ -235,6 +252,7 @@ fun NavGraphBuilder.forgotPasswordRoute(
         )
     }
 }
+
 fun NavGraphBuilder.verificationCodeRoute(
     navigateToSetNewPasswordScreen: () -> Unit
 ) {
@@ -242,10 +260,10 @@ fun NavGraphBuilder.verificationCodeRoute(
         val viewModel: VerificationCodeViewModel = koinViewModel()
         val shouldGoToNextScreen by viewModel.shouldGoToNextScreen
         VerificationCodeScreen(
-            onConfirmResetPasswordClicked = { code :String ->
+            onConfirmResetPasswordClicked = { code: String ->
                 viewModel.verifyAllConditions(code)
             },
-            codeStateValidation = { code :String ->
+            codeStateValidation = { code: String ->
                 viewModel.codeState(code)
             },
             navigateToSetNewPasswordScreen = navigateToSetNewPasswordScreen,
@@ -257,8 +275,8 @@ fun NavGraphBuilder.verificationCodeRoute(
 fun NavGraphBuilder.homeScreenRoute(
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
-    onEditTaskClicked: () -> Unit,
     navigateToLoginScreen: () -> Unit,
+    navigateToEditScreen: (taskId: Int) -> Unit,
 ) {
     composable(route = Screen.HomeScreen.route) {
         val viewModel: HomeViewModel = koinViewModel()
@@ -284,11 +302,29 @@ fun NavGraphBuilder.homeScreenRoute(
             ),
         )
 
+        val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsStateWithLifecycle()
+        val getTasksResponse = viewModel.getTasksResponse.collectAsStateWithLifecycle()
+
+        LaunchedEffect(key1 = deleteTaskResponse) {
+            if(deleteTaskResponse == ApiResponse.Success) {
+                viewModel.getUserTasks(viewModel.lastMonth, viewModel.lastYear, force = true)
+            }
+        }
+
         HomeScreen(
             onNotificationClicked = { onNotificationClicked() },
             onNewTaskClicked = { onNewTaskClicked() },
-            onEditTaskClicked = { onEditTaskClicked() },
-            menuItems = menuItems
+            onEditTaskClicked = {
+                navigateToEditScreen(it.id)
+            },
+            onDeleteTaskClicked = {
+                viewModel.excludeTask(it)
+            },
+            menuItems = menuItems,
+            onSelectDayChange = { month, year ->
+                viewModel.getUserTasks(month, year)
+            },
+            getTasksResponse = getTasksResponse.value,
         )
     }
 }
@@ -356,8 +392,13 @@ fun NavGraphBuilder.editTaskScreenRoute(
     onHomeButtonPressed: () -> Unit,
     navigateToLoginScreen: () -> Unit,
 ) {
-    composable(route = Screen.EditTaskScreen.route) {
-        val viewModel: AddTaskViewModel = koinViewModel()
+    composable(
+        route = Screen.EditTaskScreen.route,
+        arguments = listOf(
+            navArgument("taskId") { type = NavType.IntType },
+        )
+    ) { backStackEntry ->
+        val viewModel: EditTaskViewModel = koinViewModel()
         val menuItems = listOf(
             MenuItem(
                 text = stringResource(R.string.menu_configuration),
@@ -379,26 +420,57 @@ fun NavGraphBuilder.editTaskScreenRoute(
                 }
             ),
         )
+
+        val taskIdArg = backStackEntry.arguments!!.getInt("taskId")
+
+        val taskItem = remember { mutableStateOf<TaskItem?>(null) }
+
+        LaunchedEffect(taskIdArg) {
+            taskItem.value = viewModel.getTaskById(taskIdArg)
+        }
+
         val apiResponse by viewModel.apiResponse.collectAsState()
-        EditTaskScreen(
-            onBackButtonPressed = { onBackButtonPressed() },
-            onHomeButtonPressed = { onHomeButtonPressed() },
-            onNotificationClicked = { onNotificationClicked() },
-            menuItems = menuItems,
-            taskNameStateValidation = { taskName ->
-                viewModel.taskNameState(taskName)
-            },
-            taskDateStateValidation = { taskDate ->
-                viewModel.taskDateState(taskDate)
-            },
-            taskTimeStateValidation = { taskTime ->
-                viewModel.taskTimeState(taskTime)
-            },
-            taskDescriptionStateValidation = { description ->
-                viewModel.taskDescriptionState(description)
-            },
-            editTaskResult = apiResponse,
-        )
+
+        if(taskItem.value != null) {
+            EditTaskScreen(
+                onBackButtonPressed = { onBackButtonPressed() },
+                onHomeButtonPressed = { onHomeButtonPressed() },
+                onNotificationClicked = { onNotificationClicked() },
+                menuItems = menuItems,
+                taskNameStateValidation = { taskName ->
+                    viewModel.taskNameState(taskName)
+                },
+                taskDateStateValidation = { taskDate ->
+                    viewModel.taskDateState(taskDate)
+                },
+                taskTimeStateValidation = { taskTime ->
+                    viewModel.taskTimeState(taskTime)
+                },
+                taskDescriptionStateValidation = { description ->
+                    viewModel.taskDescriptionState(description)
+                },
+                editTaskResult = apiResponse,
+                task = taskItem.value!!,
+                onSaveChanges = { taskId, newTask ->
+                    viewModel.saveTask(taskId, newTask)
+                },
+                onDeleteTask = {
+                    viewModel.deleteTask(it)
+                },
+                onDuplicateTask = {
+                    viewModel.duplicateTask()
+                }
+
+            )
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+
+            ) {
+                IndeterminateCircularIndicator()
+            }
+        }
     }
 }
 

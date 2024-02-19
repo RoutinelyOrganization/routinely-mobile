@@ -37,6 +37,8 @@
     <string name="didnt_receive">Não recebeu?</string>
     <string name="send_again">Enviar novamente</string>
     <string name="password">Senha</string>
+    <string name="show_password_text">EXIBIR</string>
+    <string name="hide_password_text">ESCONDER</string>
     <string name="login_invalid_password">Senha inválida</string>
     <string name="save_changes">Salvar mudanças</string>
     <string name="delete_task">Deletar tarefa</string>
@@ -105,4 +107,7 @@
     <string name="update_password">Atualizar senha</string>
     <string name="verification_code_min_error">Quantidade de números máximo, 6!</string>
     <string name="api_forgot_password_account_not_found">Conta não encontrada</string>
+    <string name="category_personal_text">Pessoal</string>
+    <string name="no_tasks_available">Ainda não há nenhuma tarefa</string>
+    <string name="no_tasks_completed">Nenhuma tarefa foi concluída</string>
 </resources>

@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
-import com.routinely.routinely.data.auth.model.AddTaskRequest
+import com.routinely.routinely.data.auth.model.TaskRequest
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.ui.components.AddTaskButton
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
@@ -64,7 +64,7 @@ fun AddTaskScreen(
     taskTimeStateValidation: (timeTask: String) -> DateTimeInputValid,
     taskDescriptionStateValidation: (descriptionTask: String) -> DescriptionInputValid,
     navigateToHomeScreen: () -> Unit,
-    onAddTaskClick: (AddTaskRequest) -> Unit,
+    onAddTaskClick: (TaskRequest) -> Unit,
     menuItems: List<MenuItem>,
     addTaskResult: ApiResponse,
 ) {
@@ -210,7 +210,7 @@ fun AddTaskScreen(
                     AddTaskButton (
                         {
                             onAddTaskClick(
-                                AddTaskRequest(
+                                TaskRequest(
                                     name = taskName,
                                     date = taskDate,
                                     priority = dropdownPriority!!.apiString,

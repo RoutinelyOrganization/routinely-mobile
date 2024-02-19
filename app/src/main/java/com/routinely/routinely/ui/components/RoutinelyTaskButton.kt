@@ -17,12 +17,12 @@ fun RoutinelyTaskButton(
     buttonColor: ButtonColors,
     textRes: Int,
     textColor: Color,
-    borderStroke: BorderStroke
+    borderStroke: BorderStroke,
+    enabled: Boolean
 
     ) {
-    val isButtonEnabled = true
     OutlinedButton(
-        enabled = isButtonEnabled,
+        enabled = enabled,
         onClick = onClick,
         modifier = modifier,
         colors = buttonColor,

@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -28,6 +29,10 @@ import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.util.validators.DateTimeInputValid
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.util.Locale
 
 @ExperimentalMaterial3Api
 @Composable
@@ -35,15 +40,38 @@ fun DatePickerDialogRoutinely(
     onValueChange: (String) -> Unit,
     labelRes: String,
     error: DateTimeInputValid,
-    modifier: Modifier
+    modifier: Modifier,
+    value: String? = null
 ) {
     var showDatePickerDialog by remember {
         mutableStateOf(false)
     }
-    val datePickerState = rememberDatePickerState(yearRange = 2014..2024)
+    val localDateNow = LocalDate.now()
+    val datePickerState = rememberDatePickerState(
+        yearRange = localDateNow.year..localDateNow.plusYears(1).year,
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                val today = localDateNow.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+                val oneYearFromNow =
+                    localDateNow.plusYears(1).atStartOfDay(ZoneOffset.UTC).toInstant()
+                        .toEpochMilli()
+                return utcTimeMillis in (today) until oneYearFromNow
+            }
+        }
+    )
     var selectedDate by remember {
         mutableStateOf("")
     }
+    value?.let {
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale("pt-br"))
+        val date = formatter.parse(it)
+        val timestampUTC = date?.time
+        if (timestampUTC != null) {
+            datePickerState.selectedDateMillis = timestampUTC
+            selectedDate = timestampUTC.toBrazilianDateFormat()
+        }
+    }
+
     val confirmEnabled by remember { derivedStateOf { datePickerState.selectedDateMillis != null } }
 
     when {
@@ -80,7 +108,7 @@ fun DatePickerDialogRoutinely(
             ) {
                 DatePicker(
                     state = datePickerState,
-                    showModeToggle = false
+                    showModeToggle = false,
                 )
             }
         }

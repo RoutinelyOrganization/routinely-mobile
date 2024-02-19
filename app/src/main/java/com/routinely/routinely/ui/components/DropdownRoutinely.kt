@@ -36,6 +36,7 @@ fun DropdownRoutinely(
     onValueChange: (Int) -> Unit,
     list: List<TaskFields>,
     modifier: Modifier = Modifier,
+    option: Int? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
     val labelResAsString = stringResource(id = labelRes)
@@ -44,6 +45,8 @@ fun DropdownRoutinely(
     }
 
     var selectedOptionText by remember { mutableStateOf("") }
+
+    option?.let { selectedOptionText = stringResource(id = option) }
 
     ExposedDropdownMenuBox(
         modifier = modifier.fillMaxWidth(),
@@ -121,7 +124,8 @@ fun DropdownRoutinelyPriorities(
     labelRes: Int,
     onValueChange: (Int) -> Unit,
     list: List<TaskPriorities>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    option: Int? = null,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -132,6 +136,8 @@ fun DropdownRoutinelyPriorities(
     }
 
     var selectedOptionText by remember { mutableStateOf("") }
+
+    option?.let { selectedOptionText = stringResource(id = option) }
 
     val stringColorMap: Map<String, Color> = list.associate {
         stringResource(it.stringId) to it.textColor

@@ -40,7 +40,7 @@ fun TaskAlertDialog(
         title = { Text(text = stringResource(textRes),
             fontSize = 16.sp) },
         text = {
-            Column() {
+            Column {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
@@ -56,7 +56,8 @@ fun TaskAlertDialog(
                         textColor = Color.White,
                         buttonColor = ButtonDefaults.buttonColors(PurpleRoutinely),
                         modifier = Modifier.width(104.dp).height(40.dp),
-                        borderStroke = BorderStroke(1.dp, PurpleRoutinely)
+                        borderStroke = BorderStroke(1.dp, PurpleRoutinely),
+                        enabled = true,
                     )
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -67,7 +68,8 @@ fun TaskAlertDialog(
                         textColor = textGrayColor,
                         buttonColor = ButtonDefaults.outlinedButtonColors(containerColor = Color.Transparent),
                         modifier = Modifier.width(104.dp).height(40.dp),
-                        borderStroke = BorderStroke(1.dp, containerBorder)
+                        borderStroke = BorderStroke(1.dp, containerBorder),
+                        enabled = true,
                     )
                 }
             }

@@ -1,6 +1,6 @@
 package com.routinely.routinely.data.auth.model
 
-data class AddTaskRequest(
+data class TaskRequest(
     val name: String,
     val date: String,
     val hour: String,
