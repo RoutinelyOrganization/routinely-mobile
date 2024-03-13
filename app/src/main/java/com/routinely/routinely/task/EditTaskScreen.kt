@@ -35,6 +35,7 @@ import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.TaskRequest
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
+import com.routinely.routinely.ui.components.ConfirmTaskAlertDialog
 import com.routinely.routinely.ui.components.DatePickerDialogRoutinely
 import com.routinely.routinely.ui.components.DescriptionTextField
 import com.routinely.routinely.ui.components.DropdownRoutinely
@@ -76,11 +77,12 @@ fun EditTaskScreen(
     task: TaskItem,
     onSaveChanges: (Int, TaskRequest) -> Unit,
     onDeleteTask: (taskId: Int) -> Unit,
-    onDuplicateTask: (taskId: Int) -> Unit
+    onDuplicateTask: (taskId: Int) -> Boolean
 ) {
     val bottomBarItems = listOf(BottomNavItems.Home)
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var showDuplicateDialog by rememberSaveable { mutableStateOf(false) }
+    var showLimitDuplicateDialog by rememberSaveable { mutableStateOf(false) }
 
     var taskName by rememberSaveable { mutableStateOf("") }
     var taskNameState by rememberSaveable { mutableStateOf<TaskNameInputValid>(TaskNameInputValid.Empty) }
@@ -371,13 +373,24 @@ fun EditTaskScreen(
                                 textRes = R.string.duplicate_task_confirmation,
                                 onConfirm = {
                                     showDuplicateDialog = false
-                                    onDuplicateTask(task.id)
+                                    if(!onDuplicateTask(task.id)){
+                                        showLimitDuplicateDialog = true
+                                    }
                                 },
                                 onCancel = {
                                     showDuplicateDialog = false
                                 },
                                 onDismissRequest = {
                                     showDuplicateDialog = false
+                                }
+                            )
+                        }
+
+                        if(showLimitDuplicateDialog) {
+                            ConfirmTaskAlertDialog(
+                                textRes = R.string.duplicate_task_limit_reached,
+                                onConfirm = {
+                                    showLimitDuplicateDialog = false
                                 }
                             )
                         }

@@ -64,7 +64,9 @@ class EditTaskViewModel(
         }
     }
 
-    fun duplicateTask() {
+    fun duplicateTask(): Boolean {
+        if(task!!.name.contains("(5)")) return false
+
         val hourFormatter = DateTimeFormatter.ISO_DATE_TIME
 
         val dateTime = LocalDateTime.parse(task!!.hour, hourFormatter)
@@ -96,6 +98,7 @@ class EditTaskViewModel(
                 _apiResponse.value = ApiResponse.DefaultError
             }
         }
+        return true
     }
 
 
@@ -106,7 +109,7 @@ class EditTaskViewModel(
         }
     }
 
-    fun duplicateItem(name: String): String {
+    private fun duplicateItem(name: String): String {
         val regex = """(.*)\s\((\d+)\)""".toRegex()
         val matchResult = regex.find(name)
 
