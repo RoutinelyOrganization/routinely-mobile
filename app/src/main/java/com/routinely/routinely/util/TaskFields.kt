@@ -2,7 +2,7 @@ package com.routinely.routinely.util
 
 import android.os.Parcelable
 
-sealed class TaskFields(val stringId: Int, val apiString: String) : Parcelable {
+sealed class TaskFields(var stringId: Int, val apiString: String) : Parcelable {
     companion object {
         /**
          * Return all stringId from subclass

@@ -455,7 +455,7 @@ fun NavGraphBuilder.editTaskScreenRoute(
                     viewModel.taskDescriptionState(description)
                 },
                 editTaskResult = apiResponse,
-                task = taskItem.value!!,
+                initialTask = taskItem.value!!,
                 onSaveChanges = { taskId, newTask ->
                     viewModel.saveTask(taskId, newTask)
                 },

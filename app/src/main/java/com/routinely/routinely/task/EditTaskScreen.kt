@@ -74,7 +74,7 @@ fun EditTaskScreen(
     taskDescriptionStateValidation: (descriptionTask: String) -> DescriptionInputValid,
     menuItems: List<MenuItem>,
     editTaskResult: ApiResponse,
-    task: TaskItem,
+    initialTask: TaskItem,
     onSaveChanges: (Int, TaskRequest) -> Unit,
     onDeleteTask: (taskId: Int) -> Unit,
     onDuplicateTask: (taskId: Int) -> Boolean
@@ -84,31 +84,37 @@ fun EditTaskScreen(
     var showDuplicateDialog by rememberSaveable { mutableStateOf(false) }
     var showLimitDuplicateDialog by rememberSaveable { mutableStateOf(false) }
 
-    var taskName by rememberSaveable { mutableStateOf("") }
+    var taskName by rememberSaveable { mutableStateOf(initialTask.name) }
     var taskNameState by rememberSaveable { mutableStateOf<TaskNameInputValid>(TaskNameInputValid.Empty) }
-    var taskDate by rememberSaveable { mutableStateOf("") }
+
+    var taskDate by rememberSaveable { mutableStateOf(initialTask.date) }
     var taskDateState by rememberSaveable { mutableStateOf<DateTimeInputValid>(DateTimeInputValid.Empty) }
+
     var taskTime by rememberSaveable { mutableStateOf("") }
     var taskTimeState by rememberSaveable { mutableStateOf<DateTimeInputValid>(DateTimeInputValid.Empty) }
-    var dropdownPriority by rememberSaveable { mutableStateOf<TaskPriorities?>(null) }
+
+    var dropdownPriority by rememberSaveable { mutableStateOf(initialTask.priority) }
     var dropdownPriorityState by rememberSaveable {
         mutableStateOf<DropdownInputValid>(
             DropdownInputValid.Empty
         )
     }
-    var dropdownTags by rememberSaveable { mutableStateOf<TaskTag?>(null) }
+
+    var dropdownTags by rememberSaveable { mutableStateOf(initialTask.tag) }
     var dropdownTagsState by rememberSaveable {
         mutableStateOf<DropdownInputValid>(
             DropdownInputValid.Empty
         )
     }
-    var dropdownCategory by rememberSaveable { mutableStateOf<TaskCategory?>(null) }
+
+    var dropdownCategory by rememberSaveable { mutableStateOf(initialTask.category) }
     var dropdownCategoryState by rememberSaveable {
         mutableStateOf<DropdownInputValid>(
             DropdownInputValid.Empty
         )
     }
-    var taskDescription by rememberSaveable { mutableStateOf("") }
+
+    var taskDescription by rememberSaveable { mutableStateOf(initialTask.description) }
     var taskDescriptionState by rememberSaveable {
         mutableStateOf<DescriptionInputValid>(
             DescriptionInputValid.Empty
@@ -124,11 +130,8 @@ fun EditTaskScreen(
 
     val hourFormatter = DateTimeFormatter.ISO_DATE_TIME
 
-    task.let {
-        taskName = it.name
+    initialTask.let {
         taskNameState = taskNameStateValidation(it.name)
-
-        taskDate = it.date
         taskDateState = taskDateStateValidation(it.date)
 
         val dateTime = LocalDateTime.parse(it.hour, hourFormatter)
@@ -140,16 +143,12 @@ fun EditTaskScreen(
         taskTime = "${hour}:${minute}"
         taskTimeState = taskTimeStateValidation("${hour}:${minute}")
 
-        dropdownPriority = it.priority
         dropdownPriorityState = DropdownInputValid.Valid
 
-        dropdownTags = it.tag
         dropdownTagsState = DropdownInputValid.Valid
 
-        dropdownCategory = it.category
         dropdownCategoryState = DropdownInputValid.Valid
 
-        taskDescription = it.description
         taskDescriptionState = taskDescriptionStateValidation(it.description)
 
         taskId = it.id
@@ -222,18 +221,18 @@ fun EditTaskScreen(
                         labelRes = stringResource(id = R.string.label_date_picker),
                         error = taskDateState,
                         modifier = Modifier.weight(1f),
-                        value = task.date
+                        value = taskDate
                     )
                     TimePickerDialog(
                         onValueChange = { newTaskTime: String ->
+                            taskTimeState = taskTimeStateValidation(newTaskTime)
                             taskTime = newTaskTime
-                            taskTimeState = taskTimeStateValidation(taskTime)
                             hasChanges = true
                         },
                         labelRes = stringResource(id = R.string.label_time_picker),
                         error = taskTimeState,
                         modifier = Modifier.weight(1f),
-                        time = task.hour,
+                        time = taskTime,
                     )
                 }
                 Column(
@@ -249,7 +248,7 @@ fun EditTaskScreen(
                             hasChanges = true
                         },
                         list = TaskPriorities.getAllTaskPriorities(),
-                        option = task.priority.stringId
+                        option = dropdownPriority.stringId
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -266,7 +265,7 @@ fun EditTaskScreen(
                             },
                             list = TaskFields.getAllOptions<TaskCategory>(),
                             modifier = Modifier.weight(1f),
-                            option = task.category.stringId
+                            option = dropdownCategory.stringId
                         )
                         DropdownRoutinely(
                             labelRes = R.string.label_tag_dropdown,
@@ -278,7 +277,7 @@ fun EditTaskScreen(
                             },
                             list = TaskFields.getAllOptions<TaskTag>(),
                             modifier = Modifier.weight(1f),
-                            option = task.tag.stringId
+                            option = dropdownTags!!.stringId
                         )
                     }
                     DescriptionTextField(
@@ -301,12 +300,12 @@ fun EditTaskScreen(
                                 TaskRequest(
                                     name = taskName,
                                     date = taskDate,
-                                    priority = dropdownPriority!!.apiString,
+                                    priority = dropdownPriority.apiString,
                                     accountId = "",
                                     description = taskDescription,
                                     hour = taskTime,
-                                    tag = dropdownTags!!.apiString,
-                                    category = dropdownCategory!!.apiString
+                                    tag = dropdownTags.apiString,
+                                    category = dropdownCategory.apiString
                                 )
                             )
                         },
@@ -373,7 +372,7 @@ fun EditTaskScreen(
                                 textRes = R.string.duplicate_task_confirmation,
                                 onConfirm = {
                                     showDuplicateDialog = false
-                                    if(!onDuplicateTask(task.id)){
+                                    if(!onDuplicateTask(initialTask.id)){
                                         showLimitDuplicateDialog = true
                                     }
                                 },
