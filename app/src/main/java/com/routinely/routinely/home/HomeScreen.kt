@@ -94,7 +94,6 @@ fun HomeScreen(
                         onConfirm = {
                             showDeleteDialog = false
                             temporaryDeleteId?.let { onDeleteTaskClicked(it) }
-                            datePickerState.selectedDateMillis = datePickerState.selectedDateMillis
                         },
                         onCancel = {
                             showDeleteDialog = false

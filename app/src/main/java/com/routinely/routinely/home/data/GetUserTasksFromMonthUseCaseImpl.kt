@@ -50,6 +50,7 @@ internal class GetUserTasksFromMonthUseCaseImpl(
                         emit(ApiResponseWithData.Success(tasks))
                     }
                 } else {
+                    lastResponseSuccess = false
                     emit(it)
                 }
             }

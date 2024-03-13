@@ -324,6 +324,12 @@ fun NavGraphBuilder.homeScreenRoute(
             },
             onDeleteTaskClicked = {
                 viewModel.excludeTask(it)
+                viewModel.getUserTasks(
+                    month = viewModel.lastMonth,
+                    year = viewModel.lastYear,
+                    day = viewModel.lastDay,
+                    force = true
+                )
             },
             menuItems = menuItems,
             onSelectDayChange = { month, year, day ->
