@@ -15,16 +15,18 @@ internal class GetUserTasksFromMonthUseCaseImpl(
 
     private var lastMonth = 0
     private var lastYear = 0
+    private var lastResponseSuccess = false
     private val userTasks: MutableList<TaskItem> = mutableListOf()
 
     override suspend fun invoke(
         month: Int,
         year: Int,
         day: Int,
-        userId: String
+        userId: String,
+        force: Boolean,
     ): Flow<ApiResponseWithData<List<TaskItem>>> = flow {
 
-        if (lastYear == year && lastMonth == month) {
+        if (lastResponseSuccess && lastYear == year && lastMonth == month && !force) {
             emit(
                 ApiResponseWithData.Success(
                     getTasksByDayOfMonth(day, userTasks)
@@ -39,6 +41,8 @@ internal class GetUserTasksFromMonthUseCaseImpl(
                 if (it::class == ApiResponseWithData.Success::class) {
                     userTasks.addAll(it.data!!)
                     val tasks = getTasksByDayOfMonth(day, userTasks)
+
+                    lastResponseSuccess = true
 
                     if(tasks.isEmpty()) {
                         emit(ApiResponseWithData.EmptyData())

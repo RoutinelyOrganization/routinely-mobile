@@ -61,7 +61,7 @@ class HomeViewModel(
             lastDay = day
 
             try {
-                getUserTasksFromMonthUseCase.invoke(month, year, day, session.getToken()).collect {
+                getUserTasksFromMonthUseCase.invoke(month, year, day, session.getToken(), force).collect {
                     _getTasksResponse.value = it
                 }
             } catch (e: Exception) {
