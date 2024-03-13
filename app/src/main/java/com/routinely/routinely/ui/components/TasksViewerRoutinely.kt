@@ -51,6 +51,7 @@ import com.routinely.routinely.ui.theme.SecondaryYellowRoutinely
 import com.routinely.routinely.ui.theme.textGrayColor
 import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.TaskItem
+import timber.log.Timber
 
 @Composable
 fun TasksViewerRoutinely(
@@ -85,8 +86,8 @@ fun TasksViewerRoutinely(
         ) {
             when (getTasksResponse) {
                 is ApiResponseWithData.Success -> {
-                    val data = getTasksResponse.data
-                    for (item in data!!) {
+                    val data = getTasksResponse.data!!
+                    for (item in data) {
                         TaskItem(item, onEditButtonClicked, onDeleteButtonClicked)
                     }
                 }
@@ -96,17 +97,7 @@ fun TasksViewerRoutinely(
                 }
 
                 is ApiResponseWithData.EmptyData -> {
-                    Column(
-                        modifier = Modifier.padding(
-                            horizontal = 16.dp
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.no_tasks_available),
-                            fontSize = 16.sp,
-                            color = textGrayColor,
-                        )
-                    }
+                    EmptyDataLayout()
                 }
 
                 is ApiResponseWithData.Loading -> {
@@ -164,6 +155,21 @@ fun TasksViewerRoutinely(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun EmptyDataLayout() {
+    Column(
+        modifier = Modifier.padding(
+            horizontal = 16.dp
+        )
+    ) {
+        Text(
+            text = stringResource(id = R.string.no_tasks_available),
+            fontSize = 16.sp,
+            color = textGrayColor,
+        )
     }
 }
 

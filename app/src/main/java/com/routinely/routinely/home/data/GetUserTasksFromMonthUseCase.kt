@@ -5,5 +5,5 @@ import com.routinely.routinely.util.TaskItem
 import kotlinx.coroutines.flow.Flow
 
 interface GetUserTasksFromMonthUseCase {
-    suspend operator fun invoke(month: Int, year: Int, userId: String): Flow<ApiResponseWithData<List<TaskItem>>>
+    suspend operator fun invoke(month: Int, year: Int, day: Int, userId: String): Flow<ApiResponseWithData<List<TaskItem>>>
 }

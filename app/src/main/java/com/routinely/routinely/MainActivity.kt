@@ -26,6 +26,8 @@ import com.routinely.routinely.navigation.Screen
 import com.routinely.routinely.navigation.SetupNavGraph
 import com.routinely.routinely.ui.theme.RoutinelyTheme
 import org.koin.android.ext.android.inject
+import org.koin.compose.KoinContext
+import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
     private val session: Session by inject()
@@ -34,18 +36,22 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        Timber.plant(Timber.DebugTree())
+
         val notificationManager: NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             RoutinelyTheme {
-                val navController = rememberNavController()
-                checkNotificationPolicyAccess(notificationManager, this)
-                SetupNavGraph(
-                    navController = navController,
-                    startDest = getStartDestination(),
-                )
+                KoinContext {
+                    val navController = rememberNavController()
+                    checkNotificationPolicyAccess(notificationManager, this)
+                    SetupNavGraph(
+                        navController = navController,
+                        startDest = getStartDestination(),
+                    )
+                }
             }
         }
     }

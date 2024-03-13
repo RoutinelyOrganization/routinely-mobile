@@ -306,8 +306,13 @@ fun NavGraphBuilder.homeScreenRoute(
         val getTasksResponse = viewModel.getTasksResponse.collectAsStateWithLifecycle()
 
         LaunchedEffect(key1 = deleteTaskResponse) {
-            if(deleteTaskResponse == ApiResponse.Success) {
-                viewModel.getUserTasks(viewModel.lastMonth, viewModel.lastYear, force = true)
+            if (deleteTaskResponse == ApiResponse.Success) {
+                viewModel.getUserTasks(
+                    month = viewModel.lastMonth,
+                    year = viewModel.lastYear,
+                    day = viewModel.lastDay,
+                    force = true
+                )
             }
         }
 
@@ -321,8 +326,8 @@ fun NavGraphBuilder.homeScreenRoute(
                 viewModel.excludeTask(it)
             },
             menuItems = menuItems,
-            onSelectDayChange = { month, year ->
-                viewModel.getUserTasks(month, year)
+            onSelectDayChange = { month, year, day ->
+                viewModel.getUserTasks(month, year, day)
             },
             getTasksResponse = getTasksResponse.value,
         )
@@ -431,7 +436,7 @@ fun NavGraphBuilder.editTaskScreenRoute(
 
         val apiResponse by viewModel.apiResponse.collectAsState()
 
-        if(taskItem.value != null) {
+        if (taskItem.value != null) {
             EditTaskScreen(
                 onBackButtonPressed = { onBackButtonPressed() },
                 onHomeButtonPressed = { onHomeButtonPressed() },
