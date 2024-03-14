@@ -83,6 +83,7 @@ fun EditTaskScreen(
     var showDialog by rememberSaveable { mutableStateOf(false) }
     var showDuplicateDialog by rememberSaveable { mutableStateOf(false) }
     var showLimitDuplicateDialog by rememberSaveable { mutableStateOf(false) }
+    var showConfirmChangesDialog by rememberSaveable { mutableStateOf(false) }
 
     var taskName by rememberSaveable { mutableStateOf(initialTask.name) }
     var taskNameState by rememberSaveable { mutableStateOf<TaskNameInputValid>(TaskNameInputValid.Empty) }
@@ -295,19 +296,7 @@ fun EditTaskScreen(
                         textColor = Color.White,
                         buttonColor = ButtonDefaults.buttonColors(PurpleRoutinely),
                         onClick = {
-                            onSaveChanges(
-                                taskId,
-                                TaskRequest(
-                                    name = taskName,
-                                    date = taskDate,
-                                    priority = dropdownPriority.apiString,
-                                    accountId = "",
-                                    description = taskDescription,
-                                    hour = taskTime,
-                                    tag = dropdownTags.apiString,
-                                    category = dropdownCategory.apiString
-                                )
-                            )
+                            showConfirmChangesDialog = true
                         },
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -338,6 +327,34 @@ fun EditTaskScreen(
                             borderStroke = BorderStroke(1.dp, Color.Gray),
                             enabled = true
                         )
+
+                        if (showConfirmChangesDialog) {
+                            TaskAlertDialog(
+                                textRes = R.string.save_changes_confirm,
+                                onConfirm = {
+                                    showConfirmChangesDialog = false
+                                    onSaveChanges(
+                                        taskId,
+                                        TaskRequest(
+                                            name = taskName,
+                                            date = taskDate,
+                                            priority = dropdownPriority.apiString,
+                                            accountId = "",
+                                            description = taskDescription,
+                                            hour = taskTime,
+                                            tag = dropdownTags.apiString,
+                                            category = dropdownCategory.apiString
+                                        )
+                                    )
+                                },
+                                onCancel = {
+                                    showConfirmChangesDialog = false
+                                },
+                                onDismissRequest = {
+                                    showConfirmChangesDialog = false
+                                }
+                            )
+                        }
 
                         if (showDialog) {
                             TaskAlertDialog(
