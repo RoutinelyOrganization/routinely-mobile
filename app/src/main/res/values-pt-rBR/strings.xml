@@ -45,9 +45,11 @@
     <string name="duplicate_task">Duplicar tarefa</string>
     <string name="yes">Sim</string>
     <string name="delete_task_confirmation">Você tem certeza que deseja excluir essa tarefa?</string>
+    <string name="save_changes_confirm">Tem certeza que deseja salvar essa da tarefa?</string>
     <string name="no">Não</string>
     <string name="cancel">Cancela</string>
     <string name="duplicate_task_confirmation">Você tem certeza que deseja duplicar essa tarefa?</string>
+    <string name="duplicate_task_limit_reached">Limite de tarefas repetidas atingido</string>
     <string name="menu_configuration">Configurações</string>
     <string name="menu_goal">Metas</string>
     <string name="menu_notification">Notificações</string>

@@ -79,6 +79,43 @@ fun TaskAlertDialog(
     )
 }
 
+@Composable
+fun ConfirmTaskAlertDialog(
+    textRes: Int,
+    onConfirm: () -> Unit,
+) {
+    AlertDialog(
+        containerColor = Color.White,
+        modifier = Modifier.shadow(3.dp),
+        onDismissRequest = onConfirm,
+        shape = RoundedCornerShape(8.dp),
+        title = { Text(text = stringResource(textRes),
+            fontSize = 16.sp) },
+        text = {
+            Column {
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    RoutinelyTaskButton(
+                        onClick = onConfirm,
+                        textRes = R.string.ok,
+                        textColor = Color.White,
+                        buttonColor = ButtonDefaults.buttonColors(PurpleRoutinely),
+                        modifier = Modifier.width(104.dp).height(40.dp),
+                        borderStroke = BorderStroke(1.dp, PurpleRoutinely),
+                        enabled = true,
+                    )
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {},
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 fun TaskAlertDialogPreview() {

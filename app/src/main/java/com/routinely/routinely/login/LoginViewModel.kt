@@ -13,6 +13,7 @@ import com.routinely.routinely.util.validators.PasswordInputValid
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class LoginViewModel(
     private val authApi: AuthApi,
@@ -60,7 +61,7 @@ class LoginViewModel(
     }
 
     fun saveUser(token: String, remember: Boolean) {
-        viewModelScope.launch {
+        runBlocking {
             session.setToken(token)
             if(remember) session.setRememberLogin(true)
         }

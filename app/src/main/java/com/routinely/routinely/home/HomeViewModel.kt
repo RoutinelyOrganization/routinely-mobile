@@ -28,19 +28,22 @@ class HomeViewModel(
     private val _deleteTaskResponse = MutableStateFlow<ApiResponse>(ApiResponse.Empty)
     val deleteTaskResponse = _deleteTaskResponse.asStateFlow()
 
-    private val _getTasksResponse = MutableStateFlow<ApiResponseWithData<List<TaskItem>>>(ApiResponseWithData.Default())
+    private val _getTasksResponse =
+        MutableStateFlow<ApiResponseWithData<List<TaskItem>>>(ApiResponseWithData.Default())
     val getTasksResponse: StateFlow<ApiResponseWithData<List<TaskItem>>> = _getTasksResponse
 
     var lastMonth = 0
     var lastYear = 0
+    var lastDay = 0
 
     init {
         val calendar = Calendar.getInstance()
 
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH) + 1
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        getUserTasks(month, year, force = true)
+        getUserTasks(month, year, day, force = true)
     }
 
     fun logout() {
@@ -50,18 +53,21 @@ class HomeViewModel(
         }
     }
 
-    fun getUserTasks(month: Int, year: Int, force: Boolean = false) = viewModelScope.launch {
-        if(lastMonth == month && lastYear == year && !force) return@launch
-        lastMonth = month
-        lastYear = year
-        try {
-            getUserTasksFromMonthUseCase.invoke(month, year, session.getToken()).collect {
-                _getTasksResponse.value = it
+    fun getUserTasks(month: Int, year: Int, day: Int, force: Boolean = false) =
+        viewModelScope.launch {
+            if (lastMonth == month && lastYear == year && lastDay == day && !force) return@launch
+            lastMonth = month
+            lastYear = year
+            lastDay = day
+
+            try {
+                getUserTasksFromMonthUseCase.invoke(month, year, day, session.getToken(), force).collect {
+                    _getTasksResponse.value = it
+                }
+            } catch (e: Exception) {
+                _getTasksResponse.value = ApiResponseWithData.DefaultError()
             }
-        } catch (e: Exception) {
-            _getTasksResponse.value = ApiResponseWithData.DefaultError()
         }
-    }
 
     fun excludeTask(task: TaskItem) = viewModelScope.launch {
         val userId = session.getToken()

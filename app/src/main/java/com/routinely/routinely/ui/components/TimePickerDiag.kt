@@ -52,10 +52,10 @@ fun TimePickerDialog(
     var selectedMinute by rememberSaveable { mutableIntStateOf(0) }
 
     time?.let {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX")
-        val data = LocalDateTime.parse(time, formatter)
-        selectedHour = data.hour
-        selectedMinute = data.minute
+        time.split(":").let {
+            selectedHour = it.first().toInt()
+            selectedMinute = it.last().toInt()
+        }
     }
 
     val timePickerState = rememberTimePickerState(

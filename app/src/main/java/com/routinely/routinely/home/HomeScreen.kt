@@ -38,7 +38,7 @@ fun HomeScreen(
     onEditTaskClicked: (taskItem: TaskItem) -> Unit,
     onDeleteTaskClicked: (taskItem: TaskItem) -> Unit,
     menuItems: List<MenuItem>,
-    onSelectDayChange: (Int, Int) -> Unit,
+    onSelectDayChange: (Int, Int, Int) -> Unit,
     getTasksResponse: ApiResponseWithData<List<TaskItem>>,
 ) {
     val bottomBarItems = listOf(BottomNavItems.NewTask)
@@ -94,7 +94,6 @@ fun HomeScreen(
                         onConfirm = {
                             showDeleteDialog = false
                             temporaryDeleteId?.let { onDeleteTaskClicked(it) }
-                            datePickerState.selectedDateMillis = datePickerState.selectedDateMillis
                         },
                         onCancel = {
                             showDeleteDialog = false
@@ -116,8 +115,9 @@ fun HomeScreen(
 
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH) + 1
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        onSelectDayChange(month, year)
+        onSelectDayChange(month, year, day)
     }
 }
 
@@ -130,7 +130,7 @@ fun HomeScreenPreview() {
         onEditTaskClicked = { },
         onDeleteTaskClicked = { },
         menuItems = listOf(),
-        onSelectDayChange = { _, _ -> },
+        onSelectDayChange = { _, _, _ -> },
         getTasksResponse = ApiResponseWithData.Default()
     )
 }
