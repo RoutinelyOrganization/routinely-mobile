@@ -19,8 +19,6 @@ class LoginViewModel(
     private val authApi: AuthApi,
     private val session: Session,
 ) : ViewModel() {
-    private val _authenticated = MutableStateFlow(false)
-    val authenticated = _authenticated.asStateFlow()
 
     private val _signInResult = MutableStateFlow<SignInResult>(SignInResult.Empty)
     val signInResult = _signInResult.asStateFlow()

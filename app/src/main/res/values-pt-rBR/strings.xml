@@ -33,6 +33,7 @@
     <string name="create_new_password">Criar nova senha</string>
     <string name="chose_a_new_password">Escolha uma nova senha abaixo ela precisa ser diferente da senha anterior</string>
     <string name="reset_password">Redefinir senha</string>
+    <string name="reset_password_success">Redefinição de senha concluida com sucesso</string>
     <string name="type_the_code">Insira o código de verificação enviado no e-mail</string>
     <string name="didnt_receive">Não recebeu?</string>
     <string name="send_again">Enviar novamente</string>
@@ -94,9 +95,9 @@
     <string name="login_with_google">Continuar com o Google</string>
     <string name="do_login">Fazer login</string>
     <string name="login_header_text_0">Gerencie</string>
-    <string name="login_header_text_1">suas tarefas,</string>
+    <string name="login_header_text_1">suas tarefas, </string>
     <string name="login_header_text_2">organize</string>
-    <string name="login_header_text_3">sua rotina e</string>
+    <string name="login_header_text_3">sua rotina e </string>
     <string name="login_header_text_4">aproveite</string>
     <string name="login_header_text_5">seu tempo com o que desejar.</string>
     <string name="remember_login">Lembrar meu acesso</string>

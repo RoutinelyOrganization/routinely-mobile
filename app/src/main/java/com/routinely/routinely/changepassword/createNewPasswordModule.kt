@@ -5,6 +5,6 @@ import org.koin.dsl.module
 
 val createNewPasswordModule = module {
     viewModel<CreateNewPasswordViewModel> {
-        CreateNewPasswordViewModel()
+        CreateNewPasswordViewModel(get())
     }
 }

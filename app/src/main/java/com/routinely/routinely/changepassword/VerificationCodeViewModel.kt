@@ -1,22 +1,22 @@
 package com.routinely.routinely.changepassword
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.routinely.routinely.R
+import com.routinely.routinely.data.auth.api.AuthApi
+import com.routinely.routinely.data.auth.model.ValidateCodeRequest
+import com.routinely.routinely.data.auth.model.ValidateCodeResult
 import com.routinely.routinely.util.validators.CodeInputValid
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class VerificationCodeViewModel(
-    //verificationCodeApi: VerificationCodeRequest
+    private val authApi: AuthApi,
 ) : ViewModel() {
 
-    private val _apiErrorMessage = MutableStateFlow(listOf<String>())
-    val apiErrorMessage = _apiErrorMessage.asStateFlow()
-
-    var shouldGoToNextScreen = mutableStateOf(false)
+    private val _validateCodeResult = MutableStateFlow<ValidateCodeResult>(ValidateCodeResult.Empty)
+    val validateCodeResult = _validateCodeResult.asStateFlow()
 
     private val pattern = Regex("^[0-9]*\$")
     fun codeState(code: String) : CodeInputValid {
@@ -33,12 +33,14 @@ class VerificationCodeViewModel(
         }
     }
 
-    fun verifyAllConditions(code: String) :CodeInputValid {
+    fun codeVerification(validateCodeRequest: ValidateCodeRequest) {
         viewModelScope.launch {
-            if(codeState(code) == CodeInputValid.Valid){
-                shouldGoToNextScreen.value = true
+            _validateCodeResult.value = ValidateCodeResult.Loading
+            try{
+                _validateCodeResult.value = authApi.validateCode(validateCodeRequest)
+            } catch (e: Exception) {
+                _validateCodeResult.value = ValidateCodeResult.DefaultError
             }
         }
-        return codeState(code)
     }
 }

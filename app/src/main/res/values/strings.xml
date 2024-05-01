@@ -115,4 +115,6 @@
     <string name="category_personal_text">Personal</string>
     <string name="no_tasks_available">There are no tasks yet</string>
     <string name="no_tasks_completed">No tasks were completed</string>
+    <string name="reset_password_success">Password reset completed successfully</string>
+    <string name="api_validate_code_invalid">Invalid Code!</string>
 </resources>
