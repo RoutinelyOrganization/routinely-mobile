@@ -60,9 +60,10 @@ class LoginViewModel(
         }
     }
 
-    fun saveUser(token: String, remember: Boolean) {
+    fun saveUser(token: String, refreshToken: String, remember: Boolean) {
         runBlocking {
             session.setToken(token)
+            session.setRefreshToken(refreshToken)
             if(remember) session.setRememberLogin(true)
         }
     }

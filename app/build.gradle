@@ -74,6 +74,7 @@ dependencies {
     implementation "io.insert-koin:koin-androidx-compose:$koin_version"
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.7.0'
+    implementation "io.ktor:ktor-client-auth:$ktor_version"
 
     debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")

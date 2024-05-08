@@ -39,9 +39,6 @@ internal class TaskApiImpl(
             client.post(HttpRoutes.TASK) {
                 setBody(taskRequest)
                 contentType(ContentType.Application.Json)
-                headers {
-                    append(HttpHeaders.Authorization, "Bearer ${taskRequest.accountId}")
-                }
             }.taskToApiResponse()
         } catch(e: RedirectResponseException){
             // 3xx - responses
@@ -65,9 +62,6 @@ internal class TaskApiImpl(
                     parameters {
                         parameter("month", month)
                         parameter("year", year)
-                    }
-                    headers {
-                        append(HttpHeaders.Authorization, "Bearer $userId")
                     }
                 }.toTaskItemList()
             )

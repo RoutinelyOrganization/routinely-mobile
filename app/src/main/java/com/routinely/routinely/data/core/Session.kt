@@ -15,9 +15,11 @@ class Session(
         const val DATA = "Data"
         private const val IsLogin = "IsLogin"
         private const val TOKEN = "Token"
+        private const val REFRESH_TOKEN = "RefreshToken"
         private const val REMEMBER = "RememberLogin"
         val isLogin = booleanPreferencesKey(IsLogin)
         val token = stringPreferencesKey(TOKEN)
+        val refresh_token = stringPreferencesKey(TOKEN)
         val remember = booleanPreferencesKey(REMEMBER)
     }
 
@@ -35,6 +37,22 @@ class Session(
             preference[token] = userToken
         }
     }
+
+    fun getRefreshToken(): String {
+        var response: String
+        runBlocking {
+            val pref = dataStore.data.first()
+            response = pref[refresh_token] ?: ""
+        }
+        return response
+    }
+
+    suspend fun setRefreshToken(refreshToken: String) {
+        dataStore.edit { preference ->
+            preference[refresh_token] = refreshToken
+        }
+    }
+
 
     fun getRememberLogin(): Boolean {
         var response: Boolean
