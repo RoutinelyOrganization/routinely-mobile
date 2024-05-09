@@ -31,7 +31,7 @@ class LoginViewModel(
         }
         return if(isPasswordValid(password)){
             PasswordInputValid.Valid
-        }else{
+        } else{
             PasswordInputValid.Error(R.string.login_invalid_password)
         }
     }

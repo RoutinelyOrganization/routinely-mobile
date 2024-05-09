@@ -13,6 +13,7 @@ import com.routinely.routinely.data.auth.model.RegisterRequest
 import com.routinely.routinely.data.auth.model.SignInResult
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.ResponseException
+import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType

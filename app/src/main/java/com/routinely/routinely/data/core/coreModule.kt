@@ -80,18 +80,6 @@ private fun provideChuckerInterceptor(context: Context) = ChuckerInterceptor.Bui
     .build()
 
 private fun provideHttpClient(httpClientEngine: HttpClientEngine, session: Session) = HttpClient(httpClientEngine) {
-    defaultRequest {
-//        url(HttpRoutes.BASE_URL)
-        header("Content-Type", "application/json")
-
-        val doNotUseTokenList = listOf("${HttpRoutes.BASE_URL}/auth")
-
-        if(url.encodedPath !in doNotUseTokenList) {
-            val token = session.getToken()
-            bearerAuth(token)
-        }
-    }
-
     install(ContentNegotiation) {
         gson {
             serializeNulls()
@@ -100,6 +88,13 @@ private fun provideHttpClient(httpClientEngine: HttpClientEngine, session: Sessi
     }
     install(DefaultRequest) {
         header(HttpHeaders.ContentType, ContentType.Application.Json)
+
+        val doNotUseList = listOf("auth")
+
+        if(url.encodedPath !in doNotUseList) {
+            bearerAuth(session.getToken())
+
+        }
     }
     if (BuildConfig.DEBUG) {
         install(Logging) {
@@ -109,23 +104,17 @@ private fun provideHttpClient(httpClientEngine: HttpClientEngine, session: Sessi
     }
 
     install(Auth) {
-
         bearer {
-            loadTokens {
-                BearerTokens(session.getToken(), session.getRefreshToken())
-            }
             refreshTokens {
-                getRefreshToken(session.getToken(), session.getRefreshToken(), client)
+                client.post(HttpRoutes.REFRESH_TOKEN) {
+                    markAsRefreshTokenRequest()
+                    setBody(RefreshTokenBody(session.getRefreshToken()))
+                }.toBearerTokens()
             }
         }
     }
 }
 
-suspend fun getRefreshToken(token: String, refreshToken: String, client: HttpClient): BearerTokens {
-    return client.post(HttpRoutes.REFRESH_TOKEN) {
-        setBody(RefreshTokenBody(refreshToken))
-    }.toBearerTokens()
-}
 
 suspend fun HttpResponse.toBearerTokens(): BearerTokens {
     val response = this.body<TokenResponse>()
