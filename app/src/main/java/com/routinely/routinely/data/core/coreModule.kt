@@ -13,7 +13,6 @@ import com.chuckerteam.chucker.api.RetentionManager
 import com.routinely.routinely.BuildConfig
 import com.routinely.routinely.data.auth.HttpRoutes
 import io.ktor.client.HttpClient
-import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
@@ -22,7 +21,6 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.ANDROID
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -38,7 +36,6 @@ import io.ktor.http.encodedPath
 import io.ktor.serialization.gson.gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
-import timber.log.Timber
 
 val coreModule = module {
     single {
@@ -87,9 +84,11 @@ private fun provideHttpClient(httpClientEngine: HttpClientEngine, session: Sessi
         }
     }
     install(DefaultRequest) {
+        val baseUrl = BuildConfig.BASE_URL_DEBUG
+        url(baseUrl)
         header(HttpHeaders.ContentType, ContentType.Application.Json)
 
-        val doNotUseList = listOf("auth")
+        val doNotUseList = listOf("/auth")
 
         if(url.encodedPath !in doNotUseList) {
             bearerAuth(session.getToken())

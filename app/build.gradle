@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id "org.jetbrains.kotlin.plugin.serialization" version "1.9.10"
+    id "com.google.android.libraries.mapsplatform.secrets-gradle-plugin" version "2.0.1"
     id 'kotlin-parcelize'
 }
 
@@ -28,6 +29,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "BASE_URL_RELEASE", "\"${System.getenv("BASE_URL") ?: "missing-url"}\"")
+        }
+        debug {
+            buildConfigField("String", "BASE_URL_DEBUG", "\"${System.getenv("BASE_URL") ?: "missing-url"}\"")
         }
     }
     compileOptions {
