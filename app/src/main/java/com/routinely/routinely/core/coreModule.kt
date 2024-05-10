@@ -1,4 +1,4 @@
-package com.routinely.routinely.data.core
+package com.routinely.routinely.core
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -12,26 +12,25 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
 import com.routinely.routinely.BuildConfig
 import com.routinely.routinely.data.auth.HttpRoutes
+import com.routinely.routinely.core.useCase.LogoutUseCase
+import com.routinely.routinely.core.useCase.LogoutUseCaseImpl
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.okhttp.OkHttp
-import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.ANDROID
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.bearerAuth
-import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.encodedPath
 import io.ktor.serialization.gson.gson
 import org.koin.android.ext.koin.androidContext
@@ -61,6 +60,10 @@ val coreModule = module {
     single<Session> {
         Session(get())
     }
+
+    single<LogoutUseCase> {
+        LogoutUseCaseImpl(get(), get())
+    }
 }
 
 private fun provideChuckerInterceptor(context: Context) = ChuckerInterceptor.Builder(context)
@@ -77,33 +80,32 @@ private fun provideChuckerInterceptor(context: Context) = ChuckerInterceptor.Bui
     .build()
 
 private fun provideHttpClient(httpClientEngine: HttpClientEngine, session: Session) = HttpClient(httpClientEngine) {
+
+    defaultRequest {
+        url(BuildConfig.BASE_URL_DEBUG)
+    }
+
     install(ContentNegotiation) {
         gson {
             serializeNulls()
             setPrettyPrinting()
         }
     }
-    install(DefaultRequest) {
-        val baseUrl = BuildConfig.BASE_URL_DEBUG
-        url(baseUrl)
-        header(HttpHeaders.ContentType, ContentType.Application.Json)
 
-        val doNotUseList = listOf("/auth")
-
-        if(url.encodedPath !in doNotUseList) {
-            bearerAuth(session.getToken())
-
-        }
-    }
     if (BuildConfig.DEBUG) {
         install(Logging) {
             logger = Logger.ANDROID
             level = LogLevel.ALL
         }
     }
-
     install(Auth) {
         bearer {
+            sendWithoutRequest { request ->
+                !request.url.encodedPath.startsWith("/auth")
+            }
+            loadTokens {
+                BearerTokens(session.getToken(), session.getRefreshToken())
+            }
             refreshTokens {
                 client.post(HttpRoutes.REFRESH_TOKEN) {
                     markAsRefreshTokenRequest()
@@ -112,6 +114,7 @@ private fun provideHttpClient(httpClientEngine: HttpClientEngine, session: Sessi
             }
         }
     }
+    install(HttpTimeout)
 }
 
 
@@ -121,7 +124,7 @@ suspend fun HttpResponse.toBearerTokens(): BearerTokens {
 }
 
 data class RefreshTokenBody(
-    val refreshToken: String
+    val refreshToken: String?
 )
 
 data class TokenResponse(

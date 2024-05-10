@@ -13,9 +13,11 @@ import com.routinely.routinely.data.auth.model.RegisterRequest
 import com.routinely.routinely.data.auth.model.SignInResult
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.ResponseException
+import io.ktor.client.plugins.timeout
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -62,6 +64,14 @@ internal class AuthApiImpl(
         }
     }
 
+    override suspend fun refreshToken(refreshToken: String, token: String): HttpResponse {
+        return client.post(HttpRoutes.REFRESH_TOKEN) {
+            contentType(ContentType.Application.Json)
+            setBody(RefreshToken(refreshToken))
+            bearerAuth(token)
+        }
+    }
+
     private fun handleSignInErrorResponse(httpStatusCode: HttpStatusCode): SignInResult {
         println("Error SignIn: ${httpStatusCode.description}")
         return SignInResult.DefaultError
@@ -76,3 +86,7 @@ internal class AuthApiImpl(
         return ForgotPasswordResult.DefaultError
     }
 }
+
+data class RefreshToken(
+    val refreshToken: String?
+)

@@ -170,8 +170,8 @@ fun NavGraphBuilder.loginRoute(
                 viewModel.passwordState(it)
             },
             signInResult = signInResult,
-            saveUser = { token, refreshToken, remember ->
-                viewModel.saveUser(token, refreshToken, remember)
+            saveUser = { token, refreshToken, authData ->
+                viewModel.saveUser(token, refreshToken, authData)
             }
         )
     }

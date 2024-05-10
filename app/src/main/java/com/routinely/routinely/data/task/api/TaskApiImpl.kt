@@ -1,6 +1,5 @@
 package com.routinely.routinely.data.task.api
 
-import android.util.Log
 import com.routinely.routinely.data.auth.HttpRoutes
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.ApiResponseWithData
@@ -17,22 +16,19 @@ import io.ktor.client.plugins.RedirectResponseException
 import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
-import io.ktor.client.request.headers
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
 import io.ktor.http.parameters
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
 
 internal class TaskApiImpl(
-    private val client: HttpClient
+    private val client: HttpClient,
 ) : TaskApi {
     override suspend fun addTask(taskRequest: TaskRequest): ApiResponse {
         return try {
@@ -54,7 +50,7 @@ internal class TaskApiImpl(
         }
     }
 
-    override suspend fun getMonthTasks(month: Int, year: Int, userId: String): Flow<ApiResponseWithData<List<TaskItem>>> = flow {
+    override suspend fun getMonthTasks(month: Int, year: Int): Flow<ApiResponseWithData<List<TaskItem>>> = flow {
         emit(ApiResponseWithData.Loading())
         try {
             emit(
@@ -71,14 +67,11 @@ internal class TaskApiImpl(
         }
     }
 
-    override suspend fun getTaskById(userId: String, taskId: Int): TaskItem? {
+    override suspend fun getTaskById(taskId: Int): TaskItem? {
         return try {
             client.get(HttpRoutes.TASK) {
                 url {
                     appendPathSegments(taskId.toString())
-                }
-                headers {
-                    append(HttpHeaders.Authorization, "Bearer $userId")
                 }
             }.toTaskItem()
         } catch (e:Exception){
@@ -87,14 +80,11 @@ internal class TaskApiImpl(
         }
     }
 
-    override suspend fun excludeTask(taskId: Int, userId: String): ApiResponse {
+    override suspend fun excludeTask(taskId: Int): ApiResponse {
         return try {
             client.delete((HttpRoutes.TASK)) {
                 url {
                     appendPathSegments(taskId.toString())
-                }
-                headers {
-                    append(HttpHeaders.Authorization, "Bearer $userId")
                 }
             }.excludeToApiResponse()
         } catch(e: RedirectResponseException){
@@ -119,9 +109,6 @@ internal class TaskApiImpl(
                 }
                 setBody(taskRequest)
                 contentType(ContentType.Application.Json)
-                headers {
-                    append(HttpHeaders.Authorization, "Bearer ${taskRequest.accountId}")
-                }
             }
             val test = response.taskUpdateToApiResponse()
             return test

@@ -56,7 +56,7 @@ fun LoginScreen(
     emailStateValidation: (email: String) -> EmailInputValid,
     passwordStateValidation: (password: String) -> PasswordInputValid,
     signInResult: SignInResult,
-    saveUser: (token: String, refreshToken: String, rememberUser: Boolean) -> Unit,
+    saveUser: (token: String, refreshToken: String, authData: Pair<String, String>?) -> Unit,
 ) {
 
     var email by rememberSaveable { mutableStateOf("") }
@@ -189,7 +189,14 @@ fun LoginScreen(
                     showApiErrors = false
                     showLoading = false
                     showFieldError = false
-                    saveUser(signInResult.token, signInResult.refreshToken, rememberLoginCheck.value)
+
+                    val authData: Pair<String, String>? = if(rememberLoginCheck.value) {
+                        Pair(email, password)
+                    } else {
+                        null
+                    }
+
+                    saveUser(signInResult.token, signInResult.refreshToken, authData)
                     navigateToHomeScreen()
                 }
                 is SignInResult.Error -> {

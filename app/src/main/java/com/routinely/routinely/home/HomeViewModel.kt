@@ -1,15 +1,10 @@
 package com.routinely.routinely.home
 
-import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.routinely.routinely.core.useCase.LogoutUseCase
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.ApiResponseWithData
-import com.routinely.routinely.data.core.Session
 import com.routinely.routinely.home.data.ExcludeTaskUseCase
 import com.routinely.routinely.home.data.GetUserTasksFromMonthUseCase
 import com.routinely.routinely.util.TaskItem
@@ -20,9 +15,9 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class HomeViewModel(
-    private val session: Session,
     private val getUserTasksFromMonthUseCase: GetUserTasksFromMonthUseCase,
     private val excludeTaskUseCase: ExcludeTaskUseCase,
+    private val logoutUseCase: LogoutUseCase,
 ) : ViewModel() {
 
     private val _deleteTaskResponse = MutableStateFlow<ApiResponse>(ApiResponse.Empty)
@@ -48,8 +43,7 @@ class HomeViewModel(
 
     fun logout() {
         viewModelScope.launch {
-            session.setToken("")
-            session.setRememberLogin(false)
+            logoutUseCase()
         }
     }
 
@@ -61,7 +55,7 @@ class HomeViewModel(
             lastDay = day
 
             try {
-                getUserTasksFromMonthUseCase.invoke(month, year, day, session.getToken(), force).collect {
+                getUserTasksFromMonthUseCase.invoke(month, year, day, force).collect {
                     _getTasksResponse.value = it
                 }
             } catch (e: Exception) {
@@ -70,8 +64,7 @@ class HomeViewModel(
         }
 
     fun excludeTask(task: TaskItem) = viewModelScope.launch {
-        val userId = session.getToken()
-        _deleteTaskResponse.value = excludeTaskUseCase(userId, task.id)
+        _deleteTaskResponse.value = excludeTaskUseCase(task.id)
     }
 
     companion object {

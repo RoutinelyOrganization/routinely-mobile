@@ -22,7 +22,6 @@ internal class GetUserTasksFromMonthUseCaseImpl(
         month: Int,
         year: Int,
         day: Int,
-        userId: String,
         force: Boolean,
     ): Flow<ApiResponseWithData<List<TaskItem>>> = flow {
 
@@ -37,7 +36,7 @@ internal class GetUserTasksFromMonthUseCaseImpl(
             lastYear = year
 
             userTasks.clear()
-            taskApi.getMonthTasks(month, year, userId).collect {
+            taskApi.getMonthTasks(month, year).collect {
                 if (it::class == ApiResponseWithData.Success::class) {
                     userTasks.addAll(it.data!!)
                     val tasks = getTasksByDayOfMonth(day, userTasks)
