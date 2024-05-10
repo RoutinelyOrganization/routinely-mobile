@@ -25,7 +25,9 @@ fun LoginTextField(
 ) {
     OutlinedTextField(
         value = value,
-        onValueChange = { onValueChange(it) },
+        onValueChange = { newValue ->
+            if (newValue.length <= 35) onValueChange(newValue)
+        },
         label = {
             Text(
                 text = labelRes,
@@ -36,7 +38,7 @@ fun LoginTextField(
         modifier = Modifier.fillMaxWidth(),
         isError = error is EmailInputValid.Error || apiError,
         supportingText = {
-            if(error is EmailInputValid.Error) {
+            if (error is EmailInputValid.Error) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(id = error.messageId),

@@ -48,7 +48,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    authenticated: Boolean,
     navigateToHomeScreen: () -> Unit,
     loginWithEmailAndPassword: (loginRequest: LoginRequest) -> Unit,
     navigateToCreateAccountScreen: () -> Unit,
@@ -168,19 +167,13 @@ fun LoginScreen(
                         }
                     },
                     areFieldValid = emailState == EmailInputValid.Valid &&
-                            passwordState == PasswordInputValid.Valid
+                            passwordState == PasswordInputValid.Valid && !showLoading
                 )
                 SignUpButton(onLoginClick = {
                     navigateToCreateAccountScreen()
                 })
             }
 
-        }
-
-        LaunchedEffect(key1 = authenticated) {
-            if(authenticated) {
-                navigateToHomeScreen()
-            }
         }
 
         LaunchedEffect(key1 = signInResult) {
@@ -236,7 +229,6 @@ fun LoginScreen(
 fun LoginScreenPreview() {
     RoutinelyTheme {
         LoginScreen(
-            authenticated = false,
             navigateToHomeScreen = {},
             navigateToCreateAccountScreen = {},
             navigateToForgotPasswordScreen = {},

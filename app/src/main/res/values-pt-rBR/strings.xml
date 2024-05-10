@@ -26,13 +26,15 @@
     <string name="name">Nome</string>
     <string name="email">Email</string>
     <string name="invalid_email">E-mail inválido</string>
+    <string name="email_mandatory">O campo email é obrigatório.</string>
     <string name="passwords_must_be_identical">As senhas devem ser idênticas</string>
     <string name="forgot_your_password">Esqueceu sua senha?</string>
-    <string name="you_will_receive_the_code">Você receberá um código de verificação no seu email</string>
+    <string name="you_will_receive_the_code">Verifique seu email para concluir a redefinição de senha</string>
     <string name="type_your_email">Digite o e-mail cadastrado na sua conta Routinely</string>
     <string name="create_new_password">Criar nova senha</string>
     <string name="chose_a_new_password">Escolha uma nova senha abaixo ela precisa ser diferente da senha anterior</string>
     <string name="reset_password">Redefinir senha</string>
+    <string name="reset_password_success">Redefinição de senha concluida com sucesso</string>
     <string name="type_the_code">Insira o código de verificação enviado no e-mail</string>
     <string name="didnt_receive">Não recebeu?</string>
     <string name="send_again">Enviar novamente</string>
@@ -94,9 +96,9 @@
     <string name="login_with_google">Continuar com o Google</string>
     <string name="do_login">Fazer login</string>
     <string name="login_header_text_0">Gerencie</string>
-    <string name="login_header_text_1">suas tarefas,</string>
+    <string name="login_header_text_1">suas tarefas, </string>
     <string name="login_header_text_2">organize</string>
-    <string name="login_header_text_3">sua rotina e</string>
+    <string name="login_header_text_3">sua rotina e </string>
     <string name="login_header_text_4">aproveite</string>
     <string name="login_header_text_5">seu tempo com o que desejar.</string>
     <string name="remember_login">Lembrar meu acesso</string>
@@ -112,4 +114,5 @@
     <string name="category_personal_text">Pessoal</string>
     <string name="no_tasks_available">Ainda não há nenhuma tarefa</string>
     <string name="no_tasks_completed">Nenhuma tarefa foi concluída</string>
+    <string name="api_validate_code_invalid">Código Inválido!</string>
 </resources>

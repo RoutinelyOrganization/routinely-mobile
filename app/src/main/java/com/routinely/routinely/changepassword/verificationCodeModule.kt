@@ -5,6 +5,6 @@ import org.koin.dsl.module
 
 val verificationCodeModule = module {
     viewModel<VerificationCodeViewModel> {
-        VerificationCodeViewModel()
+        VerificationCodeViewModel(get())
     }
 }

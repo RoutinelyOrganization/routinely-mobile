@@ -27,6 +27,7 @@ fun VerificationCodeTextField(
     onValueChange: (String) -> Unit,
     labelRes: String,
     error: CodeInputValid,
+    apiError: Boolean = false,
 ) {
     OutlinedTextField(
         value = value,
@@ -39,7 +40,7 @@ fun VerificationCodeTextField(
                 style = TextStyle(color = Color.Black) // Definindo a cor do texto como branco
             )
         },
-        isError = error is CodeInputValid.Error,
+        isError = error is CodeInputValid.Error || apiError,
         supportingText = {
             if (error is CodeInputValid.Error) {
                 Text(

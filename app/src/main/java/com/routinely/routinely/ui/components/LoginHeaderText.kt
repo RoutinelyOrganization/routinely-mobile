@@ -24,7 +24,7 @@ fun LoginHeaderText() {
                 style = SpanStyle(
                     color = Color(0xff171a21), fontSize = 16.sp
                 )
-            ) { append(" " + stringResource(id = R.string.login_header_text_1)) }
+            ) { append(" " + stringResource(id = R.string.login_header_text_1) + " ") }
             withStyle(
                 style = SpanStyle(
                     color = Color(0xff171a21), fontSize = 16.sp, fontWeight = FontWeight.Bold
@@ -34,7 +34,7 @@ fun LoginHeaderText() {
                 style = SpanStyle(
                     color = Color(0xff171a21), fontSize = 16.sp
                 )
-            ) { append(stringResource(id = R.string.login_header_text_3)) }
+            ) { append(stringResource(id = R.string.login_header_text_3) + " ") }
             withStyle(
                 style = SpanStyle(
                     color = Color(0xff171a21), fontSize = 16.sp, fontWeight = FontWeight.Bold

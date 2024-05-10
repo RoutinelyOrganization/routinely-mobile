@@ -28,9 +28,10 @@
     <string name="name">Name</string>
     <string name="email">Email</string>
     <string name="invalid_email">Invalid Email</string>
+    <string name="email_mandatory">Field email is mandatory</string>
     <string name="passwords_must_be_identical">Passwords must be identical</string>
     <string name="forgot_your_password">Forgot Your Password?</string>
-    <string name="you_will_receive_the_code">You will receive a verification code in your email</string>
+    <string name="you_will_receive_the_code">Check your email to finish the reset of your password</string>
     <string name="type_your_email">Enter the email registered in your Routinely account</string>
     <string name="create_new_password">Create New Password</string>
     <string name="chose_a_new_password">Choose a new password below; it needs to be different from the previous password</string>
@@ -115,4 +116,6 @@
     <string name="category_personal_text">Personal</string>
     <string name="no_tasks_available">There are no tasks yet</string>
     <string name="no_tasks_completed">No tasks were completed</string>
+    <string name="reset_password_success">Password reset completed successfully</string>
+    <string name="api_validate_code_invalid">Invalid Code!</string>
 </resources>

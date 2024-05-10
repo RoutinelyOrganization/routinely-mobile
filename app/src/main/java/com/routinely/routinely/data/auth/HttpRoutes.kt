@@ -9,4 +9,6 @@ object HttpRoutes {
     const val LOGIN = "/auth"
     const val REFRESH_TOKEN = "$BASE_URL/auth/refresh"
     const val FORGOT_PASSWORD = "/auth/resetpassword"
+    const val VALIDATE_CODE = "$BASE_URL/auth/validatecode"
+    const val CHANGE_PASSWORD = "$BASE_URL/auth/changepassword"
 }

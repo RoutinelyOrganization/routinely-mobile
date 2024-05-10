@@ -177,6 +177,7 @@ fun CreateAccountScreen(
                         && passwordState == PasswordInputValid.Valid
                         && confirmPasswordState == PasswordInputValid.Valid
                         && privacyState == PrivacyPolicyInputValid.Valid
+                        && !showLoading
             )
 
             CreateBottomText(onLoginClick = {
