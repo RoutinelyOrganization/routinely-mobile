@@ -38,7 +38,11 @@ class HomeViewModel(
         val month = calendar.get(Calendar.MONTH) + 1
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-        getUserTasks(month, year, day, force = true)
+        lastMonth = month
+        lastYear = year
+        lastDay = day
+
+        getUserTasks(month, year, day)
     }
 
     fun logout() {

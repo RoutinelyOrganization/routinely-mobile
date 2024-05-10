@@ -10,12 +10,6 @@ import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 
-//suspend fun HttpResponse.toApiResponse() : ApiResponse {
-//    val response =  this.body<ApiResponseBody>()
-//    response.serverStatusCode = this.status
-//    return response
-//
-//}
 
 suspend fun HttpResponse.toSignInResult() : SignInResult {
     return when(this.status) {
