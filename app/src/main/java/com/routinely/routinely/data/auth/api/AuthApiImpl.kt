@@ -19,7 +19,6 @@ import com.routinely.routinely.data.auth.model.ValidateCodeRequest
 import com.routinely.routinely.data.auth.model.ValidateCodeResult
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.ResponseException
-import io.ktor.client.plugins.timeout
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.post
 import io.ktor.client.request.put
