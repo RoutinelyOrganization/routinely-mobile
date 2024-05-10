@@ -22,7 +22,7 @@ jobs:
           java-version: '17'
 
       - name: Create local.properties
-        run: echo "BASE_URL_DEBUG=${BASE_URL_DEBUG}" >> local.properties
+        run: echo "BASE_URL=${BASE_URL_DEBUG}" >> local.properties
 
       - name: Build android
         run: ./gradlew assembleDebug testDebug

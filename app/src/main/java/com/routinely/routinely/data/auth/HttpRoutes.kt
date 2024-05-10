@@ -3,7 +3,7 @@ package com.routinely.routinely.data.auth
 import com.routinely.routinely.BuildConfig
 
 object HttpRoutes {
-    const private val BASE_URL = BuildConfig.BASE_URL_DEBUG
+    private const val BASE_URL = BuildConfig.BASE_URL
     const val REGISTER = "/auth/register"
     const val TASK = "/tasks"
     const val LOGIN = "/auth"
