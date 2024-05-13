@@ -82,7 +82,7 @@ private fun provideChuckerInterceptor(context: Context) = ChuckerInterceptor.Bui
 private fun provideHttpClient(httpClientEngine: HttpClientEngine, session: Session) = HttpClient(httpClientEngine) {
 
     defaultRequest {
-        url(BuildConfig.BASE_URL_DEBUG)
+        url(BuildConfig.BASE_URL)
     }
 
     install(ContentNegotiation) {
