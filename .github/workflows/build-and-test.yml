@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       isCI: "true"
-      BASE_SCHEME: ${{ secrets.BASE_SCHEME }}
+      BASE_SCHEME: ${{ secrets.BASE_URL_DEBUG }}
 
     steps:
       - name: Check out code
