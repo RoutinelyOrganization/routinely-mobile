@@ -214,7 +214,6 @@ fun AddTaskScreen(
                                     name = taskName,
                                     date = taskDate,
                                     priority = dropdownPriority!!.apiString,
-                                    accountId = "",
                                     description = taskDescription,
                                     hour = taskTime,
                                     tag = dropdownTags!!.apiString,

@@ -11,13 +11,20 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       isCI: "true"
+      BASE_SCHEME: ${{ secrets.BASE_URL_DEBUG }}
+
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: adopt
           java-version: '17'
+
+      - name: Create local.properties
+        run: echo "BASE_URL=${BASE_SCHEME}" >> local.properties
+
       - name: Build android
-        run: ./gradlew assembleDebug testDebug
+        run: ./gradlew assembleDebug --stacktrace

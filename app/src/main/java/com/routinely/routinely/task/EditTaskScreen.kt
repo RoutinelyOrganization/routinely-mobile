@@ -278,7 +278,7 @@ fun EditTaskScreen(
                             },
                             list = TaskFields.getAllOptions<TaskTag>(),
                             modifier = Modifier.weight(1f),
-                            option = dropdownTags!!.stringId
+                            option = dropdownTags.stringId
                         )
                     }
                     DescriptionTextField(
@@ -339,7 +339,6 @@ fun EditTaskScreen(
                                             name = taskName,
                                             date = taskDate,
                                             priority = dropdownPriority.apiString,
-                                            accountId = "",
                                             description = taskDescription,
                                             hour = taskTime,
                                             tag = dropdownTags.apiString,

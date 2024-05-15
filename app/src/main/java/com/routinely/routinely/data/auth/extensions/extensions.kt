@@ -14,18 +14,12 @@ import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
 
-//suspend fun HttpResponse.toApiResponse() : ApiResponse {
-//    val response =  this.body<ApiResponseBody>()
-//    response.serverStatusCode = this.status
-//    return response
-//
-//}
 
 suspend fun HttpResponse.toSignInResult() : SignInResult {
     return when(this.status) {
         HttpStatusCode.OK -> {
             val response = this.body<LoginResponse>()
-            SignInResult.Success(response.token)
+            SignInResult.Success(response.token, response.refreshToken)
         }
         HttpStatusCode.Unauthorized -> {
             SignInResult.Error(R.string.api_login_unauthorized)

@@ -22,32 +22,33 @@ internal class GetUserTasksFromMonthUseCaseImpl(
         month: Int,
         year: Int,
         day: Int,
-        userId: String,
         force: Boolean,
     ): Flow<ApiResponseWithData<List<TaskItem>>> = flow {
 
         if (lastResponseSuccess && lastYear == year && lastMonth == month && !force) {
+            val tasksByDay = getTasksByDayOfMonth(day, userTasks)
             emit(
-                ApiResponseWithData.Success(
-                    getTasksByDayOfMonth(day, userTasks)
-                )
+                if(tasksByDay.isEmpty()) {
+                    ApiResponseWithData.EmptyData()
+                } else {
+                    ApiResponseWithData.Success(tasksByDay)
+                }
             )
         } else {
             lastMonth = month
             lastYear = year
 
             userTasks.clear()
-            taskApi.getMonthTasks(month, year, userId).collect {
-                if (it::class == ApiResponseWithData.Success::class) {
-                    userTasks.addAll(it.data!!)
-                    val tasks = getTasksByDayOfMonth(day, userTasks)
-
+            taskApi.getMonthTasks(month, year).collect {
+                if (it::class == ApiResponseWithData.Success::class || it::class == ApiResponseWithData.EmptyData::class) {
                     lastResponseSuccess = true
 
-                    if(tasks.isEmpty()) {
-                        emit(ApiResponseWithData.EmptyData())
-                    } else {
+                    if(it.data != null) {
+                        userTasks.addAll(it.data)
+                        val tasks = getTasksByDayOfMonth(day, userTasks)
                         emit(ApiResponseWithData.Success(tasks))
+                    } else {
+                        emit(ApiResponseWithData.EmptyData())
                     }
                 } else {
                     lastResponseSuccess = false

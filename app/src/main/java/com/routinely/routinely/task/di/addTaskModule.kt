@@ -15,6 +15,6 @@ val addTaskModule = module {
         EditTaskViewModel(get(), get(), get())
     }
     single<GetTaskByIdUseCase> {
-        GetTaskByIdUseCaseImpl(get(), get())
+        GetTaskByIdUseCaseImpl(get())
     }
 }

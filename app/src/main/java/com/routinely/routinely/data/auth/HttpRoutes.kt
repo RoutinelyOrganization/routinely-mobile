@@ -1,11 +1,13 @@
 package com.routinely.routinely.data.auth
 
+import com.routinely.routinely.BuildConfig
+
 object HttpRoutes {
-    private const val BASE_URL = "xxxxxxxxxxxxxx.com"
-    const val REGISTER = "$BASE_URL/auth/register"
-    const val TASK = "$BASE_URL/tasks"
-    const val LOGIN = "$BASE_URL/auth"
-    const val FORGOT_PASSWORD = "$BASE_URL/auth/resetpassword"
-    const val VALIDATE_CODE = "$BASE_URL/auth/validatecode"
-    const val CHANGE_PASSWORD = "$BASE_URL/auth/changepassword"
+    const val REGISTER = "/auth/register"
+    const val TASK = "/tasks"
+    const val LOGIN = "/auth"
+    const val REFRESH_TOKEN = "/auth/refresh"
+    const val FORGOT_PASSWORD = "/auth/resetpassword"
+    const val VALIDATE_CODE = "/auth/validatecode"
+    const val CHANGE_PASSWORD = "/auth/changepassword"
 }

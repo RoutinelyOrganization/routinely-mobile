@@ -10,6 +10,7 @@ import com.routinely.routinely.data.auth.model.RegisterRequest
 import com.routinely.routinely.data.auth.model.SignInResult
 import com.routinely.routinely.data.auth.model.ValidateCodeRequest
 import com.routinely.routinely.data.auth.model.ValidateCodeResult
+import io.ktor.client.statement.HttpResponse
 
 interface AuthApi {
     suspend fun registerUser(registerRequest: RegisterRequest) : CreateAccountResult
@@ -17,6 +18,10 @@ interface AuthApi {
     suspend fun loginUser(loginRequest: LoginRequest) : SignInResult
 
     suspend fun forgotPassword(forgotPasswordRequest: ForgotPasswordRequest) : ForgotPasswordResult
+
     suspend fun validateCode(validateCodeRequest: ValidateCodeRequest) : ValidateCodeResult
+
     suspend fun createNewPassword(createNewPasswordRequest: CreateNewPasswordRequest): CreateNewPasswordResult
+
+    suspend fun refreshToken(refreshToken: String, token: String): HttpResponse
 }
