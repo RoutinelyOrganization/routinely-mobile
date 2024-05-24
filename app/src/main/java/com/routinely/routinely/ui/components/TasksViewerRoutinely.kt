@@ -42,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
@@ -51,7 +52,8 @@ import com.routinely.routinely.ui.theme.SecondaryYellowRoutinely
 import com.routinely.routinely.ui.theme.textGrayColor
 import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.TaskItem
-import timber.log.Timber
+import com.routinely.routinely.util.TaskPriorities
+import com.routinely.routinely.util.TaskTag
 
 @Composable
 fun TasksViewerRoutinely(
@@ -205,7 +207,9 @@ private fun TaskItem(
 
         TextWithMarquee(taskItem.name, focusRequester)
 
-        Row {
+        Row(
+           verticalAlignment = Alignment.CenterVertically
+        ){
             CategoryItem(taskItem.category)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -307,6 +311,11 @@ private fun CategoryItem(category: TaskCategory) {
             textAlign = TextAlign.Center
         )
     }
+}
+
+@Composable
+private fun CategoryTask(category: TaskCategory) {
+
 }
 
 @Composable
@@ -424,5 +433,70 @@ private fun RowScope.TextConcludedWithMarquee(text: String, focusRequester: Focu
         maxLines = 1,
         textDecoration = TextDecoration.LineThrough,
         color = Color.Gray
+    )
+}
+@Composable
+@Preview (showBackground = true)
+fun PreviewTasksViewerRoutinely() {
+    val mockTasks = listOf(
+        TaskItem(
+            id = 1,
+            name = "Task 12",
+            date = "2024-05-11",
+            hour = "10:00",
+            tag = TaskTag.Candidacy,
+            priority = TaskPriorities.High,
+            category = TaskCategory.Career,
+            description = "Description of Task 1"
+        ),
+        TaskItem(
+            id = 2,
+            name = "Task 2",
+            date = "2024-05-12",
+            hour = "14:00",
+            tag = TaskTag.Bill,
+            priority = TaskPriorities.Medium,
+            category = TaskCategory.Personal,
+            description = "Description of Task 2"
+        ),
+        TaskItem(
+            id = 3,
+            name = "Task 3",
+            date = "2024-05-13",
+            hour = "16:00",
+            tag = TaskTag.Exercise,
+            priority = TaskPriorities.Low,
+            category = TaskCategory.Studies,
+            description = "Description of Task 3"
+        )
+    )
+
+    val mockCompletedTasks = listOf(
+        TaskItem(
+            id = 4,
+            name = "Completed Task 1",
+            date = "2024-05-10",
+            hour = "12:00",
+            tag = TaskTag.Beauty,
+            priority = TaskPriorities.High,
+            category = TaskCategory.Health,
+            description = "Description of Completed Task 1"
+        ),
+        TaskItem(
+            id = 5,
+            name = "Completed Task 2",
+            date = "2024-05-09",
+            hour = "09:00",
+            tag = TaskTag.Literature,
+            priority = TaskPriorities.Medium,
+            category = TaskCategory.Finances,
+            description = "Description of Completed Task 2"
+        )
+    )
+    TasksViewerRoutinely(
+        getTasksResponse = ApiResponseWithData.Success(mockTasks),
+        listOfConcludedTaskItems = mockCompletedTasks,
+        onEditButtonClicked = { taskItem -> /* Handle edit button click */ },
+        onDeleteButtonClicked = { taskItem -> /* Handle delete button click */ }
     )
 }

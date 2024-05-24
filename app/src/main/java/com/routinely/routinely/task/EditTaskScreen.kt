@@ -38,8 +38,8 @@ import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.ConfirmTaskAlertDialog
 import com.routinely.routinely.ui.components.DatePickerDialogRoutinely
 import com.routinely.routinely.ui.components.DescriptionTextField
-import com.routinely.routinely.ui.components.DropdownRoutinely
 import com.routinely.routinely.ui.components.DropdownRoutinelyPriorities
+import com.routinely.routinely.ui.components.DropdownTaskFilter
 import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.ui.components.RoutinelyTaskButton
 import com.routinely.routinely.ui.components.TaskAlertDialog
@@ -155,9 +155,6 @@ fun EditTaskScreen(
         taskId = it.id
     }
 
-
-
-
     Scaffold(
         topBar = {
             TopAppBarRoutinely(
@@ -256,7 +253,7 @@ fun EditTaskScreen(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        DropdownRoutinely(
+                        DropdownTaskFilter(
                             labelRes = R.string.label_category_dropdown,
                             onValueChange = { stringId ->
                                 dropdownCategory =
@@ -268,7 +265,7 @@ fun EditTaskScreen(
                             modifier = Modifier.weight(1f),
                             option = dropdownCategory.stringId
                         )
-                        DropdownRoutinely(
+                        DropdownTaskFilter(
                             labelRes = R.string.label_tag_dropdown,
                             onValueChange = { stringId ->
                                 dropdownTags =
@@ -278,7 +275,7 @@ fun EditTaskScreen(
                             },
                             list = TaskFields.getAllOptions<TaskTag>(),
                             modifier = Modifier.weight(1f),
-                            option = dropdownTags!!.stringId
+                            option = dropdownTags.stringId
                         )
                     }
                     DescriptionTextField(
