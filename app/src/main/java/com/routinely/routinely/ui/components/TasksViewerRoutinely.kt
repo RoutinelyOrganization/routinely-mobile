@@ -95,7 +95,7 @@ fun TasksViewerRoutinely(
                 }
 
                 is ApiResponseWithData.Error -> {
-
+                    EmptyDataLayout()
                 }
 
                 is ApiResponseWithData.EmptyData -> {
@@ -113,7 +113,7 @@ fun TasksViewerRoutinely(
                 }
 
                 else -> {
-
+                    EmptyDataLayout()
                 }
             }
         }

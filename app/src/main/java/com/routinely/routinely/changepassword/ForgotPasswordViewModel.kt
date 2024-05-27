@@ -22,7 +22,7 @@ class ForgotPasswordViewModel(
     fun emailState(email: String) : EmailInputValid {
         return when {
             email.isEmpty() -> {
-                EmailInputValid.Error(R.string.empty_field)
+                EmailInputValid.Error(R.string.email_mandatory)
             }
             isValidEmailFormat(email) -> {
                 EmailInputValid.Valid

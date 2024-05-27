@@ -3,10 +3,11 @@ package com.routinely.routinely.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.routinely.routinely.R
+import com.routinely.routinely.authentication.AuthenticationData
 import com.routinely.routinely.data.auth.api.AuthApi
 import com.routinely.routinely.data.auth.model.LoginRequest
 import com.routinely.routinely.data.auth.model.SignInResult
-import com.routinely.routinely.data.core.Session
+import com.routinely.routinely.core.Session
 import com.routinely.routinely.ui.components.isPasswordValid
 import com.routinely.routinely.util.validators.EmailInputValid
 import com.routinely.routinely.util.validators.PasswordInputValid
@@ -18,6 +19,7 @@ import kotlinx.coroutines.runBlocking
 class LoginViewModel(
     private val authApi: AuthApi,
     private val session: Session,
+    private val authenticationData: AuthenticationData
 ) : ViewModel() {
 
     private val _signInResult = MutableStateFlow<SignInResult>(SignInResult.Empty)
@@ -29,7 +31,7 @@ class LoginViewModel(
         }
         return if(isPasswordValid(password)){
             PasswordInputValid.Valid
-        }else{
+        } else{
             PasswordInputValid.Error(R.string.login_invalid_password)
         }
     }
@@ -58,10 +60,13 @@ class LoginViewModel(
         }
     }
 
-    fun saveUser(token: String, remember: Boolean) {
+    fun saveUser(token: String, refreshToken: String, authData: Pair<String, String>?) {
         runBlocking {
             session.setToken(token)
-            if(remember) session.setRememberLogin(true)
+            session.setRefreshToken(refreshToken)
+            if (authData != null) {
+                authenticationData.saveUserCredentials(authData.first, authData.second)
+            }
         }
     }
 }

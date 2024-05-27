@@ -1,12 +1,12 @@
 package com.routinely.routinely.task
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.routinely.routinely.R
-import com.routinely.routinely.data.auth.model.TaskRequest
+import com.routinely.routinely.core.Session
+import com.routinely.routinely.core.useCase.LogoutUseCase
 import com.routinely.routinely.data.auth.model.ApiResponse
-import com.routinely.routinely.data.core.Session
+import com.routinely.routinely.data.auth.model.TaskRequest
 import com.routinely.routinely.data.task.api.TaskApi
 import com.routinely.routinely.util.validators.DateTimeInputValid
 import com.routinely.routinely.util.validators.DescriptionInputValid
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class AddTaskViewModel(
     private val taskApi: TaskApi,
-    private val session: Session,
+    private val logoutUseCase: LogoutUseCase,
 ) : ViewModel() {
 
     private val _apiResponse = MutableStateFlow<ApiResponse>(ApiResponse.Empty)
@@ -29,7 +29,6 @@ class AddTaskViewModel(
             date = newTask.date,
             hour = newTask.hour,
             description = newTask.description,
-            accountId = getTokenSession(),
             priority = newTask.priority,
             category = newTask.category,
             tag = newTask.tag,
@@ -92,15 +91,9 @@ class AddTaskViewModel(
         }
     }
 
-    private fun getTokenSession(): String {
-            return session.getToken()
-    }
-
     fun logout() {
-        Log.d("HomeViewModel", "logout: Calling")
         viewModelScope.launch {
-            session.setToken("")
-            session.setRememberLogin(false)
+            logoutUseCase()
         }
     }
 }

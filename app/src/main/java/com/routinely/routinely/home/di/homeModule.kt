@@ -1,5 +1,6 @@
-package com.routinely.routinely.home
+package com.routinely.routinely.home.di
 
+import com.routinely.routinely.home.HomeViewModel
 import com.routinely.routinely.home.data.ExcludeTaskUseCase
 import com.routinely.routinely.home.data.ExcludeTaskUseCaseImpl
 import com.routinely.routinely.home.data.GetUserTasksFromMonthUseCase

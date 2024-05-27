@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id "org.jetbrains.kotlin.plugin.serialization" version "1.9.10"
+    id "com.google.android.libraries.mapsplatform.secrets-gradle-plugin" version "2.0.1"
     id 'kotlin-parcelize'
 }
 
@@ -28,6 +29,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "BASE_URL_RELEASE", "\"${System.getenv("BASE_URL") ?: "missing-url"}\"")
+        }
+        debug {
+            buildConfigField("String", "BASE_URL_DEBUG", "\"${System.getenv("BASE_URL") ?: "missing-url"}\"")
         }
     }
     compileOptions {
@@ -50,7 +55,7 @@ android {
     }
 }
 ext {
-    ktor_version = "2.3.4"
+    ktor_version = "2.3.8"
     koin_version = "3.5.0"
 }
 dependencies {
@@ -74,6 +79,7 @@ dependencies {
     implementation "io.insert-koin:koin-androidx-compose:$koin_version"
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.7.0'
+    implementation "io.ktor:ktor-client-auth:$ktor_version"
 
     debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
@@ -81,20 +87,18 @@ dependencies {
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
-    implementation("io.ktor:ktor-client-okhttp:2.3.4")
+    implementation("io.ktor:ktor-client-okhttp:$ktor_version")
     implementation ("com.jakewharton.timber:timber:5.0.1")
 
-    //Calendar
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation 'com.kizitonwose.calendar:compose:2.5.1'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation platform('androidx.compose:compose-bom:2024.02.02')
+    androidTestImplementation platform('androidx.compose:compose-bom:2024.05.00')
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
-
-
 
 }

@@ -6,7 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.TaskRequest
-import com.routinely.routinely.data.core.Session
+import com.routinely.routinely.core.Session
+import com.routinely.routinely.core.useCase.LogoutUseCase
 import com.routinely.routinely.data.task.api.TaskApi
 import com.routinely.routinely.task.data.GetTaskByIdUseCase
 import com.routinely.routinely.util.TaskItem
@@ -21,9 +22,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class EditTaskViewModel(
-    private val session: Session,
     private val getTaskByIdUseCase: GetTaskByIdUseCase,
-    private val taskApi: TaskApi
+    private val taskApi: TaskApi,
+    private val logoutUseCase: LogoutUseCase,
 ) : ViewModel() {
 
     private val _apiResponse = MutableStateFlow<ApiResponse>(ApiResponse.Empty)
@@ -37,7 +38,6 @@ class EditTaskViewModel(
             date = newTask.date,
             hour = newTask.hour,
             description = newTask.description,
-            accountId = session.getToken(),
             priority = newTask.priority,
             category = newTask.category,
             tag = newTask.tag,
@@ -57,7 +57,7 @@ class EditTaskViewModel(
         viewModelScope.launch {
             _apiResponse.value = ApiResponse.Loading
             try {
-                _apiResponse.value = taskApi.excludeTask(taskId, session.getToken())
+                _apiResponse.value = taskApi.excludeTask(taskId)
             } catch (e: Exception) {
                 _apiResponse.value = ApiResponse.DefaultError
             }
@@ -88,7 +88,6 @@ class EditTaskViewModel(
                         date = task!!.date,
                         hour = "${hour}:${minute}",
                         description = task!!.description,
-                        accountId = session.getToken(),
                         priority = task!!.priority.apiString,
                         category = task!!.category.apiString,
                         tag = task!!.tag.apiString,
@@ -175,10 +174,8 @@ class EditTaskViewModel(
     }
 
     fun logout() {
-        Log.d("HomeViewModel", "logout: Calling")
         viewModelScope.launch {
-            session.setToken("")
-            session.setRememberLogin(false)
+            logoutUseCase()
         }
     }
 }

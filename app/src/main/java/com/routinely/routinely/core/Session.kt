@@ -1,8 +1,7 @@
-package com.routinely.routinely.data.core
+package com.routinely.routinely.core
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.first
@@ -13,12 +12,10 @@ class Session(
 ) {
     companion object {
         const val DATA = "Data"
-        private const val IsLogin = "IsLogin"
         private const val TOKEN = "Token"
-        private const val REMEMBER = "RememberLogin"
-        val isLogin = booleanPreferencesKey(IsLogin)
+        private const val REFRESH_TOKEN = "RefreshToken"
         val token = stringPreferencesKey(TOKEN)
-        val remember = booleanPreferencesKey(REMEMBER)
+        val refresh_token = stringPreferencesKey(REFRESH_TOKEN)
     }
 
     fun getToken(): String {
@@ -36,18 +33,35 @@ class Session(
         }
     }
 
-    fun getRememberLogin(): Boolean {
-        var response: Boolean
+    fun getRefreshToken(): String {
+        var response: String
         runBlocking {
             val pref = dataStore.data.first()
-            response = pref[remember] ?: false
+            response = pref[refresh_token] ?: ""
         }
         return response
     }
 
-    suspend fun setRememberLogin(shouldRemember: Boolean) {
+    suspend fun setRefreshToken(refreshToken: String) {
         dataStore.edit { preference ->
-            preference[remember] = shouldRemember
+            preference[refresh_token] = refreshToken
+        }
+    }
+
+    fun clearData() {
+        runBlocking {
+            dataStore.edit { preferences ->
+                preferences.clear()
+            }
+        }
+    }
+
+    fun saveTokens(tokens: Pair<String, String>) {
+        runBlocking {
+            dataStore.edit { preferences ->
+                preferences[token] = tokens.first
+                preferences[refresh_token] = tokens.second
+            }
         }
     }
 }
