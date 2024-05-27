@@ -34,7 +34,7 @@ import com.routinely.routinely.ui.components.AddTaskButton
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.DatePickerDialogRoutinely
 import com.routinely.routinely.ui.components.DescriptionTextField
-import com.routinely.routinely.ui.components.DropdownRoutinely
+import com.routinely.routinely.ui.components.DropdownTaskFilter
 import com.routinely.routinely.ui.components.DropdownRoutinelyPriorities
 import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.ui.components.LabelError
@@ -176,7 +176,7 @@ fun AddTaskScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        DropdownRoutinely(
+                        DropdownTaskFilter(
                             labelRes = R.string.label_category_dropdown,
                             onValueChange = { stringId ->
                                 dropdownCategory = TaskFields.getTaskFieldByStringId<TaskCategory>(stringId = stringId)
@@ -185,7 +185,7 @@ fun AddTaskScreen(
                             list = TaskFields.getAllOptions<TaskCategory>(),
                             modifier = Modifier.weight(1f),
                         )
-                        DropdownRoutinely(
+                        DropdownTaskFilter(
                             labelRes = R.string.label_tag_dropdown,
                             onValueChange = { stringId ->
                                 dropdownTags = TaskFields.getTaskFieldByStringId<TaskTag>(stringId = stringId)

@@ -43,9 +43,12 @@ import com.routinely.routinely.task.AddTaskViewModel
 import com.routinely.routinely.task.EditTaskScreen
 import com.routinely.routinely.task.EditTaskViewModel
 import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
+import com.routinely.routinely.ui.components.Task
+import com.routinely.routinely.util.ActivityTag
 import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskItem
 import org.koin.androidx.compose.koinViewModel
+
 
 @Composable
 fun SetupNavGraph(
@@ -356,6 +359,45 @@ fun NavGraphBuilder.homeScreenRoute(
                 }
             ),
         )
+        val menuTask = listOf(
+            Task(
+                id = id,
+                title = "Title",
+                description = "Description",
+                category = ActivityTag.Project.stringId
+            ),
+            Task(
+                id = id,
+                title = "Title",
+                description = "Description",
+                category = ActivityTag.AllActivity.stringId
+            ),
+            Task(
+                id = id,
+                title = "Title",
+                description = "Description",
+                category = ActivityTag.Task.stringId
+            ),
+            Task(
+                id = id,
+                title = "Title",
+                description = "Description",
+                category = ActivityTag.AllActivity.stringId
+            ),
+            Task(
+                id = id,
+                title = "Title",
+                description = "Description",
+                category = ActivityTag.AllActivity.stringId
+            ),
+            Task(
+                id = id,
+                title = "Title",
+                description = "Description",
+                category = ActivityTag.AllActivity.stringId,
+                isSelected = true
+            )
+        )
 
         val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsStateWithLifecycle()
         val getTasksResponse = viewModel.getTasksResponse.collectAsStateWithLifecycle()
@@ -387,11 +429,14 @@ fun NavGraphBuilder.homeScreenRoute(
                 )
             },
             menuItems = menuItems,
+
             onSelectDayChange = { month, year, day ->
                 viewModel.getUserTasks(month, year, day)
             },
             getTasksResponse = getTasksResponse.value,
+            menuTask = menuTask,
         )
+
     }
 }
 

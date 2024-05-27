@@ -80,6 +80,9 @@
     <string name="medium_priority">Medium</string>
     <string name="low_priority">Low</string>
     <string name="text_tag_bill">Bill</string>
+    <string name="text_tag_project">Project</string>
+    <string name="text_tag_habit">Habit</string>
+    <string name="text_tag_activity">Activity</string>
     <string name="api_tag_bill">bill</string>
     <string name="label_category_dropdown">Categories</string>
     <string name="label_tag_dropdown">Tags</string>
@@ -88,6 +91,8 @@
     <string name="text_tag_beauty">Beauty</string>
     <string name="text_tag_literature">Literature</string>
     <string name="text_tag_exercise">Exercise</string>
+    <string name="text_tag_completed">Completed</string>
+    <string name="text_tag_activities">All activities</string>
     <string name="title_edit_task">Edit Task</string>
     <string name="continue_with_email_button">Continue with email and password</string>
     <string name="create_account_button">Create Account</string>
@@ -118,4 +123,5 @@
     <string name="no_tasks_completed">No tasks were completed</string>
     <string name="reset_password_success">Password reset completed successfully</string>
     <string name="api_validate_code_invalid">Invalid Code!</string>
+    <string name="filter_task">All activities</string>
 </resources>

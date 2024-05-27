@@ -58,6 +58,7 @@
     <string name="menu_logout">Sair da conta</string>
     <string name="task_name_limit">Quantidade de caracteres máximo, 50!</string>
 
+
     <!--     API RETURNS     -->
     <string name="api_login_unauthorized">Email e/ou senha inválido</string>
     <string name="api_unexpected_error">Ooops!!! Algo de errado não está certo. Tente novamente mais tarde</string>
@@ -77,6 +78,9 @@
     <string name="medium_priority">Média</string>
     <string name="low_priority">Baixa</string>
     <string name="text_tag_bill">Conta</string>
+    <string name="text_tag_project">Projeto</string>
+    <string name="text_tag_habit">Hábito</string>
+    <string name="text_tag_activity">Atividade</string>
     <string name="api_tag_bill">bill</string>
     <string name="label_category_dropdown">Categorias</string>
     <string name="label_tag_dropdown">Tags</string>
@@ -85,6 +89,7 @@
     <string name="text_tag_beauty">Beleza</string>
     <string name="text_tag_literature">Literatura</string>
     <string name="text_tag_exercise">Exercícios</string>
+    <string name="text_tag_activities">Todas as atividades</string>
     <string name="title_edit_task">Editar tarefa</string>
     <string name="continue_with_email_button">Continuar com e-mail e senha</string>
     <string name="create_account_button">Criar conta</string>
@@ -114,5 +119,7 @@
     <string name="category_personal_text">Pessoal</string>
     <string name="no_tasks_available">Ainda não há nenhuma tarefa</string>
     <string name="no_tasks_completed">Nenhuma tarefa foi concluída</string>
-    <string name="api_validate_code_invalid">Código Inválido!</string>
+    <string name="api_validate_code_invalid">Código invalido!</string>
+    <string name="filter_task">Todas as atividades</string>
+    <string name="text_tag_completed">Concluídas</string>
 </resources>
