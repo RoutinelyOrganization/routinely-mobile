@@ -106,12 +106,11 @@ fun HomeScreen(
         content = { initialPadding ->
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 12.dp, vertical = 12.dp)
-
+                    .padding(initialPadding)
+                    .padding(horizontal = 12.dp)
             ) {
                 CalendarRoutinely(
                     state = weekCalendarState,
-                    modifier = Modifier.padding(initialPadding),
                 )
                 DropdownTaskFilter(
                     modifier = Modifier.padding(top = 9.dp),
