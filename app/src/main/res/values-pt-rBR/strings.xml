@@ -115,11 +115,11 @@
     <string name="hour">Hora</string>
     <string name="update_password">Atualizar senha</string>
     <string name="verification_code_min_error">Quantidade de números máximo, 6!</string>
-    <string name="api_forgot_password_account_not_found">Conta não encontrada</string>
+    <string name="api_forgot_password_account_not_found">E-mail não cadastrado. Verifique o e-mail digitado.</string>
     <string name="category_personal_text">Pessoal</string>
     <string name="no_tasks_available">Ainda não há nenhuma tarefa</string>
     <string name="no_tasks_completed">Nenhuma tarefa foi concluída</string>
-    <string name="api_validate_code_invalid">Código invalido!</string>
+    <string name="api_validate_code_invalid">O código de verificação que você inseriu expirou. Solicite novo código e tente novamente.</string>
     <string name="filter_task">Todas as atividades</string>
     <string name="text_tag_completed">Concluídas</string>
 </resources>
