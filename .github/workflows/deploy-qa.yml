@@ -33,19 +33,18 @@ jobs:
           distribution: adopt
           java-version: "17"
 
-      - name: Increment version
-        id: increment-version
-        uses: RichardInnocent/semantic-versioning-git@v0.0.1
+      # - name: Print if version changed
+      #   if: steps.increment-version.outputs.previous-version != steps.increment-version.outputs.new-version
+      #   run: echo "The new version is now $new_version"
+      #   env:
+      #     new_version: ${{ steps.increment-version.outputs.new-version }}
 
-      # Everything below here shows how you might use the results of the action..
-
-      - name: Print if version changed
-        if: steps.increment-version.outputs.previous-version != steps.increment-version.outputs.new-version
-        run: echo "The new version is now $new_version"
-        env:
-          new_version: ${{ steps.increment-version.outputs.new-version }}
       # - name: Create local.properties
       #   run: echo "BASE_URL=${BASE_SCHEME}" >> local.properties
 
       # - name: Build android
       #   run: ./gradlew assembleDebug --stacktrace
+
+      - name: Increment version
+        id: increment-version
+        uses: RichardInnocent/semantic-versioning-git@v0.0.1
