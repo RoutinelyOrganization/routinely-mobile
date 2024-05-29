@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "796414104769",
+    "project_id": "routinely-74335",
+    "storage_bucket": "routinely-74335.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796414104769:android:6b4b9337176036adbdb040",
+        "android_client_info": {
+          "package_name": "com.routinely.routinely"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxi1MG5n0MomqYZxdVFVDFFptxZrXgUUg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
