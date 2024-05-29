@@ -7,7 +7,7 @@ on:
 
 jobs:
   build_and_deploy:
-    name: Build
+    name: Deploy QA
     runs-on: ubuntu-22.04
     concurrency: ci-${{ github.ref }}
     permissions:
@@ -52,6 +52,6 @@ jobs:
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           file: app/build/outputs/apk/debug/app-debug.apk
           groups: routinely---qa
-          releaseNotes: "Release version ${{ env.new_version }}"
+          releaseNotes: "Versão QA ${{ env.new_version }}"
         env:
           new_version: ${{ steps.increment-version.outputs.new-version }}
