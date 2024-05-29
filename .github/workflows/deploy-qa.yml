@@ -27,13 +27,13 @@ jobs:
           java-version: "17"
 
       - name: Bump version and push tag
-        uses: ChrSchu90/GitTagSemanticVersion@v1.1
+        uses: pedroalejandropt/auto-semantic-version@v1
         id: tag_semantic
 
       - name: Testing tag_semantic
         shell: bash
         env:
-          TAG_VERSION: ${{steps.tag_semantic.outputs.version_tag}}
+          TAG_VERSION: ${{steps.tag_semantic.outputs.version}}
         run: |
           echo "Tag Semantic"
           echo "${TAG_VERSION}"
