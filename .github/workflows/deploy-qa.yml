@@ -29,22 +29,17 @@ jobs:
           distribution: adopt
           java-version: "17"
 
-      - name: Bump version and push tag
-        id: tag_semantic
-        uses: K-Phoen/semver-release-action@master
-        with:
-          release_branch: develop
-          release_strategy: none
+      - name: Process version of the tag
+        id: version
+        uses: ncipollo/semantic-version-action@v1
+      - name: Dump steps context
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Testing tag_semantic
-        shell: bash
+          STEPS_CONTEXT: ${{ toJson(steps.version.outputs) }}
+        run: echo "$STEPS_CONTEXT"
+      - name: Dump previous tag
         env:
-          TAG_VERSION: ${{steps.tag_semantic.outputs.tag}}
-        run: |
-          echo "Tag Semantic"
-          echo "${TAG_VERSION}"
+          PREVIOUS_TAG: ${{ steps.version.outputs.previous_tag }}
+        run: echo "$PREVIOUS_TAG"
       # - name: Create local.properties
       #   run: echo "BASE_URL=${BASE_SCHEME}" >> local.properties
 
