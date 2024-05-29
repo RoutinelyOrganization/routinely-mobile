@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - homolog
-  pull_request:
-    branches:
-      - homolog
 
 jobs:
   build_and_deploy:
