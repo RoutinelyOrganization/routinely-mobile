@@ -33,7 +33,7 @@ jobs:
         id: increment-version
         uses: RichardInnocent/semantic-versioning-git@v0.0.1
 
-      # Everything below here shows how you might use the results of the action...
+      # Everything below here shows how you might use the results of the action....
 
       - name: Print if version changed
         if: steps.increment-version.outputs.previous-version != steps.increment-version.outputs.new-version
