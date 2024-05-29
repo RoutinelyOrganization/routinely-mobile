@@ -37,9 +37,9 @@ jobs:
         shell: bash
         env:
           TAG_VERSION: ${{steps.tag_semantic.outputs.new_tag}}
-          run: |
-            echo "Tag Semantic"
-            echo "${TAG_VERSION}"
+        run: |
+          echo "Tag Semantic"
+          echo "${TAG_VERSION}"
       # - name: Create local.properties
       #   run: echo "BASE_URL=${BASE_SCHEME}" >> local.properties
 
