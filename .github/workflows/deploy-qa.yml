@@ -1,9 +1,9 @@
 name: Deploy QA
 
 on:
- push:
-   branches:
-     - homolog
+  push:
+    branches:
+      - homolog
 
 jobs:
   build_and_deploy:
@@ -40,6 +40,10 @@ jobs:
         id: increment-version
         uses: RichardInnocent/semantic-versioning-git@v0.0.1
 
+      - name: Get new version
+        id: get-version
+        run: echo "new_version=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+
       - name: Upload Apk to Firebase App Distribution QA
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
@@ -47,3 +51,4 @@ jobs:
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           file: app/build/outputs/apk/debug/app-debug.apk
           groups: routinely---qa
+          releaseNotes: "Release version ${{ env.new_version }}"
