@@ -8,7 +8,6 @@ plugins {
 }
 
 
-
 android {
     namespace 'com.routinely.routinely'
     compileSdk 34
@@ -17,8 +16,14 @@ android {
         applicationId "com.routinely.routinely"
         minSdk 26
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        def versionNameValue = properties.getProperty('CI_VERSION_NAME')
+        def versionCodeValue = properties.getProperty('CI_VERSION_CODE') as int
+
+        versionCode versionCodeValue
+        versionName versionNameValue
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
