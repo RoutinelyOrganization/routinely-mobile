@@ -36,7 +36,6 @@ jobs:
       - name: Create local.properties
         run: |
           echo "BASE_URL=${BASE_SCHEME}" >> local.properties
-          echo "ciVersionName=Teste" >> local.properties
 
       - name: Build android
         run: ./gradlew clean assembleDebug --stacktrace
