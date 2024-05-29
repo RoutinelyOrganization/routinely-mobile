@@ -4,6 +4,7 @@ plugins {
     id "org.jetbrains.kotlin.plugin.serialization" version "1.9.10"
     id "com.google.android.libraries.mapsplatform.secrets-gradle-plugin" version "2.0.1"
     id 'kotlin-parcelize'
+    id("com.google.gms.google-services")
 }
 
 
@@ -80,6 +81,9 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.7.0'
     implementation "io.ktor:ktor-client-auth:$ktor_version"
+
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
     debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")

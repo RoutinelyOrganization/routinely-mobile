@@ -1,0 +1,49 @@
+name: Deploy QA
+
+on:
+ push:
+   branches:
+     - homolog
+
+jobs:
+  build_and_deploy:
+    name: Build
+    runs-on: ubuntu-22.04
+    concurrency: ci-${{ github.ref }}
+    permissions:
+      contents: write
+
+    env:
+      isCI: "true"
+      BASE_SCHEME: ${{ secrets.BASE_URL_DEBUG }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: "17"
+
+      - name: Create local.properties
+        run: |
+          echo "BASE_URL=${BASE_SCHEME}" >> local.properties
+
+      - name: Build android
+        run: ./gradlew clean assembleDebug --stacktrace
+
+      - name: Increment version
+        id: increment-version
+        uses: RichardInnocent/semantic-versioning-git@v0.0.1
+
+      - name: Upload Apk to Firebase App Distribution QA
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{secrets.FIREBASE_APP_ID}}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          file: app/build/outputs/apk/debug/app-debug.apk
+          groups: routinely---qa
