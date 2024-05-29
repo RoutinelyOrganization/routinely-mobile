@@ -31,7 +31,7 @@ jobs:
 
       - name: Bump version and push tag
         id: tag_semantic
-        uses: brunopadz/semver-release-action@main
+        uses: K-Phoen/semver-release-action@master
         with:
           release_branch: develop
           release_strategy: none
