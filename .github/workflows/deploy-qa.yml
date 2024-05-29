@@ -27,15 +27,13 @@ jobs:
           java-version: "17"
 
       - name: Bump version and push tag
-        uses: hennejg/github-tag-action@v4.1.jh1
+        uses: ChrSchu90/GitTagSemanticVersion@v1.1
         id: tag_semantic
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Testing tag_semantic
         shell: bash
         env:
-          TAG_VERSION: ${{steps.tag_semantic.outputs.new_tag}}
+          TAG_VERSION: ${{steps.tag_semantic.outputs.version_tag}}
         run: |
           echo "Tag Semantic"
           echo "${TAG_VERSION}"
