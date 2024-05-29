@@ -29,17 +29,17 @@ jobs:
           distribution: adopt
           java-version: "17"
 
-      - name: Process version of the tag
-        id: version
-        uses: ncipollo/semantic-version-action@v1
-      - name: Dump steps context
+      - name: Increment version
+        id: increment-version
+        uses: RichardInnocent/semantic-versioning-git@v0.0.1
+
+      # Everything below here shows how you might use the results of the action...
+
+      - name: Print if version changed
+        if: steps.increment-version.outputs.previous-version != steps.increment-version.outputs.new-version
+        run: echo "The new version is now $new_version"
         env:
-          STEPS_CONTEXT: ${{ toJson(steps.version.outputs) }}
-        run: echo "$STEPS_CONTEXT"
-      - name: Dump previous tag
-        env:
-          PREVIOUS_TAG: ${{ steps.version.outputs.previous_tag }}
-        run: echo "$PREVIOUS_TAG"
+          new_version: ${{ steps.increment-version.outputs.new-version }}
       # - name: Create local.properties
       #   run: echo "BASE_URL=${BASE_SCHEME}" >> local.properties
 
