@@ -18,7 +18,10 @@ jobs:
       BASE_SCHEME: ${{ secrets.BASE_URL_DEBUG }}
 
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -27,13 +30,17 @@ jobs:
           java-version: "17"
 
       - name: Bump version and push tag
-        uses: pedroalejandropt/auto-semantic-version@v1
         id: tag_semantic
+        uses: brunopadz/semver-release-action@main
+        with:
+          release_branch: develop
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Testing tag_semantic
         shell: bash
         env:
-          TAG_VERSION: ${{steps.tag_semantic.outputs.version}}
+          TAG_VERSION: ${{steps.tag_semantic.outputs.tag}}
         run: |
           echo "Tag Semantic"
           echo "${TAG_VERSION}"
