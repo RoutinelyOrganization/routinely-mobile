@@ -33,17 +33,21 @@ jobs:
           distribution: adopt
           java-version: "17"
 
-      # - name: Print if version changed
-      #   if: steps.increment-version.outputs.previous-version != steps.increment-version.outputs.new-version
-      #   run: echo "The new version is now $new_version"
-      #   env:
-      #     new_version: ${{ steps.increment-version.outputs.new-version }}
+      - name: Create local.properties
+        run: |
+          echo "BASE_URL=${BASE_SCHEME}" >> local.properties
+          echo "ciVersionName=Teste" >> local.properties
 
-      # - name: Create local.properties
-      #   run: echo "BASE_URL=${BASE_SCHEME}" >> local.properties
+      - name: Build android
+        run: ./gradlew clean assembleDebug --stacktrace
 
-      # - name: Build android
-      #   run: ./gradlew assembleDebug --stacktrace
+      - name: Firebase App Distribution QA
+        uses: hasretsariyer/firebase-app-distribution-github-action@v1
+        with:
+          app_id: ${{secrets.FIREBASE_APP_ID}}
+          firebase_token: ${{secrets.FIREBASE_TOKEN}}
+          app_file: app/build/outputs/apk/debug/app-debug.apk
+          tester_groups: routinely---qa
 
       - name: Increment version
         id: increment-version
