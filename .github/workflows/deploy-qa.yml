@@ -34,6 +34,7 @@ jobs:
         uses: brunopadz/semver-release-action@main
         with:
           release_branch: develop
+          release_strategy: none
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
