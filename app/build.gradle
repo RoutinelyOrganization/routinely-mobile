@@ -19,8 +19,8 @@ android {
 
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
-        def versionNameValue = properties.getProperty('CI_VERSION_NAME')
-        def versionCodeValue = properties.getProperty('CI_VERSION_CODE') as int
+        def versionNameValue = (properties.getProperty('CI_VERSION_NAME') ?: 1.0) as String
+        def versionCodeValue = (properties.getProperty('CI_VERSION_CODE') ?: '1') as int
 
         versionCode versionCodeValue
         versionName versionNameValue

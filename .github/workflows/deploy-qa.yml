@@ -36,15 +36,13 @@ jobs:
         id: increment-version
         uses: RichardInnocent/semantic-versioning-git@v0.0.1
 
-      - name: Get new version
-        id: get-version
-        run: echo "new_version=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
-
       - name: Create local.properties
         run: |
           echo "BASE_URL=${BASE_SCHEME}" >> local.properties
           echo "CI_VERSION_NAME=${{ env.new_version }}" >> local.properties
           echo "CI_VERSION_CODE=${{ github.run_number }}" >> local.properties
+        env:
+          new_version: ${{ steps.increment-version.outputs.new-version }}
 
       - name: Build android
         run: ./gradlew clean assembleDebug --stacktrace
@@ -58,3 +56,5 @@ jobs:
           file: app/build/outputs/apk/debug/app-debug.apk
           groups: routinely---qa
           releaseNotes: "Release version ${{ env.new_version }}"
+        env:
+          new_version: ${{ steps.increment-version.outputs.new-version }}
