@@ -1,0 +1,47 @@
+name: Deploy QA
+
+# on:
+#   push:
+#     branches:
+#       - homolog
+on:
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  build_and_deploy:
+    name: Build
+    runs-on: ubuntu-22.04
+    env:
+      isCI: "true"
+      BASE_SCHEME: ${{ secrets.BASE_URL_DEBUG }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: "17"
+
+      - name: Bump version and push tag
+        uses: hennejg/github-tag-action@v4.1.jh1
+        id: tag_semantic
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Testing tag_semantic
+        shell: bash
+        env:
+          TAG_VERSION: ${{steps.tag_semantic.outputs.new_tag}}
+          run: |
+            echo "Tag Semantic"
+            echo "${TAG_VERSION}"
+      # - name: Create local.properties
+      #   run: echo "BASE_URL=${BASE_SCHEME}" >> local.properties
+
+      # - name: Build android
+      #   run: ./gradlew assembleDebug --stacktrace

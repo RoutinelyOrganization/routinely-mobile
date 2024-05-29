@@ -1,9 +1,13 @@
 name: Build and test
 
+# on:
+#   pull_request:
+#     branches:
+#       - '*'
 on:
-  pull_request:
+  push:
     branches:
-      - '*'
+      - homolog
 
 jobs:
   android_build_and_test:
@@ -21,7 +25,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: adopt
-          java-version: '17'
+          java-version: "17"
 
       - name: Create local.properties
         run: echo "BASE_URL=${BASE_SCHEME}" >> local.properties
