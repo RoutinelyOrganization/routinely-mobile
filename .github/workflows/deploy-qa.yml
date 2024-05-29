@@ -38,16 +38,21 @@ jobs:
           echo "BASE_URL=${BASE_SCHEME}" >> local.properties
           echo "ciVersionName=Teste" >> local.properties
 
+      - name: Add Google Services JSON
+        shell: bash
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES }}" > app/google-services.json
+
       - name: Build android
         run: ./gradlew clean assembleDebug --stacktrace
 
-      - name: Firebase App Distribution QA
-        uses: hasretsariyer/firebase-app-distribution-github-action@v1
+      - name: Upload Apk to Firebase App Distribution QA
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          app_id: ${{secrets.FIREBASE_APP_ID}}
-          firebase_token: ${{secrets.FIREBASE_TOKEN}}
-          app_file: app/build/outputs/apk/debug/app-debug.apk
-          tester_groups: routinely---qa
+          appId: ${{secrets.FIREBASE_APP_ID}}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          file: app/build/outputs/apk/debug/app-debug.apk
+          groups: routinely---qa
 
       - name: Increment version
         id: increment-version
