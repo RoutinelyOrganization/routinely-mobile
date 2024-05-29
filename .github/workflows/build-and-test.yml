@@ -1,13 +1,9 @@
 name: Build and test
 
-# on:
-#   pull_request:
-#     branches:
-#       - '*'
 on:
-  push:
-    branches:
-      - homolog
+ pull_request:
+   branches:
+     - '*'
 
 jobs:
   android_build_and_test:
