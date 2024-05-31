@@ -15,7 +15,6 @@ jobs:
 
     env:
       isCI: "true"
-      BASE_SCHEME: ${{ secrets.BASE_URL_DEBUG }}
 
     steps:
       - name: Checkout repository
@@ -29,29 +28,25 @@ jobs:
           distribution: adopt
           java-version: "17"
 
-      - name: Increment version
-        id: increment-version
-        uses: RichardInnocent/semantic-versioning-git@v0.0.1
+      - name: Adding Firebase Credentials Json File
+        run: echo "${{ secrets.CREDENTIAL_FILE_CONTENT }}" > credential_file_content.json
 
-      - name: Create local.properties
-        run: |
-          echo "BASE_URL=${BASE_SCHEME}" >> local.properties
-          echo "CI_VERSION_NAME=${{ env.new_version }}" >> local.properties
-          echo "CI_VERSION_CODE=${{ github.run_number }}" >> local.properties
-        env:
-          new_version: ${{ steps.increment-version.outputs.new-version }}
-
-      - name: Build android
-        run: ./gradlew clean assembleDebug --stacktrace
-
-
-      - name: Upload Apk to Firebase App Distribution QA
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          appId: ${{secrets.FIREBASE_APP_ID}}
-          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
-          file: app/build/outputs/apk/debug/app-debug.apk
-          groups: routinely---qa
-          releaseNotes: "Versão QA ${{ env.new_version }}"
+          ruby-version: 3.2.3
+
+      - name: Add current platform to Bundler lockfile
+        run: |
+          bundle lock --add-platform ruby
+          bundle lock --add-platform x86_64-linux
+
+      - name: Install Gems
+        run: bundle install
+
+      - name: Build and Deploy QA
+        run: bundle exec fastlane qa
         env:
-          new_version: ${{ steps.increment-version.outputs.new-version }}
+          BASE_URL: ${{ secrets.BASE_URL_DEBUG }}
+          GITHUB_RUNNER_NUMBER: ${{ github.run_number }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
