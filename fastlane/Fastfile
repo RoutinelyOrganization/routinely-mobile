@@ -22,44 +22,49 @@ platform :android do
   lane :test do
     # Function:
     #   This lane creates local properties and run the tests
+    begin
+      create_local_properties(
+          base_url: ENV['BASE_URL']
+      )
 
-    properties = create_local_properties(
-        base_url: ENV['BASE_URL']
-    )
-
-    gradle(
-        task: "test",
-        print_command: false,
-        properties: properties
-    )
+      gradle(
+          task: "test",
+          print_command: false,
+      )
+    rescue => e
+      error_handler('test', e)
+    end
   end
 
   desc "Build and Deploy QA version on Firebase App Distribution"
   lane :qa do
     # Function:
     #   This lane builds the QA version of the app and deploys it to Firebase App Distribution.
+    begin
+      environment = QA
+      version_code = ENV['GITHUB_RUNNER_NUMBER']
+      base_api = ENV['BASE_URL']
 
-    environment = QA
-    version_code = ENV['GITHUB_RUNNER_NUMBER']
-    base_api = ENV['BASE_URL']
+      version_name, changelog = generate_changelog(
+          tag_match: "#{environment}/*",
+      )
 
-    version_name, changelog = generate_changelog(
-        tag_match: "#{environment}/*",
-    )
+      build(
+          environment: environment,
+          version_name: version_name,
+          version_code: version_code,
+          base_api: base_api
+      )
 
-    build(
-        environment: environment,
-        version_name: version_name,
-        version_code: version_code,
-        base_api: base_api
-    )
+      publish_on_firebase(
+          environment: environment,
+          changelog: changelog
+      )
 
-    publish_on_firebase(
-        environment: environment,
-        changelog: changelog
-    )
-
-    pos_deploy(tag: "qa/#{next_version}")
+      pos_deploy(tag: "qa/#{next_version}")
+    rescue => e
+      error_handler('qa', e)
+    end
   end
 
   desc "Create local properties and return it"
@@ -69,17 +74,28 @@ platform :android do
     #   :version_code (String): The version code of the app.
     #   :base_api (String): The base API URL.
     # Function:
-    #   This lane creates the local properties based on the provided options.
+    #   This lane creates the local properties based on the provided options and writes them to local.properties.
+    begin
+      version_name = options[:version_name]
+      version_code = options[:version_code]
+      base_api = options[:base_api]
 
-    version_name = options[:version_name]
-    version_code = options[:version_code]
-    base_api = options[:base_api]
+      local_properties = {
+          'BASE_URL' => base_api,
+          'CI_VERSION_NAME' => version_name,
+          'CI_VERSION_CODE' => version_code,
+      }
 
-    local_properties = {
-        'BASE_URL' => base_api,
-        'CI_VERSION_NAME' => version_name,
-        'CI_VERSION_CODE' => version_code,
-    }
+      File.open("local.properties", "w") do |file|
+        local_properties.each do |key, value|
+          file.puts("#{key}=#{value}")
+        end
+      end
+
+      return local_properties
+    rescue => e
+      error_handler('create_local_properties', e)
+    end
   end
 
   desc "Build android project"
@@ -91,30 +107,32 @@ platform :android do
     #   :base_api (String): The base API URL.
     # Function:
     #   This lane builds the Android project using the provided options.
+    begin
+      environment = options[:environment]
+      version_name = options[:version_name]
+      version_code = options[:version_code]
+      base_api = options[:base_api]
 
-    environment = options[:environment]
-    version_name = options[:version_name]
-    version_code = options[:version_code]
-    base_api = options[:base_api]
+      create_local_properties(
+          version_name: version_name,
+          version_code: version_code,
+          base_api: base_api
+      )
 
-    local_properties = create_local_properties(
-        version_name: version_name,
-        version_code: version_code,
-        base_api: base_api
-    )
+      case environment
+      when QA
+          gradle_task = 'clean assemble'
+          gradle_build_type = 'Debug'
+      end
 
-    case environment
-    when QA
-        gradle_task = 'clean assemble'
-        gradle_build_type = 'Debug'
+      gradle(
+          task: gradle_task,
+          build_type: gradle_build_type,
+          print_command: false
+      )
+    rescue => e
+      error_handler('build', e)
     end
-
-    gradle(
-        task: gradle_task,
-        build_type: gradle_build_type,
-        print_command: false,
-        properties: local_properties
-    )
   end
 
   desc "Publish version on Firebase App Distribution"
@@ -124,21 +142,24 @@ platform :android do
     #   :changelog (String): The changelog for this release.
     # Function:
     #   This lane publishes the built app version on Firebase App Distribution using the provided options.
+    begin
+      environment = options[:environment]
+      changelog = options[:changelog]
 
-    environment = options[:environment]
-    changelog = options[:changelog]
+      case environment
+      when QA
+          groups = "routinely---qa"
+      end
 
-    case environment
-    when QA
-        groups = "routinely---qa"
+      firebase_app_distribution(
+          app: ENV['FIREBASE_APP_ID'],
+          groups: groups,
+          release_notes: changelog,
+          service_credentials_file: "credential_file_content.json"
+      )
+    rescue => e
+      error_handler('publish_on_firebase', e)
     end
-
-    firebase_app_distribution(
-        app: ENV['FIREBASE_APP_ID'],
-        groups: groups,
-        release_notes: changelog,
-        service_credentials_file: "credential_file_content.json"
-    )
   end
 
   desc "Generate tag and changelog by semantic versioning 2.0.0"
@@ -149,25 +170,28 @@ platform :android do
     #   [String, String]: The next version and the changelog.
     # Function:
     #   This lane generates the next version and changelog based on semantic versioning.
+    begin
+      match = options[:tag_match]
+      git_pull(only_tags: true)
 
-    match = options[:tag_match]
-    git_pull(only_tags: true)
+      analyze_commits(
+          match: match,
+      )
 
-    analyze_commits(
-        match: match,
-    )
+      next_version = lane_context[SharedValues::RELEASE_NEXT_VERSION]
 
-    next_version = lane_context[SharedValues::RELEASE_NEXT_VERSION]
+      changelog = conventional_changelog(
+          format: 'slack',
+          title: 'Android Alpha',
+          display_author: false,
+          display_links: false,
+          debug: false
+      )
 
-    changelog = conventional_changelog(
-        format: 'slack',
-        title: 'Android Alpha',
-        display_author: false,
-        display_links: false,
-        debug: false
-    )
-
-    return next_version, changelog
+      return next_version, changelog
+    rescue => e
+      error_handler('generate_changelog', e)
+    end
   end
 
   desc "Lane to be executed after each deploy lane"
@@ -177,28 +201,20 @@ platform :android do
     #   :changelog (String): The changelog for the tag.
     # Function:
     #   This lane is executed after each deploy lane, creating and pushing a git tag.
+    begin
+      tag = options[:tag]
+      changelog = options[:changelog]
 
-    tag = options[:tag]
-    changelog = options[:changelog]
-
-    add_git_tag(tag: tag, message: changelog)
-    push_git_tags
+      add_git_tag(tag: tag, message: changelog)
+      push_git_tags
+    rescue => e
+      error_handler('pos_deploy', e)
+    end
   end
 end
 
-desc "Create and push a git tag"
-lane :create_and_push_tag do |options|
-  # Parameters:
-  #   :tag (String): The tag to be created.
-  # Function:
-  #   This lane creates a git tag and pushes it to the remote repository.
-
-  tag = options[:tag]
-
-  if tag.nil? || tag.empty?
-    UI.user_error!("You must provide a tag name.")
-  end
-
-  sh("git tag #{tag}")
-  sh("git push origin #{tag}")
+# Define an error handler method to capture and log errors
+def error_handler(lane_name, exception)
+  UI.error("Lane '#{lane_name}' failed with error: #{exception.message}")
+  UI.error(exception.backtrace.join("\n"))
 end
