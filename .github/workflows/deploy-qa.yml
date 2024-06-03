@@ -29,7 +29,7 @@ jobs:
           java-version: "17"
 
       - name: Adding Firebase Credentials Json File
-        run: echo "${{ secrets.CREDENTIAL_FILE_CONTENT }}" > credential_file_content.json
+        run: echo "${{ secrets.CREDENTIAL_FILE_CONTENT }}" | base64 -d > credential_file_content.json
 
       - name: Install Ruby
         uses: ruby/setup-ruby@v1

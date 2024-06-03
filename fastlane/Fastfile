@@ -160,7 +160,7 @@ platform :android do
           service_credentials_file: "credential_file_content.json"
       )
     rescue => e
-      error_handler('publish_on_firebase', e)
+      error_handler('publish_on_firebase', "")
     end
   end
 
