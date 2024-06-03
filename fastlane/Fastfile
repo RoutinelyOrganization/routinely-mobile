@@ -67,36 +67,34 @@ platform :android do
     end
   end
 
-  desc "Create local properties and return it"
-  private_lane :create_local_properties do |options|
-    # Parameters:
-    #   :version_name (String): The version name of the app.
-    #   :version_code (String): The version code of the app.
-    #   :base_api (String): The base API URL.
-    # Function:
-    #   This lane creates the local properties based on the provided options and writes them to local.properties.
-    begin
-      version_name = options[:version_name]
-      version_code = options[:version_code]
-      base_api = options[:base_api]
+  desc "Create local properties"
+    private_lane :create_local_properties do |options|
+      # Parameters:
+      #   :version_name (String): The version name of the app.
+      #   :version_code (String): The version code of the app.
+      #   :base_api (String): The base API URL.
+      # Function:
+      #   This lane creates the local properties based on the provided options and writes them to local.properties.
+      begin
+        version_name = options[:version_name]
+        version_code = options[:version_code]
+        base_api = options[:base_api]
 
-      local_properties = {
-          'BASE_URL' => base_api,
-          'CI_VERSION_NAME' => version_name,
-          'CI_VERSION_CODE' => version_code,
-      }
+        local_properties = {
+            'BASE_URL' => base_api,
+            'CI_VERSION_NAME' => version_name,
+            'CI_VERSION_CODE' => version_code,
+        }
 
-      File.open("local.properties", "w") do |file|
-        local_properties.each do |key, value|
-          file.puts("#{key}=#{value}")
+        File.open("local.properties", "w") do |file|
+          local_properties.each do |key, value|
+            file.puts("#{key}=#{value}")
+          end
         end
+      rescue => e
+        error_handler('create_local_properties', e)
       end
-
-      return local_properties
-    rescue => e
-      error_handler('create_local_properties', e)
     end
-  end
 
   desc "Build android project"
   private_lane :build do |options|
@@ -217,4 +215,5 @@ end
 def error_handler(lane_name, exception)
   UI.error("Lane '#{lane_name}' failed with error: #{exception.message}")
   UI.error(exception.backtrace.join("\n"))
+  raise exception
 end
