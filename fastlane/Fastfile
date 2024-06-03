@@ -63,7 +63,7 @@ platform :android do
           changelog: changelog
       )
 
-      pos_deploy(tag: "qa/#{next_version}")
+      pos_deploy(tag: "qa/#{version_name}")
     rescue => e
       error_handler('qa', e)
     end
