@@ -21,13 +21,16 @@ platform :android do
   desc "Runs all the tests"
   lane :test do
     # Function:
-    #   This lane run tests with properties BASE_URL
+    #   This lane creates local properties and run the tests
+
+    properties = create_local_properties(
+        base_url: ENV['BASE_URL']
+    )
+
     gradle(
         task: "test",
         print_command: false,
-        properties: {
-            "BASE_URL" => ENV['BASE_URL']
-        }
+        properties: properties
     )
   end
 
