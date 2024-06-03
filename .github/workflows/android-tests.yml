@@ -1,18 +1,14 @@
-name: Deploy QA
+name: Tests
 
 on:
-  push:
+  pull_request:
     branches:
-      - homolog
+      - '*'
 
 jobs:
-  build_and_deploy:
-    name: Deploy QA
+  android_build_and_test:
+    name: Android - run tests
     runs-on: ubuntu-22.04
-    concurrency: ci-${{ github.ref }}
-    permissions:
-      contents: write
-
     env:
       isCI: "true"
 
@@ -28,9 +24,6 @@ jobs:
           distribution: adopt
           java-version: "17"
 
-      - name: Adding Firebase Credentials Json File
-        run: echo "${{ secrets.CREDENTIAL_FILE_CONTENT }}" > credential_file_content.json
-
       - name: Install Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -44,9 +37,7 @@ jobs:
       - name: Install Gems
         run: bundle install
 
-      - name: Build and Deploy QA
-        run: bundle exec fastlane qa
+      - name: Run Tests
+        run: bundle exec fastlane test
         env:
           BASE_URL: ${{ secrets.BASE_URL_DEBUG }}
-          GITHUB_RUNNER_NUMBER: ${{ github.run_number }}
-          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
