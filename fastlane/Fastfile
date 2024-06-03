@@ -190,7 +190,7 @@ platform :android do
           debug: false
       )
 
-      return next_version, changelog
+      [next_version, changelog]
     rescue => e
       error_handler('generate_changelog', e)
     end
