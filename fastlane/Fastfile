@@ -20,7 +20,15 @@ QA = "QA"
 platform :android do
   desc "Runs all the tests"
   lane :test do
-    gradle(task: "test")
+    # Function:
+    #   This lane run tests with properties BASE_URL
+    gradle(
+        task: "test",
+        print_command: false,
+        properties: {
+            "BASE_URL" => ENV['BASE_URL']
+        }
+    )
   end
 
   desc "Build and Deploy QA version on Firebase App Distribution"
