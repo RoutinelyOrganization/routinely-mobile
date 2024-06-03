@@ -24,9 +24,7 @@ platform :android do
     #   This lane creates local properties and run the tests
     begin
       create_local_properties(
-          base_url: ENV['BASE_URL'],
-          version_name: "1.0.0",
-          version_code: 1
+          base_api: ENV['BASE_URL']
       )
 
       gradle(
