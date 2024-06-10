@@ -1,7 +1,5 @@
 package com.routinely.routinely.data.auth
 
-import com.routinely.routinely.BuildConfig
-
 object HttpRoutes {
     const val REGISTER = "/auth/register"
     const val TASK = "/tasks"
