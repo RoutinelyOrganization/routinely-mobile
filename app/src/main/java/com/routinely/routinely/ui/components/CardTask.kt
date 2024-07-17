@@ -1,6 +1,5 @@
 package com.routinely.routinely.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,12 +49,13 @@ fun CardTask(
     description: String,
     category: Int,
     isSelected: Boolean,
+    originalCategory: String?,
     onSelected: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val (emoji, cardBackgroundColor, border) = getCategoryAttributes(category,originalCategory?.toInt())
+    val categoryAttributes = getCategoryAttributes(category)
 
-    val (emoji, cardBackgroundColor, border) = getCategoryAttributes(category)
-    val categoryName = getCategoryName(category)
 
     Card(
         modifier = modifier
@@ -99,13 +101,17 @@ fun CardTask(
                         .padding(start = 2.dp)
                         .weight(0.5f),
                     maxLines = 2,
-
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        textDecoration = if (isSelected) TextDecoration.LineThrough else TextDecoration.None
                     )
+                )
                 CustomRadioButton(
                     modifier = modifier.padding(start = 10.dp),
                     selected = isSelected,
-                    onSelected = onSelected,
-                    selectedIcon =painterResource(id = R.drawable.baseline_check_circle_outline_24),
+                    onSelected = {
+                        onSelected(it)
+                    },
+                    selectedIcon = painterResource(id = R.drawable.baseline_check_circle_outline_24),
                     unselectedIcon = painterResource(id = R.drawable.baseline_radio_button_unchecked_24),
                     colors = RadioButtonDefaults.colors(
                         unselectedColor = categoryColor,
@@ -131,12 +137,12 @@ fun CardTask(
 
                 ) {
                     Text(
-                        text = categoryName,
+                        text = categoryAttributes.originalCategoryName,
                         textAlign = TextAlign.Center,
                         fontSize = 12.sp,
                         fontWeight = FontWeight(400),
                         color = Color.White,
-                        )
+                    )
                 }
                 Icon(
                     imageVector = Icons.Default.Edit,
@@ -174,14 +180,64 @@ fun CustomRadioButton(
     }
 }
 
-fun getCategoryAttributes(category: Int): Triple<String, Color, Color> {
-    return when (category) {
-        ActivityTag.Task.stringId -> Triple("📋", cardTask, Color(0xFF115D9E))
-        ActivityTag.Habit.stringId -> Triple("📌", cardHabit, Color(0xFF5450BC))
-        ActivityTag.Project.stringId -> Triple("🚀", cardProject, Color(0xFF747400))
-        ActivityTag.AllActivity.stringId -> Triple("✨", Color.Yellow, Color.Black)
-        else -> Triple("🧷", Color.Gray, Color.Gray)
+data class CardCategory(
+    val icon: String,
+    val cardColor: Color,
+    val cardBorder: Color,
+    val originalCategoryName: String,
+    val isSelected: Int
+)
+
+
+fun darkenColor(color: Color, factor: Float = 0.8f): Color {
+    return Color(
+        red = (color.red * factor).coerceIn(0f, 1f),
+        green = (color.green * factor).coerceIn(0f, 1f),
+        blue = (color.blue * factor).coerceIn(0f, 1f),
+        alpha = color.alpha
+    )
+}
+fun getCategoryAttributes(category: Int,originalCategory: Int? = null): CardCategory {
+    val defaultBorderColor = Color.Gray
+    val darkenFactor = 0.8f
+
+    val backgroundColor = when {
+        category == ActivityTag.Completed.stringId && originalCategory != null -> {
+            val originalColor = when (originalCategory) {
+                ActivityTag.Task.stringId -> cardTask
+                ActivityTag.Habit.stringId -> cardHabit
+                ActivityTag.Project.stringId -> cardProject
+                else -> Color.Transparent
+            }
+            darkenColor(originalColor, darkenFactor)
+        }
+        category == ActivityTag.Task.stringId -> cardTask
+        category == ActivityTag.Habit.stringId -> cardHabit
+        category == ActivityTag.Project.stringId -> cardProject
+        category == ActivityTag.Completed.stringId -> darkenColor(Color.Red, darkenFactor)
+        else -> Color.Transparent
     }
+
+    val borderColor = when (category) {
+        ActivityTag.Task.stringId -> Color(0xFF115D9E)
+        ActivityTag.Habit.stringId -> Color(0xFF5450BC)
+        ActivityTag.Project.stringId -> Color(0xFF747400)
+        ActivityTag.Completed.stringId -> Color.Gray
+        else -> defaultBorderColor
+    }
+
+    val icon = when (originalCategory ?: category) {
+        ActivityTag.Task.stringId -> "📋"
+        ActivityTag.Habit.stringId -> "📌"
+        ActivityTag.Project.stringId -> "🚀"
+        ActivityTag.Completed.stringId -> "✔️"
+        else -> "❓"
+    }
+
+    val originalCategoryName = getCategoryName(category)
+
+    return CardCategory(icon, backgroundColor, borderColor, originalCategoryName, category)
+
 }
 
 fun getCategoryName(category: Int): String {
@@ -190,12 +246,20 @@ fun getCategoryName(category: Int): String {
         ActivityTag.Habit.stringId -> "Habit"
         ActivityTag.Project.stringId -> "Project"
         ActivityTag.AllActivity.stringId -> "All Activity"
-        else -> "Unknown"
+        else -> "Unknow"
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
 private fun CardTaskPreview() {
-    CardTask(title = "Title", description = "Description", isSelected = true, onSelected = {}, category = ActivityTag.Task.stringId)
+    CardTask(
+        title = "Title",
+        description = "Description",
+        isSelected = true,
+        originalCategory = null,
+        onSelected = {},
+        category = ActivityTag.Task.stringId
+    )
 }

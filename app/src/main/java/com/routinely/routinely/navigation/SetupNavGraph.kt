@@ -48,6 +48,7 @@ import com.routinely.routinely.util.ActivityTag
 import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskItem
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDate
 
 
 @Composable
@@ -360,43 +361,10 @@ fun NavGraphBuilder.homeScreenRoute(
             ),
         )
         val menuTask = listOf(
-            Task(
-                id = id,
-                title = "Title",
-                description = "Description",
-                category = ActivityTag.Project.stringId
-            ),
-            Task(
-                id = id,
-                title = "Title",
-                description = "Description",
-                category = ActivityTag.AllActivity.stringId
-            ),
-            Task(
-                id = id,
-                title = "Title",
-                description = "Description",
-                category = ActivityTag.Task.stringId
-            ),
-            Task(
-                id = id,
-                title = "Title",
-                description = "Description",
-                category = ActivityTag.AllActivity.stringId
-            ),
-            Task(
-                id = id,
-                title = "Title",
-                description = "Description",
-                category = ActivityTag.AllActivity.stringId
-            ),
-            Task(
-                id = id,
-                title = "Title",
-                description = "Description",
-                category = ActivityTag.AllActivity.stringId,
-                isSelected = true
-            )
+            Task(id = 1, title = "Title 1", description = "Description 1", category = ActivityTag.Project.stringId, date = LocalDate.now()),
+            Task(id = 2, title = "Title 2", description = "Description 2", category = ActivityTag.Task.stringId, date = LocalDate.now()),
+            Task(id = 3, title = "Title 3", description = "Description 3", category = ActivityTag.Habit.stringId, date = LocalDate.now()),
+            Task(id = 4, title = "Title 4", description = "Description 4", category = ActivityTag.Project.stringId, date = LocalDate.now()),
         )
 
         val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsStateWithLifecycle()
@@ -439,6 +407,8 @@ fun NavGraphBuilder.homeScreenRoute(
 
     }
 }
+
+
 
 fun NavGraphBuilder.addTaskScreenRoute(
     onBackButtonPressed: () -> Unit,

@@ -1,6 +1,5 @@
 package com.routinely.routinely.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -63,7 +62,7 @@ import java.util.Locale
 fun CalendarRoutinely(
     state: WeekCalendarState,
     modifier: Modifier = Modifier,
-
+    onDateSelected: (LocalDate) -> Unit
     ) {
 
     var currentDate by rememberSaveable { mutableStateOf(LocalDate.now()) }
@@ -103,7 +102,7 @@ fun CalendarRoutinely(
                     onDialogOpen = { showAlertDialog = true},
                     newDate = { newDate ->
                         currentDate = newDate
-
+                        onDateSelected(newDate)
                     }
                 )
             }
@@ -114,7 +113,7 @@ fun CalendarRoutinely(
                 onDateSelected = { newDate ->
                     currentDate = newDate
                     showAlertDialog = false
-
+                    onDateSelected(newDate)
                 },
                 onDismissRequest = { showAlertDialog = false },
 
@@ -352,7 +351,7 @@ fun CalendarTop(
 @Composable
 private fun WeekCalendarPreview() {
     val state = rememberWeekCalendarState()
-    CalendarRoutinely(state = state, Modifier)
+    CalendarRoutinely(state = state, Modifier, onDateSelected = { } )
 }
 
 @Preview(showBackground = true)
