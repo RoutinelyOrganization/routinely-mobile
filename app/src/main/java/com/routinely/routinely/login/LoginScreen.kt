@@ -45,6 +45,8 @@ import com.routinely.routinely.ui.theme.RoutinelyTheme
 import com.routinely.routinely.util.validators.EmailInputValid
 import com.routinely.routinely.util.validators.PasswordInputValid
 import kotlinx.coroutines.launch
+import android.util.Log
+
 
 @Composable
 fun LoginScreen(
@@ -156,6 +158,7 @@ fun LoginScreen(
             ) {
                 LoginButton(
                     onLoginClick = {
+
                         coroutineScope.launch {
                             loginWithEmailAndPassword(
                                 LoginRequest(
@@ -179,6 +182,7 @@ fun LoginScreen(
         LaunchedEffect(key1 = signInResult) {
             when(signInResult) {
                 is SignInResult.Success -> {
+                    Log.d("LoginScreen", "Login bem-sucedido. Token: ${signInResult.token}")
                     showApiErrors = false
                     showLoading = false
                     showFieldError = false
@@ -193,17 +197,22 @@ fun LoginScreen(
                     navigateToHomeScreen()
                 }
                 is SignInResult.Error -> {
+                    Log.e("LoginScreen", "Erro ao fazer login: ${signInResult.message}")
+                    Log.e("LoginScreen", "Detalhes do erro: $signInResult") // Imprime a estrutura completa
+
                     apiErrorMessage = signInResult.message
                     showApiErrors = true
                     showLoading = false
                     showFieldError = true
                 }
                 is SignInResult.DefaultError -> {
+                    Log.e("LoginScreen", "Erro inesperado de API. Detalhes: $signInResult") // Imprime a estrutura completa
                     apiErrorMessage = R.string.api_unexpected_error
                     showApiErrors = true
                     showLoading = false
                 }
                 is SignInResult.Loading -> {
+                    Log.d("LoginScreen", "Login em progresso...")
                     showLoading = true
                     showApiErrors = false
                     showFieldError = false

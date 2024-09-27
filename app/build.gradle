@@ -35,10 +35,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "BASE_URL_RELEASE", "\"${System.getenv("BASE_URL") ?: "missing-url"}\"")
+            buildConfigField("String", "BASE_URL", "\"https://routinely-api-dev.onrender.com/\"")
         }
         debug {
-            buildConfigField("String", "BASE_URL_DEBUG", "\"${System.getenv("BASE_URL") ?: "missing-url"}\"")
+            buildConfigField("String", "BASE_URL", "\"https://routinely-api-dev.onrender.com/\"")
         }
     }
     compileOptions {
