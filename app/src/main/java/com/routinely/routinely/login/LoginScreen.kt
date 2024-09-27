@@ -182,7 +182,6 @@ fun LoginScreen(
         LaunchedEffect(key1 = signInResult) {
             when(signInResult) {
                 is SignInResult.Success -> {
-                    Log.d("LoginScreen", "Login bem-sucedido. Token: ${signInResult.token}")
                     showApiErrors = false
                     showLoading = false
                     showFieldError = false
@@ -197,8 +196,6 @@ fun LoginScreen(
                     navigateToHomeScreen()
                 }
                 is SignInResult.Error -> {
-                    Log.e("LoginScreen", "Erro ao fazer login: ${signInResult.message}")
-                    Log.e("LoginScreen", "Detalhes do erro: $signInResult") // Imprime a estrutura completa
 
                     apiErrorMessage = signInResult.message
                     showApiErrors = true
@@ -206,13 +203,11 @@ fun LoginScreen(
                     showFieldError = true
                 }
                 is SignInResult.DefaultError -> {
-                    Log.e("LoginScreen", "Erro inesperado de API. Detalhes: $signInResult") // Imprime a estrutura completa
                     apiErrorMessage = R.string.api_unexpected_error
                     showApiErrors = true
                     showLoading = false
                 }
                 is SignInResult.Loading -> {
-                    Log.d("LoginScreen", "Login em progresso...")
                     showLoading = true
                     showApiErrors = false
                     showFieldError = false
