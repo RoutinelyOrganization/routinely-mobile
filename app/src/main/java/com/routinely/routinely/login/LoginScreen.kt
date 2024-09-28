@@ -45,6 +45,8 @@ import com.routinely.routinely.ui.theme.RoutinelyTheme
 import com.routinely.routinely.util.validators.EmailInputValid
 import com.routinely.routinely.util.validators.PasswordInputValid
 import kotlinx.coroutines.launch
+import android.util.Log
+
 
 @Composable
 fun LoginScreen(
@@ -156,6 +158,7 @@ fun LoginScreen(
             ) {
                 LoginButton(
                     onLoginClick = {
+
                         coroutineScope.launch {
                             loginWithEmailAndPassword(
                                 LoginRequest(
@@ -193,6 +196,7 @@ fun LoginScreen(
                     navigateToHomeScreen()
                 }
                 is SignInResult.Error -> {
+
                     apiErrorMessage = signInResult.message
                     showApiErrors = true
                     showLoading = false
