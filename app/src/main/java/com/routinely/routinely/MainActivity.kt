@@ -62,14 +62,14 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun getStartDestination(isLogged: Boolean): Screen {
-        return if(isLogged) Screen.HomeScreen else Screen.SplashScreen
+        return if (isLogged) Screen.HomeScreen else Screen.SplashScreen
     }
 }
 
 @Composable
 fun checkNotificationPolicyAccess(
     notificationManager: NotificationManager,
-    context: Context
+    context: Context,
 ): Boolean {
     if (notificationManager.areNotificationsEnabled() || Build.VERSION.SDK_INT < 32) {
         return true
