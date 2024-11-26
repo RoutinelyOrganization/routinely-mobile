@@ -122,4 +122,5 @@
     <string name="api_validate_code_invalid">O código de verificação que você inseriu não é válido. Verifique o código e tente novamente.</string>
     <string name="filter_task">Todas as atividades</string>
     <string name="text_tag_completed">Concluídas</string>
+    <string name="text_tag_task">Tarefa</string>
 </resources>
