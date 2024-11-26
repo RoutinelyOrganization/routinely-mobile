@@ -52,7 +52,7 @@ fun DropdownTaskFilter(
     var selectedOptionText by remember { mutableStateOf(labelResAsString) }
 
     option?.let {
-        selectedOptionText = stringResource(id = option)
+        selectedOptionText = stringResource(id = it)
     }
 
 
@@ -133,7 +133,7 @@ fun DropdownTaskFilter(
 @Preview(showBackground = true)
 @Composable
 private fun TaskFilterRoutinelyPreview() {
-    var selectedTasktag by remember { mutableIntStateOf(ActivityTag.AllActivity.stringId) }
+    var selectedTasktag by remember { mutableIntStateOf(ActivityTag.Task.stringId) }
     DropdownTaskFilter(
         labelRes = selectedTasktag,
         onValueChange = { newTask ->

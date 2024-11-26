@@ -1,5 +1,7 @@
 package com.routinely.routinely.home.di
 
+import com.routinely.routinely.core.useCase.LogoutUseCase
+import com.routinely.routinely.core.useCase.LogoutUseCaseImpl
 import com.routinely.routinely.home.HomeViewModel
 import com.routinely.routinely.home.data.ExcludeTaskUseCase
 import com.routinely.routinely.home.data.ExcludeTaskUseCaseImpl
@@ -18,5 +20,8 @@ val homeModule = module {
     }
     single<ExcludeTaskUseCase> {
         ExcludeTaskUseCaseImpl(get())
+    }
+    single<LogoutUseCase> {
+        LogoutUseCaseImpl(get(), get())
     }
 }

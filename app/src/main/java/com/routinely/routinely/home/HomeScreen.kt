@@ -8,8 +8,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
@@ -21,6 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.ApiResponseWithData
@@ -31,13 +31,12 @@ import com.routinely.routinely.ui.components.DropdownTaskFilter
 import com.routinely.routinely.ui.components.Task
 import com.routinely.routinely.ui.components.TaskAlertDialog
 import com.routinely.routinely.ui.components.TopAppBarRoutinely
-import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.util.ActivityTag
 import com.routinely.routinely.util.BottomNavItems
 import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskFields
 import com.routinely.routinely.util.TaskItem
-import java.time.LocalDate
+import com.routinely.routinely.util.toStringId
 
 fun <K, V> snapshotStateMapSaver() = Saver<SnapshotStateMap<K, V>, Any>(
     save = { map ->
@@ -62,15 +61,23 @@ fun HomeScreen(
     menuItems: List<MenuItem>,
     menuTask: List<Task>,
     onSelectDayChange: (Int, Int, Int) -> Unit,
+    viewModel: HomeViewModel = viewModel(),
     getTasksResponse: ApiResponseWithData<List<TaskItem>>,
 ) {
+    val tasks by viewModel.tasks.collectAsStateWithLifecycle()
+    val selectedActivityTag by viewModel.selectedActivityTag.collectAsStateWithLifecycle()
+    val selectedDate by viewModel.selectedDate.collectAsStateWithLifecycle()
+    val taskSelections by viewModel.taskSelections.collectAsStateWithLifecycle()
+    val originalCategories by viewModel.originalCategories.collectAsStateWithLifecycle()
+    val activityTags = TaskFields.getAllOptions<ActivityTag>()
+
     val bottomBarItems = listOf(BottomNavItems.NewTask)
     val weekCalendarState = rememberWeekCalendarState()
 
     var expanded by remember { mutableStateOf(false) }
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
     val temporaryDeleteId by remember { mutableStateOf<TaskItem?>(null) }
-    var selectedActivityTag by remember { mutableIntStateOf(ActivityTag.AllActivity.stringId) }
+    /*var selectedActivityTag by remember { mutableIntStateOf(ActivityTag.AllActivity.stringId) }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
 
     val taskSelections by rememberSaveable(stateSaver = snapshotStateMapSaver()) {
@@ -88,9 +95,8 @@ fun HomeScreen(
         if (!originalCategories.containsKey(task.id)) {
             originalCategories[task.id] = task.category
         }
-    }
-
-    val filteredTasks = menuTask.filter { task ->
+    }*/
+    /*  val filteredTasks = menuTask.filter { task ->
         val matchesCategory = when (selectedActivityTag) {
             ActivityTag.AllActivity.stringId -> task.category != ActivityTag.Completed.stringId
             ActivityTag.Completed.stringId -> task.category == ActivityTag.Completed.stringId
@@ -98,7 +104,7 @@ fun HomeScreen(
         }
         val matchesDate = selectedDate?.let { task.date == it } ?: true
         matchesCategory && matchesDate
-    }
+    }*/
 
     Scaffold(
         topBar = {
@@ -114,7 +120,7 @@ fun HomeScreen(
         },
         bottomBar = {
             BottomAppBarRoutinely(
-                bottomBarItems = bottomBarItems,
+                bottomBarItems = listOf(BottomNavItems.NewTask),
                 onClick = { onNewTaskClicked() },
             )
         },
@@ -127,22 +133,31 @@ fun HomeScreen(
                 CalendarRoutinely(
                     state = weekCalendarState,
                     onDateSelected = { newDate ->
-                        selectedDate = newDate
+                        viewModel.onDateSelected(newDate)
                     }
                 )
                 DropdownTaskFilter(
                     modifier = Modifier.padding(top = 9.dp),
-                    labelRes = selectedActivityTag,
+                    labelRes = selectedActivityTag.toStringId(),
                     onValueChange = { newLabelRes ->
-                        selectedActivityTag = newLabelRes
+                        viewModel.onActivityTagChanged(newLabelRes)
                     },
-                    list = TaskFields.getAllOptions<ActivityTag>(),
+                    list = activityTags,
+                    option = selectedActivityTag.stringId
                 )
+
+                val filteredTasks = tasks.filter { task ->
+                    val matchesCategory = when (selectedActivityTag) {
+                        else -> task.categoryTask == selectedActivityTag.stringId
+                    }
+                    val matchesDate = selectedDate?.let { task.date == it } ?: true
+                    matchesCategory && matchesDate
+                }
 
                 if (filteredTasks.isEmpty()) {
                     Text(
                         text = "Você ainda não tem atividades para hoje",
-                        modifier = Modifier.padding(top = 32.dp, ),
+                        modifier = Modifier.padding(top = 32.dp),
                         fontSize = 14.sp,
                         color = Color.Gray
                     )
@@ -153,32 +168,21 @@ fun HomeScreen(
                 ) {
                     items(filteredTasks) { task ->
                         val isSelected = taskSelections[task.id] ?: false
-                        val originalCategory = originalCategories[task.id] ?: task.category
+                        val originalCategory = originalCategories[task.id] ?: task.categoryTask
 
-                        if (isSelected) {
-                            task.category = ActivityTag.Completed.stringId
-                        } else {
-                            task.category = originalCategory
-                        }
                         val shouldDisplay = when (selectedActivityTag) {
-                            ActivityTag.AllActivity.stringId -> true
-                            ActivityTag.Completed.stringId -> task.category == ActivityTag.Completed.stringId
-                            else -> task.category == selectedActivityTag
+
+                            else -> task.categoryTask == selectedActivityTag.stringId
                         }
+
                         if (shouldDisplay) {
                             CardTask(
-                                title = task.title,
+                                activityTag = ActivityTag.Task.stringId,
                                 description = task.description,
-                                category = task.category,
-                                originalCategory = if (task.category == ActivityTag.Completed.stringId) originalCategory.toString() else null,
+                                categoryTask = task.categoryTask,
                                 isSelected = isSelected,
                                 onSelected = { selected ->
-                                    taskSelections[task.id] = selected
-                                    if (selected) {
-                                        tasks.find { it.id == task.id }?.category = ActivityTag.Completed.stringId.toInt()
-                                    } else {
-                                        tasks.find { it.id == task.id}?.category = originalCategory
-                                    }
+                                    viewModel.onTaskSelected(task.id, selected)
                                 }
                             )
                         }
@@ -216,6 +220,7 @@ fun HomeScreenPreview() {
         menuItems = listOf(),
         menuTask = listOf(),
         onSelectDayChange = { _, _, _ -> },
-        getTasksResponse = ApiResponseWithData.Default()
+        getTasksResponse = ApiResponseWithData.Default(),
+        viewModel = viewModel()
     )
 }

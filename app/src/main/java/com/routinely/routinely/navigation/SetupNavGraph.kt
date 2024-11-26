@@ -247,7 +247,7 @@ fun NavGraphBuilder.createAccountRoute(
 }
 
 fun NavGraphBuilder.newPasswordRoute(
-    navigateToLoginScreen: () -> Unit,
+    navigateToLoginScreen: () -> Unit
 ) {
     composable(
         route = Screen.NewPasswordScreen.route,
@@ -268,10 +268,10 @@ fun NavGraphBuilder.newPasswordRoute(
                         password = password,
                         accountId = accountId,
                         code = code
-                    ), confirmPassword
+                    ),confirmPassword
                 )
             },
-            passwordStateValidation = { password ->
+            passwordStateValidation = {password ->
                 viewModel.passwordState(password)
             },
             navigateToLoginScreen = {
