@@ -63,7 +63,6 @@ class HomeViewModel(
         lastDay = day
 
         getUserTasks(month, year, day)
-        loadTaskSelections()
     }
 
     fun logout() {
@@ -92,39 +91,23 @@ class HomeViewModel(
         _deleteTaskResponse.value = excludeTaskUseCase(task.id)
     }
 
-    private fun loadTaskSelections() {
-        val mockTasks = listOf(
-            Task(id = 1, activityTag = ActivityTag.Task.stringId, description = "Description Um", categoryTask = ActivityTag.Task.stringId, date = LocalDate.now()),
-            Task(id = 2, activityTag = ActivityTag.Habit.stringId, description = "Description Cinco", categoryTask = ActivityTag.Habit.stringId, date = LocalDate.now()),
-            Task(id = 3, activityTag = ActivityTag.Project.stringId, description = "Description Tres", categoryTask = ActivityTag.Project.stringId, date = LocalDate.now()),
-            Task(id = 4, activityTag = ActivityTag.Habit.stringId, description = "Description Quatro", categoryTask = ActivityTag.Habit.stringId, date = LocalDate.now()),
-        )
-
-        _tasks.value = mockTasks
-        _taskSelections.value = mockTasks.associate { it.id to it.isSelected }
-        _originalCategories.value = mockTasks.associate { it.id to fromStringId(it.categoryTask)}
-
-    }
-
     fun onTaskSelected(taskId: Int, isSelected: Boolean) {
-      val task = _tasks.value.find { it.id == taskId }
+        val task = _tasks.value.find { it.id == taskId }
         task?.let {
             _taskSelections.value = _taskSelections.value.toMutableMap().apply {
                 this[taskId] = isSelected
             }
             val updatedTasks = _tasks.value.toMutableList().map { task ->
                 if (task.id == taskId) {
-                    val originalCategory = _originalCategories.value[taskId] ?: fromStringId(task.categoryTask)
-                    val newCategory = if (isSelected) ActivityTag.Task.stringId else originalCategory.stringId
+                    val originalCategory =
+                        _originalCategories.value[taskId] ?: fromStringId(task.categoryTask)
+                    val newCategory =
+                        if (isSelected) ActivityTag.Task.stringId else originalCategory.stringId
                     task.copy(categoryTask = newCategory)
                 } else task
             }
             _tasks.value = updatedTasks
         }
-    }
-
-    fun onActivityTagSelected(activityTag: ActivityTag) {
-        _selectedActivityTag.value = activityTag
     }
 
     fun onDateSelected(date: LocalDate) {
@@ -136,9 +119,7 @@ class HomeViewModel(
         _selectedActivityTag.value = newTag
     }
 
-
     companion object {
         private const val TAG = "HomeViewModel"
     }
 }
-
