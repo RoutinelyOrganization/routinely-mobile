@@ -4,9 +4,9 @@ import java.time.LocalDate
 
 data class Task (
     val id: Int,
-    val title: String,
+    val activityTag: Int,
     val description: String,
-    var category: Int,
+    var categoryTask: Int,
     var isSelected: Boolean = false,
     val date: LocalDate
 )

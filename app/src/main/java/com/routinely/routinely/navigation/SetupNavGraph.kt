@@ -1,5 +1,6 @@
 package com.routinely.routinely.navigation
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -14,12 +15,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.routinely.routinely.R
 import com.routinely.routinely.changepassword.CreateNewPasswordScreen
 import com.routinely.routinely.changepassword.CreateNewPasswordViewModel
@@ -27,6 +31,7 @@ import com.routinely.routinely.changepassword.ForgotPasswordScreen
 import com.routinely.routinely.changepassword.ForgotPasswordViewModel
 import com.routinely.routinely.changepassword.VerificationCodeScreen
 import com.routinely.routinely.changepassword.VerificationCodeViewModel
+import com.routinely.routinely.data.auth.HttpRoutes
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.CreateNewPasswordRequest
 import com.routinely.routinely.data.auth.model.ForgotPasswordRequest
@@ -121,7 +126,7 @@ fun SetupNavGraph(
             }
         )
         forgotPasswordRoute(
-            navigateToCodeVerificationScreen = {accountId ->
+            navigateToCodeVerificationScreen = { accountId ->
                 navController.navigate(Screen.VerificationCodeScreen.withArgs(accountId))
             }
         )
@@ -159,7 +164,12 @@ fun NavGraphBuilder.loginRoute(
     navigateToCreateAccountScreen: () -> Unit,
     navigateToForgotPasswordScreen: () -> Unit,
 ) {
-    composable(route = Screen.Login.route) { navBackStackEntry ->
+    composable(
+        route = Screen.Login.route,
+        deepLinks = listOf(navDeepLink {
+            uriPattern = "https://routinely-api-next.vercel.app"
+        })
+    ) { navBackStackEntry ->
         val viewModel: LoginViewModel = koinViewModel()
         val signInResult by viewModel.signInResult.collectAsState()
         LoginScreen(
@@ -361,10 +371,13 @@ fun NavGraphBuilder.homeScreenRoute(
             ),
         )
         val menuTask = listOf(
-            Task(id = 1, title = "Title 1", description = "Description 1", category = ActivityTag.Project.stringId, date = LocalDate.now()),
-            Task(id = 2, title = "Title 2", description = "Description 2", category = ActivityTag.Task.stringId, date = LocalDate.now()),
-            Task(id = 3, title = "Title 3", description = "Description 3", category = ActivityTag.Habit.stringId, date = LocalDate.now()),
-            Task(id = 4, title = "Title 4", description = "Description 4", category = ActivityTag.Project.stringId, date = LocalDate.now()),
+            Task(
+                id = 1,
+                activityTag = ActivityTag.Task.stringId,
+                description = "1",
+                categoryTask = ActivityTag.Task.stringId,
+                date = LocalDate.now()
+            )
         )
 
         val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsStateWithLifecycle()
@@ -407,7 +420,6 @@ fun NavGraphBuilder.homeScreenRoute(
 
     }
 }
-
 
 
 fun NavGraphBuilder.addTaskScreenRoute(
@@ -571,7 +583,7 @@ private fun NavBackStackEntry.lifecycleIsresumed() =
 
 private fun navigateToScreenOnlyIfResumed(
     navBackStackEntry: NavBackStackEntry,
-    navigateToHomeScreen: () -> Unit
+    navigateToHomeScreen: () -> Unit,
 ) {
     if (navBackStackEntry.lifecycleIsresumed()) {
         navigateToHomeScreen()

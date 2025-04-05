@@ -42,19 +42,32 @@ import com.routinely.routinely.ui.theme.cardProject
 import com.routinely.routinely.ui.theme.cardTask
 import com.routinely.routinely.ui.theme.categoryColor
 import com.routinely.routinely.util.ActivityTag
+import com.routinely.routinely.util.TaskCategory
 
 @Composable
 fun CardTask(
-    title: String,
+    activityTag: Int,
     description: String,
-    category: Int,
+    categoryTask: Int,
     isSelected: Boolean,
-    originalCategory: String?,
     onSelected: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (emoji, cardBackgroundColor, border) = getCategoryAttributes(category,originalCategory?.toInt())
-    val categoryAttributes = getCategoryAttributes(category)
+
+    val (defaultEmoji, defaultBackgroundColor, defaultBorderColor) = getActivityAttributes(
+        activityTag
+    )
+    val (selectedEmoji, selectedBackgroundColor, selectedBorderColor) = getSelectedActivityAttributes(
+        activityTag
+    )
+
+    val (defaultActivity, defaultBackgroundActivityColor) = getActivityAttributes( activityTag )
+    val (emojiActivity, backgroundActivityColor) = getSelectedActivityAttributes( activityTag )
+
+
+    val emoji = if (isSelected) emojiActivity else defaultActivity
+    val cardBackgroundColor = if (isSelected) backgroundActivityColor else defaultBackgroundActivityColor
+    val borderColor = if (isSelected) selectedBorderColor else defaultBorderColor
 
 
     Card(
@@ -62,7 +75,7 @@ fun CardTask(
             .padding(vertical = 12.dp)
             .height(124.dp),
         shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, border),
+        border = BorderStroke(1.dp, borderColor),
         colors = CardDefaults.cardColors(cardBackgroundColor)
     ) {
         Column(
@@ -83,7 +96,7 @@ fun CardTask(
                     modifier = Modifier.padding(end = 2.dp)
                 )
                 Text(
-                    text = title,
+                    text = getActivityName(activityTag),
                     fontSize = 14.sp,
                     color = categoryColor,
                     fontWeight = FontWeight.Bold
@@ -137,7 +150,7 @@ fun CardTask(
 
                 ) {
                     Text(
-                        text = categoryAttributes.originalCategoryName,
+                        text = getCategoryName(categoryTask),
                         textAlign = TextAlign.Center,
                         fontSize = 12.sp,
                         fontWeight = FontWeight(400),
@@ -176,7 +189,6 @@ fun CustomRadioButton(
             contentDescription = null,
             tint = if (selected) colors.selectedColor else colors.unselectedColor
         )
-
     }
 }
 
@@ -184,8 +196,7 @@ data class CardCategory(
     val icon: String,
     val cardColor: Color,
     val cardBorder: Color,
-    val originalCategoryName: String,
-    val isSelected: Int
+    val checked: Int
 )
 
 
@@ -197,56 +208,84 @@ fun darkenColor(color: Color, factor: Float = 0.8f): Color {
         alpha = color.alpha
     )
 }
-fun getCategoryAttributes(category: Int,originalCategory: Int? = null): CardCategory {
-    val defaultBorderColor = Color.Gray
-    val darkenFactor = 0.8f
 
-    val backgroundColor = when {
-        category == ActivityTag.Completed.stringId && originalCategory != null -> {
-            val originalColor = when (originalCategory) {
-                ActivityTag.Task.stringId -> cardTask
-                ActivityTag.Habit.stringId -> cardHabit
-                ActivityTag.Project.stringId -> cardProject
-                else -> Color.Transparent
-            }
-            darkenColor(originalColor, darkenFactor)
-        }
-        category == ActivityTag.Task.stringId -> cardTask
-        category == ActivityTag.Habit.stringId -> cardHabit
-        category == ActivityTag.Project.stringId -> cardProject
-        category == ActivityTag.Completed.stringId -> darkenColor(Color.Red, darkenFactor)
-        else -> Color.Transparent
+fun getSelectedActivityAttributes(activityTag: Int): CardCategory {
+    val selectedBackgroundColor = when (activityTag) {
+        ActivityTag.Task.stringId -> darkenColor(cardTask, 0.6f)  // Darker color for selected state
+        ActivityTag.Habit.stringId -> darkenColor(cardHabit, 0.6f)
+        ActivityTag.Project.stringId -> darkenColor(cardProject, 0.6f)
+        else -> Color.LightGray
     }
 
-    val borderColor = when (category) {
-        ActivityTag.Task.stringId -> Color(0xFF115D9E)
-        ActivityTag.Habit.stringId -> Color(0xFF5450BC)
-        ActivityTag.Project.stringId -> Color(0xFF747400)
-        ActivityTag.Completed.stringId -> Color.Gray
-        else -> defaultBorderColor
+    val selectedBorderColor = when (activityTag) {
+        ActivityTag.Task.stringId -> Color(0xFF002D5E)  // Darker border for selected state
+        ActivityTag.Habit.stringId -> Color(0xFF303080)
+        ActivityTag.Project.stringId -> Color(0xFF505000)
+        else -> Color.Gray
     }
 
-    val icon = when (originalCategory ?: category) {
-        ActivityTag.Task.stringId -> "📋"
-        ActivityTag.Habit.stringId -> "📌"
+    val selectedIcon = when (activityTag) {
+        ActivityTag.Task.stringId -> "✅"
+        ActivityTag.Habit.stringId -> "🎯"
         ActivityTag.Project.stringId -> "🚀"
-        ActivityTag.Completed.stringId -> "✔️"
         else -> "❓"
     }
 
-    val originalCategoryName = getCategoryName(category)
+    return CardCategory(
+        selectedIcon,
+        selectedBackgroundColor,
+        selectedBorderColor,
+        activityTag
+    )
+}
 
-    return CardCategory(icon, backgroundColor, borderColor, originalCategoryName, category)
+fun getActivityAttributes(activityTag: Int, isSelected: Boolean = false): CardCategory {
+    val defaultBackgroundColor = when (activityTag) {
+        ActivityTag.Task.stringId -> cardTask
+        ActivityTag.Habit.stringId -> cardHabit
+        ActivityTag.Project.stringId -> cardProject
+        else -> Color.LightGray
+    }
 
+    val defaultBorderColor = when (activityTag) {
+        ActivityTag.Task.stringId -> Color(0xFF115D9E)
+        ActivityTag.Habit.stringId -> Color(0xFF5450BC)
+        ActivityTag.Project.stringId -> Color(0xFF747400)
+        else -> Color.Gray
+    }
+
+    val backgroundColor = if (isSelected) darkenColor(defaultBackgroundColor, 0.6f) else defaultBackgroundColor
+    val borderColor = if (isSelected) darkenColor(defaultBorderColor, 0.6f) else defaultBorderColor
+
+    val icon = when (activityTag) {
+        ActivityTag.Task.stringId -> "📋"
+        ActivityTag.Habit.stringId -> "📌"
+        ActivityTag.Project.stringId -> "🚀"
+        else -> "❓"
+    }
+
+    val activityName = getActivityName(activityTag)
+
+    return CardCategory(icon, backgroundColor, borderColor, activityTag)
+}
+
+fun getActivityName(activity: Int): String {
+    return when (activity) {
+        ActivityTag.Task.stringId -> "Task"
+        ActivityTag.Habit.stringId -> "Habit"
+        ActivityTag.Project.stringId -> "Project"
+        else -> "Unknown"
+    }
 }
 
 fun getCategoryName(category: Int): String {
     return when (category) {
-        ActivityTag.Task.stringId -> "Task"
-        ActivityTag.Habit.stringId -> "Habit"
-        ActivityTag.Project.stringId -> "Project"
-        ActivityTag.AllActivity.stringId -> "All Activity"
-        else -> "Unknow"
+        TaskCategory.Personal.stringId -> "Personal"
+        TaskCategory.Career.stringId -> "Career"
+        TaskCategory.Health.stringId -> "Health"
+        TaskCategory.Studies.stringId -> "Studies"
+        TaskCategory.Finances.stringId -> "Finances"
+        else -> "Unknown"
     }
 }
 
@@ -255,11 +294,10 @@ fun getCategoryName(category: Int): String {
 @Composable
 private fun CardTaskPreview() {
     CardTask(
-        title = "Title",
+        activityTag = ActivityTag.Task.stringId,
         description = "Description",
-        isSelected = true,
-        originalCategory = null,
+        isSelected = false,
         onSelected = {},
-        category = ActivityTag.Task.stringId
+        categoryTask = TaskCategory.Career.stringId
     )
 }
