@@ -5,7 +5,7 @@
     <string name="desc_home_navigation_button">Botão Home de Navegação</string>
 
     <string name="label_home_navigation_button">Início</string>
-    <string name="label_new_task_navigation_button">Nova tarefa</string>
+    <string name="label_new_task_navigation_button">Nova atividade</string>
     <string name="desc_top_bar">Top Bar</string>
 
     <string name="desc_urgent_priority">Prioridade urgente</string>
@@ -80,7 +80,7 @@
     <string name="text_tag_bill">Conta</string>
     <string name="text_tag_project">Projeto</string>
     <string name="text_tag_habit">Hábito</string>
-    <string name="text_tag_activity">Atividade</string>
+    <string name="text_tag_task">Tarefa</string>
     <string name="api_tag_bill">bill</string>
     <string name="label_category_dropdown">Categorias</string>
     <string name="label_tag_dropdown">Tags</string>
@@ -122,5 +122,10 @@
     <string name="api_validate_code_invalid">O código de verificação que você inseriu não é válido. Verifique o código e tente novamente.</string>
     <string name="filter_task">Todas as atividades</string>
     <string name="text_tag_completed">Concluídas</string>
-    <string name="text_tag_task">Tarefa</string>
+    <string name="category_leisure_text">Lazer</string>
+    <string name="category_productivity_text">Produtividade</string>
+    <string name="category_several_text">Diversos</string>
+    <string name="invalid_type">Tipo invalido</string>
+    <string name="invalid_category">Tipo de categoria</string>
+    <string name="text_tag_activity">Atividade</string>
 </resources>

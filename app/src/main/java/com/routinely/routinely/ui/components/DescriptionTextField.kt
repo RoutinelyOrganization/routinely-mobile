@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import com.routinely.routinely.ui.theme.Gray80
 import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
@@ -34,6 +36,7 @@ fun DescriptionTextField(
         label = {
             Text(
                 text = labelRes,
+                fontSize = 16.sp,
                 style = TextStyle(color = Color.Black)
             )
         },
@@ -69,4 +72,10 @@ fun DescriptionTextField(
         modifier = Modifier
             .fillMaxWidth()
     )
+}
+
+@Preview (showBackground = true)
+@Composable
+private fun DescriptionTextFieldPreview() {
+    DescriptionTextField(value = "Description", onValueChange = {}, labelRes = "", error = DescriptionInputValid.Valid)
 }

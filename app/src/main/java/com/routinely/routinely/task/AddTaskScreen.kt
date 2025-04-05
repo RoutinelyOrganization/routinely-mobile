@@ -25,33 +25,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
-import com.routinely.routinely.data.auth.model.TaskRequest
 import com.routinely.routinely.data.auth.model.ApiResponse
+import com.routinely.routinely.data.auth.model.TaskRequest
 import com.routinely.routinely.ui.components.AddTaskButton
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.DatePickerDialogRoutinely
 import com.routinely.routinely.ui.components.DescriptionTextField
-import com.routinely.routinely.ui.components.DropdownTaskFilter
-import com.routinely.routinely.ui.components.DropdownRoutinelyPriorities
+import com.routinely.routinely.ui.components.DropdownActivityFilter
 import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.ui.components.LabelError
 import com.routinely.routinely.ui.components.TaskNameTextField
 import com.routinely.routinely.ui.components.TimePickerDialog
 import com.routinely.routinely.ui.components.TopAppBarRoutinely
 import com.routinely.routinely.ui.theme.PurpleRoutinely
+import com.routinely.routinely.util.ActivityTag
 import com.routinely.routinely.util.BottomNavItems
 import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskCategory
 import com.routinely.routinely.util.TaskFields
-import com.routinely.routinely.util.TaskPriorities
-import com.routinely.routinely.util.TaskTag
 import com.routinely.routinely.util.validators.DateTimeInputValid
 import com.routinely.routinely.util.validators.DescriptionInputValid
 import com.routinely.routinely.util.validators.DropdownInputValid
 import com.routinely.routinely.util.validators.TaskNameInputValid
+import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,14 +74,26 @@ fun AddTaskScreen(
     var taskDateState by rememberSaveable { mutableStateOf<DateTimeInputValid>(DateTimeInputValid.Empty) }
     var taskTime by rememberSaveable { mutableStateOf("") }
     var taskTimeState by rememberSaveable { mutableStateOf<DateTimeInputValid>(DateTimeInputValid.Empty) }
-    var dropdownPriority by rememberSaveable { mutableStateOf<TaskPriorities?>(null) }
-    var dropdownPriorityState by rememberSaveable { mutableStateOf<DropdownInputValid>(DropdownInputValid.Empty) }
-    var dropdownTags by rememberSaveable { mutableStateOf<TaskTag?>(null) }
-    var dropdownTagsState by rememberSaveable { mutableStateOf<DropdownInputValid>(DropdownInputValid.Empty) }
+    var selectedWeekDays by rememberSaveable { mutableStateOf<List<String>>(emptyList()) }
+
+    var dropdownTags by rememberSaveable { mutableStateOf<ActivityTag?>(null) }
+    var dropdownTagsState by rememberSaveable {
+        mutableStateOf<DropdownInputValid>(
+            DropdownInputValid.Empty
+        )
+    }
     var dropdownCategory by rememberSaveable { mutableStateOf<TaskCategory?>(null) }
-    var dropdownCategoryState by rememberSaveable { mutableStateOf<DropdownInputValid>(DropdownInputValid.Empty) }
+    var dropdownCategoryState by rememberSaveable {
+        mutableStateOf<DropdownInputValid>(
+            DropdownInputValid.Empty
+        )
+    }
     var taskDescription by rememberSaveable { mutableStateOf("") }
-    var taskDescriptionState by rememberSaveable { mutableStateOf<DescriptionInputValid>(DescriptionInputValid.Empty) }
+    var taskDescriptionState by rememberSaveable {
+        mutableStateOf<DescriptionInputValid>(
+            DescriptionInputValid.Empty
+        )
+    }
 
     var apiErrorMessage by rememberSaveable { mutableIntStateOf(0) }
     var showApiErrors by rememberSaveable { mutableStateOf(false) }
@@ -93,7 +105,7 @@ fun AddTaskScreen(
         topBar = {
             TopAppBarRoutinely(
                 onMenuClick = { expanded = true },
-                onNotificationClick = {  },
+                onNotificationClick = { },
                 showBackButton = true,
                 onBackButtonClicked = { onBackButtonPressed() },
                 onDismissMenu = { expanded = false },
@@ -164,37 +176,40 @@ fun AddTaskScreen(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    DropdownRoutinelyPriorities(
-                        labelRes = R.string.label_priority_dropdown,
-                        onValueChange = { stringId ->
-                            dropdownPriority = TaskFields.getTaskFieldByStringId<TaskPriorities>(stringId = stringId)
-                            dropdownPriorityState = DropdownInputValid.Valid
-                        },
-                        list = TaskPriorities.getAllTaskPriorities(),
-                    )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                     ) {
-                        DropdownTaskFilter(
+                        DropdownActivityFilter(
                             labelRes = R.string.label_category_dropdown,
                             onValueChange = { stringId ->
-                                dropdownCategory = TaskFields.getTaskFieldByStringId<TaskCategory>(stringId = stringId)
+                                dropdownCategory = TaskCategory.fromId(stringId)
                                 dropdownCategoryState = DropdownInputValid.Valid
                             },
-                            list = TaskFields.getAllOptions<TaskCategory>(),
-                            modifier = Modifier.weight(1f),
-                        )
-                        DropdownTaskFilter(
-                            labelRes = R.string.label_tag_dropdown,
-                            onValueChange = { stringId ->
-                                dropdownTags = TaskFields.getTaskFieldByStringId<TaskTag>(stringId = stringId)
-                                dropdownTagsState = DropdownInputValid.Valid
+                            list = TaskCategory.entries.map { category: TaskCategory ->
+                                object : TaskFields(category.id, category.name) {}
                             },
-                            list = TaskFields.getAllOptions<TaskTag>(),
                             modifier = Modifier.weight(1f),
+                            option = dropdownCategory?.id
                         )
                     }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        DropdownActivityFilter(
+                            labelRes = R.string.label_tag_dropdown,
+                            onValueChange = { stringId ->
+                                dropdownTags = ActivityTag.fromId(stringId)
+                                dropdownTagsState = DropdownInputValid.Valid
+                            },
+                            list = listOf(ActivityTag.Task, ActivityTag.Habit),
+                            modifier = Modifier.weight(1f),
+                            option = dropdownTags?.stringId
+                        )
+                    }
+
                     DescriptionTextField(
                         value = taskDescription,
                         onValueChange = { newTaskDescription: String ->
@@ -204,60 +219,84 @@ fun AddTaskScreen(
                         labelRes = stringResource(id = R.string.label_task_description),
                         error = taskDescriptionState,
                     )
-                    if(showApiErrors) {
+
+                    DropdownWeeklyFrequencyScreen(
+                        onWeekDaysSelected = { days ->
+                            selectedWeekDays = days
+                        }
+                    )
+
+                    if (showApiErrors) {
                         LabelError(stringResource(apiErrorMessage))
                     }
-                    AddTaskButton (
+                    AddTaskButton(
                         {
+                            val formattedDate = if (taskDate.isNotEmpty() && taskTime.isNotEmpty()) {
+                                "$taskDate $taskTime"
+                            } else {
+                                ""
+                            }
+
+                            val category = dropdownCategory?.apiName ?: "Several"
+                            val type = dropdownTags?.apiString?.lowercase() ?: "task"
+                            val weekDays = if (selectedWeekDays.isEmpty()) 
+                                listOf("Monday") 
+                            else 
+                                selectedWeekDays.map { it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() } }
+
                             onAddTaskClick(
                                 TaskRequest(
-                                    name = taskName,
-                                    date = taskDate,
-                                    priority = dropdownPriority!!.apiString,
-                                    description = taskDescription,
-                                    hour = taskTime,
-                                    tag = dropdownTags!!.apiString,
-                                    category = dropdownCategory!!.apiString
+                                    name = taskName.trim(),
+                                    description = taskDescription.trim(),
+                                    date = formattedDate,
+                                    category = category,
+                                    finallyDate = formattedDate,
+                                    weekDays = weekDays,
+                                    type = type,
                                 )
                             )
                         },
                         areFieldsValid = taskNameState == TaskNameInputValid.Valid &&
                                 taskDescriptionState == DescriptionInputValid.Valid &&
                                 taskDateState == DateTimeInputValid.Valid &&
-                                dropdownPriorityState == DropdownInputValid.Valid &&
-                                dropdownCategoryState == DropdownInputValid.Valid &&
-                                dropdownTagsState == DropdownInputValid.Valid &&
-                                taskTimeState == DateTimeInputValid.Valid
+                                taskTimeState == DateTimeInputValid.Valid &&
+                                dropdownCategory != null &&
+                                dropdownTags != null &&
+                                selectedWeekDays.isNotEmpty()
                     )
                 }
             }
         },
     )
     LaunchedEffect(key1 = addTaskResult) {
-        when(addTaskResult) {
+        when (addTaskResult) {
             is ApiResponse.Success -> {
                 showApiErrors = false
                 showLoading = false
                 navigateToHomeScreen()
             }
+
             is ApiResponse.Error -> {
                 apiErrorMessage = addTaskResult.message
                 showApiErrors = true
                 showLoading = false
             }
+
             is ApiResponse.DefaultError -> {
                 apiErrorMessage = R.string.api_unexpected_error
                 showApiErrors = true
                 showLoading = false
             }
+
             is ApiResponse.Loading -> {
                 showLoading = true
                 showApiErrors = false
             }
+
             else -> Unit
         }
     }
-    if(showLoading) {
+    if (showLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -267,3 +306,33 @@ fun AddTaskScreen(
         }
     }
 }
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewAddTaskScreen() {
+    AddTaskScreen(
+        onBackButtonPressed = { },
+        onHomeButtonPressed = { },
+        taskNameStateValidation = { nameTask ->
+            TaskNameInputValid.Valid
+        },
+        taskDateStateValidation = { dateTask ->
+            DateTimeInputValid.Valid
+        },
+        taskTimeStateValidation = { timeTask ->
+            DateTimeInputValid.Valid
+        },
+        taskDescriptionStateValidation = { descriptionTask ->
+            DescriptionInputValid.Valid
+        },
+        navigateToHomeScreen = { },
+        onAddTaskClick = { taskRequest ->
+        },
+        menuItems = listOf(
+        ),
+        addTaskResult = ApiResponse.Success
+    )
+}
+
+

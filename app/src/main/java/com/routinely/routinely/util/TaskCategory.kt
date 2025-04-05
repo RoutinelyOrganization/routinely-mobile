@@ -1,17 +1,34 @@
 package com.routinely.routinely.util
 
-import com.routinely.routinely.R
-import kotlinx.parcelize.Parcelize
+enum class TaskCategory(val id: Int) {
+    CAREER(1),
+    FINANCE(2),
+    STUDIES(3),
+    HEALTH(4),
+    LEISURE(5),
+    PRODUCTIVITY(6),
+    SEVERAL(7);
 
-sealed class TaskCategory(stringId: Int, apiString: String) : TaskFields(stringId, apiString) {
-    @Parcelize
-    data object Career : TaskCategory(R.string.category_career_text, "career")
-    @Parcelize
-    data object Personal : TaskCategory(R.string.category_personal_text, "personal")
-    @Parcelize
-    data object Health : TaskCategory(R.string.category_health_text, "health")
-    @Parcelize
-    data object Finances : TaskCategory(R.string.category_finances_text, "finance")
-    @Parcelize
-    data object Studies : TaskCategory(R.string.category_studies_text, "study")
+    val apiName: String
+        get() = name.lowercase().replaceFirstChar { it.uppercase() }
+
+    companion object {
+        fun fromString(value: String): TaskCategory {
+            return try {
+                valueOf(value.uppercase())
+            } catch (e: IllegalArgumentException) {
+                SEVERAL
+            }
+        }
+
+        fun fromId(id: Int): TaskCategory {
+            return entries.find { it.id == id } ?: SEVERAL
+        }
+
+        fun toTaskFieldsList(): List<TaskFields> {
+            return entries.map { category ->
+                object : TaskFields(category.id, category.apiName) {}
+            }
+        }
+    }
 }

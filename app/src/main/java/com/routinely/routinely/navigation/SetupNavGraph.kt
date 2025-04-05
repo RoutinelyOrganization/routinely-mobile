@@ -1,6 +1,5 @@
 package com.routinely.routinely.navigation
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -15,15 +14,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.navigation.navDeepLink
 import com.routinely.routinely.R
 import com.routinely.routinely.changepassword.CreateNewPasswordScreen
 import com.routinely.routinely.changepassword.CreateNewPasswordViewModel
@@ -31,7 +27,6 @@ import com.routinely.routinely.changepassword.ForgotPasswordScreen
 import com.routinely.routinely.changepassword.ForgotPasswordViewModel
 import com.routinely.routinely.changepassword.VerificationCodeScreen
 import com.routinely.routinely.changepassword.VerificationCodeViewModel
-import com.routinely.routinely.data.auth.HttpRoutes
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.CreateNewPasswordRequest
 import com.routinely.routinely.data.auth.model.ForgotPasswordRequest
@@ -48,12 +43,10 @@ import com.routinely.routinely.task.AddTaskViewModel
 import com.routinely.routinely.task.EditTaskScreen
 import com.routinely.routinely.task.EditTaskViewModel
 import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
-import com.routinely.routinely.ui.components.Task
-import com.routinely.routinely.util.ActivityTag
 import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskItem
+import com.routinely.routinely.util.TaskMapper
 import org.koin.androidx.compose.koinViewModel
-import java.time.LocalDate
 
 
 @Composable
@@ -164,12 +157,7 @@ fun NavGraphBuilder.loginRoute(
     navigateToCreateAccountScreen: () -> Unit,
     navigateToForgotPasswordScreen: () -> Unit,
 ) {
-    composable(
-        route = Screen.Login.route,
-        deepLinks = listOf(navDeepLink {
-            uriPattern = "https://routinely-api-next.vercel.app"
-        })
-    ) { navBackStackEntry ->
+    composable(route = Screen.Login.route) { navBackStackEntry ->
         val viewModel: LoginViewModel = koinViewModel()
         val signInResult by viewModel.signInResult.collectAsState()
         LoginScreen(
@@ -247,7 +235,7 @@ fun NavGraphBuilder.createAccountRoute(
 }
 
 fun NavGraphBuilder.newPasswordRoute(
-    navigateToLoginScreen: () -> Unit
+    navigateToLoginScreen: () -> Unit,
 ) {
     composable(
         route = Screen.NewPasswordScreen.route,
@@ -268,10 +256,10 @@ fun NavGraphBuilder.newPasswordRoute(
                         password = password,
                         accountId = accountId,
                         code = code
-                    ),confirmPassword
+                    ), confirmPassword
                 )
             },
-            passwordStateValidation = {password ->
+            passwordStateValidation = { password ->
                 viewModel.passwordState(password)
             },
             navigateToLoginScreen = {
@@ -345,79 +333,58 @@ fun NavGraphBuilder.homeScreenRoute(
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
     navigateToLoginScreen: () -> Unit,
-    navigateToEditScreen: (taskId: Int) -> Unit,
+    navigateToEditScreen: (Int) -> Unit,
 ) {
     composable(route = Screen.HomeScreen.route) { navBackStackEntry ->
         val viewModel: HomeViewModel = koinViewModel()
+        val getTasksResponse by viewModel.getTasksResponse.collectAsStateWithLifecycle()
+        val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsState()
+
         val menuItems = listOf(
-            MenuItem(
-                text = stringResource(R.string.menu_configuration),
-                onItemClick = { }
-            ),
-            MenuItem(
-                text = stringResource(R.string.menu_goal),
-                onItemClick = { }
-            ),
-            MenuItem(
-                text = stringResource(R.string.menu_notification),
-                onItemClick = { }
-            ),
             MenuItem(
                 text = stringResource(R.string.menu_logout),
                 onItemClick = {
                     viewModel.logout()
-                    navigateToScreenOnlyIfResumed(navBackStackEntry, navigateToLoginScreen)
+                    navigateToLoginScreen()
                 }
-            ),
-        )
-        val menuTask = listOf(
-            Task(
-                id = 1,
-                activityTag = ActivityTag.Task.stringId,
-                description = "1",
-                categoryTask = ActivityTag.Task.stringId,
-                date = LocalDate.now()
             )
         )
 
-        val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsStateWithLifecycle()
-        val getTasksResponse = viewModel.getTasksResponse.collectAsStateWithLifecycle()
+        val menuTask = getTasksResponse.data?.mapNotNull { taskItem ->
+            try {
+                TaskMapper.fromApi(taskItem)
+            } catch (e: Exception) {
+                null
+            }
+        } ?: emptyList()
 
-        LaunchedEffect(key1 = deleteTaskResponse) {
-            if (deleteTaskResponse == ApiResponse.Success) {
+        HomeScreen(
+            onNotificationClicked = onNotificationClicked,
+            onNewTaskClicked = onNewTaskClicked,
+            onEditTaskClicked = { taskItem ->
+                navigateToEditScreen(taskItem.id)
+            },
+            onDeleteTaskClicked = { taskItem ->
+                viewModel.excludeTask(taskItem)
+            },
+            menuItems = menuItems,
+            menuTask = menuTask,
+            onSelectDayChange = { month, year, day ->
+                viewModel.getUserTasks(month, year, day)
+            },
+            getTasksResponse = getTasksResponse
+        )
+
+        LaunchedEffect(deleteTaskResponse) {
+            if (deleteTaskResponse is ApiResponse.Success) {
                 viewModel.getUserTasks(
-                    month = viewModel.lastMonth,
-                    year = viewModel.lastYear,
-                    day = viewModel.lastDay,
+                    viewModel.lastMonth,
+                    viewModel.lastYear,
+                    viewModel.lastDay,
                     force = true
                 )
             }
         }
-
-        HomeScreen(
-            onNotificationClicked = { onNotificationClicked() },
-            onNewTaskClicked = { onNewTaskClicked() },
-            onEditTaskClicked = {
-                navigateToEditScreen(it.id)
-            },
-            onDeleteTaskClicked = {
-                viewModel.excludeTask(it)
-                viewModel.getUserTasks(
-                    month = viewModel.lastMonth,
-                    year = viewModel.lastYear,
-                    day = viewModel.lastDay,
-                    force = true
-                )
-            },
-            menuItems = menuItems,
-
-            onSelectDayChange = { month, year, day ->
-                viewModel.getUserTasks(month, year, day)
-            },
-            getTasksResponse = getTasksResponse.value,
-            menuTask = menuTask,
-        )
-
     }
 }
 
