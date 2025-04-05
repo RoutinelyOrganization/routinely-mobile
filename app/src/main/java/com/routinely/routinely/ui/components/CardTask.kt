@@ -6,12 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -19,7 +17,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
@@ -30,87 +27,97 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
 import com.routinely.routinely.ui.theme.PurpleRoutinely
-import com.routinely.routinely.ui.theme.cardHabit
-import com.routinely.routinely.ui.theme.cardProject
-import com.routinely.routinely.ui.theme.cardTask
 import com.routinely.routinely.ui.theme.categoryColor
 import com.routinely.routinely.util.ActivityTag
+import com.routinely.routinely.util.TaskCategoryNew
 
 @Composable
 fun CardTask(
     title: String,
     description: String,
+    taskType: Int,
     category: Int,
     isSelected: Boolean,
-    originalCategory: String?,
     onSelected: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val (emoji, cardBackgroundColor, border) = getCategoryAttributes(category,originalCategory?.toInt())
-    val categoryAttributes = getCategoryAttributes(category)
+    val (emoji, cardBackgroundColor, border) = getCategoryAttributes(taskType)
+    val taskTypeText = when (taskType) {
+        ActivityTag.Task.stringId -> "Atividade"
+        ActivityTag.Habit.stringId -> "Hábitos"
+        else -> "Atividade"
+    }
 
+    val categoryText = when (category) {
+        1 -> TaskCategoryNew.Career.name
+        2 -> TaskCategoryNew.Finances.name
+        3 -> TaskCategoryNew.Studies.name
+        4 -> TaskCategoryNew.Health.name
+        5 -> TaskCategoryNew.Leisure.name
+        6 -> TaskCategoryNew.Productivity.name
+        else -> TaskCategoryNew.Several.name
+    }
 
     Card(
         modifier = modifier
-            .padding(vertical = 12.dp)
-            .height(124.dp),
-        shape = RoundedCornerShape(8.dp),
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, border),
         colors = CardDefaults.cardColors(cardBackgroundColor)
     ) {
         Column(
-            modifier = modifier
-                .padding(horizontal = 8.dp)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.SpaceAround
-
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = emoji,
-                    fontSize = 14.sp,
-                    modifier = Modifier.padding(end = 2.dp)
+                    fontSize = 16.sp
                 )
                 Text(
-                    text = title,
+                    text = taskTypeText,
                     fontSize = 14.sp,
                     color = categoryColor,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Medium
                 )
             }
             Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = description,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 2.dp)
-                        .weight(0.5f),
-                    maxLines = 2,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        textDecoration = if (isSelected) TextDecoration.LineThrough else TextDecoration.None
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Bottom
+
+                ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = "00:00",
+                        fontSize = 14.sp,
+                        color = Color.Black
                     )
-                )
+                    Text(
+                        text = title,
+                        fontSize = 14.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Normal,
+                        maxLines = 2
+                    )
+                }
                 CustomRadioButton(
-                    modifier = modifier.padding(start = 10.dp),
                     selected = isSelected,
-                    onSelected = {
-                        onSelected(it)
-                    },
+                    onSelected = onSelected,
                     selectedIcon = painterResource(id = R.drawable.baseline_check_circle_outline_24),
                     unselectedIcon = painterResource(id = R.drawable.baseline_radio_button_unchecked_24),
                     colors = RadioButtonDefaults.colors(
@@ -118,37 +125,35 @@ fun CardTask(
                         selectedColor = categoryColor,
                         disabledSelectedColor = categoryColor,
                         disabledUnselectedColor = categoryColor
-                    )
+                    ),
                 )
             }
+
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
-                        .wrapContentWidth()
                         .background(
                             color = categoryColor,
                             shape = RoundedCornerShape(4.dp)
                         )
-                        .padding(horizontal = 6.dp, vertical = 4.dp)
-
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = categoryAttributes.originalCategoryName,
-                        textAlign = TextAlign.Center,
+                        text = categoryText,
                         fontSize = 12.sp,
-                        fontWeight = FontWeight(400),
                         color = Color.White,
+                        fontWeight = FontWeight.Normal
                     )
                 }
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = null,
                     tint = PurpleRoutinely,
-                    modifier = Modifier
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
@@ -162,19 +167,19 @@ fun CustomRadioButton(
     modifier: Modifier = Modifier,
     selectedIcon: Painter,
     unselectedIcon: Painter,
-    colors: RadioButtonColors = RadioButtonDefaults.colors()
+    colors: RadioButtonColors = RadioButtonDefaults.colors(),
 ) {
     IconToggleButton(
         checked = selected,
         onCheckedChange = { onSelected(!selected) },
-        modifier = modifier
-            .width(24.dp)
-            .height(24.dp)
-    ) {
+        modifier = modifier.size(24.dp)
+
+        ) {
         Icon(
             painter = if (selected) selectedIcon else unselectedIcon,
             contentDescription = null,
-            tint = if (selected) colors.selectedColor else colors.unselectedColor
+            tint = if (selected) colors.selectedColor else colors.unselectedColor,
+            modifier = modifier.fillMaxSize()
         )
 
     }
@@ -185,68 +190,38 @@ data class CardCategory(
     val cardColor: Color,
     val cardBorder: Color,
     val originalCategoryName: String,
-    val isSelected: Int
 )
 
-
-fun darkenColor(color: Color, factor: Float = 0.8f): Color {
-    return Color(
-        red = (color.red * factor).coerceIn(0f, 1f),
-        green = (color.green * factor).coerceIn(0f, 1f),
-        blue = (color.blue * factor).coerceIn(0f, 1f),
-        alpha = color.alpha
-    )
-}
-fun getCategoryAttributes(category: Int,originalCategory: Int? = null): CardCategory {
+fun getCategoryAttributes(taskType: Int): CardCategory {
     val defaultBorderColor = Color.Gray
-    val darkenFactor = 0.8f
 
-    val backgroundColor = when {
-        category == ActivityTag.Completed.stringId && originalCategory != null -> {
-            val originalColor = when (originalCategory) {
-                ActivityTag.Task.stringId -> cardTask
-                ActivityTag.Habit.stringId -> cardHabit
-                ActivityTag.Project.stringId -> cardProject
-                else -> Color.Transparent
-            }
-            darkenColor(originalColor, darkenFactor)
-        }
-        category == ActivityTag.Task.stringId -> cardTask
-        category == ActivityTag.Habit.stringId -> cardHabit
-        category == ActivityTag.Project.stringId -> cardProject
-        category == ActivityTag.Completed.stringId -> darkenColor(Color.Red, darkenFactor)
+    val backgroundColor = when (taskType) {
+        ActivityTag.Task.stringId -> Color(0xFFD1EAFF)
+        ActivityTag.Habit.stringId -> Color(0xF1E0DFFF)
         else -> Color.Transparent
     }
 
-    val borderColor = when (category) {
+    val borderColor = when (taskType) {
         ActivityTag.Task.stringId -> Color(0xFF115D9E)
         ActivityTag.Habit.stringId -> Color(0xFF5450BC)
-        ActivityTag.Project.stringId -> Color(0xFF747400)
-        ActivityTag.Completed.stringId -> Color.Gray
         else -> defaultBorderColor
     }
 
-    val icon = when (originalCategory ?: category) {
+    val icon = when (taskType) {
         ActivityTag.Task.stringId -> "📋"
         ActivityTag.Habit.stringId -> "📌"
-        ActivityTag.Project.stringId -> "🚀"
-        ActivityTag.Completed.stringId -> "✔️"
         else -> "❓"
     }
 
-    val originalCategoryName = getCategoryName(category)
-
-    return CardCategory(icon, backgroundColor, borderColor, originalCategoryName, category)
-
+    val originalCategoryName = getCategoryName(taskType)
+    return CardCategory(icon, backgroundColor, borderColor, originalCategoryName)
 }
 
 fun getCategoryName(category: Int): String {
     return when (category) {
-        ActivityTag.Task.stringId -> "Task"
-        ActivityTag.Habit.stringId -> "Habit"
-        ActivityTag.Project.stringId -> "Project"
-        ActivityTag.AllActivity.stringId -> "All Activity"
-        else -> "Unknow"
+        ActivityTag.Task.stringId -> "Tarefa"
+        ActivityTag.Habit.stringId -> "Hábito"
+        else -> "Desconhecido"
     }
 }
 
@@ -255,11 +230,11 @@ fun getCategoryName(category: Int): String {
 @Composable
 private fun CardTaskPreview() {
     CardTask(
-        title = "Title",
+        title = "Asa sauaygsdyu",
         description = "Description",
         isSelected = true,
-        originalCategory = null,
+        category = 4,
         onSelected = {},
-        category = ActivityTag.Task.stringId
+        taskType = ActivityTag.Habit.stringId
     )
 }

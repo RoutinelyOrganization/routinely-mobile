@@ -1,5 +1,6 @@
 package com.routinely.routinely.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -47,6 +48,7 @@ import com.routinely.routinely.ui.components.Task
 import com.routinely.routinely.util.ActivityTag
 import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskItem
+import com.routinely.routinely.util.TaskMapper
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDate
 
@@ -121,7 +123,7 @@ fun SetupNavGraph(
             }
         )
         forgotPasswordRoute(
-            navigateToCodeVerificationScreen = {accountId ->
+            navigateToCodeVerificationScreen = { accountId ->
                 navController.navigate(Screen.VerificationCodeScreen.withArgs(accountId))
             }
         )
@@ -237,7 +239,7 @@ fun NavGraphBuilder.createAccountRoute(
 }
 
 fun NavGraphBuilder.newPasswordRoute(
-    navigateToLoginScreen: () -> Unit
+    navigateToLoginScreen: () -> Unit,
 ) {
     composable(
         route = Screen.NewPasswordScreen.route,
@@ -258,10 +260,10 @@ fun NavGraphBuilder.newPasswordRoute(
                         password = password,
                         accountId = accountId,
                         code = code
-                    ),confirmPassword
+                    ), confirmPassword
                 )
             },
-            passwordStateValidation = {password ->
+            passwordStateValidation = { password ->
                 viewModel.passwordState(password)
             },
             navigateToLoginScreen = {
@@ -335,79 +337,60 @@ fun NavGraphBuilder.homeScreenRoute(
     onNotificationClicked: () -> Unit,
     onNewTaskClicked: () -> Unit,
     navigateToLoginScreen: () -> Unit,
-    navigateToEditScreen: (taskId: Int) -> Unit,
+    navigateToEditScreen: (Int) -> Unit,
 ) {
     composable(route = Screen.HomeScreen.route) { navBackStackEntry ->
         val viewModel: HomeViewModel = koinViewModel()
+        val getTasksResponse by viewModel.getTasksResponse.collectAsStateWithLifecycle()
+        val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsState()
+
         val menuItems = listOf(
-            MenuItem(
-                text = stringResource(R.string.menu_configuration),
-                onItemClick = { }
-            ),
-            MenuItem(
-                text = stringResource(R.string.menu_goal),
-                onItemClick = { }
-            ),
-            MenuItem(
-                text = stringResource(R.string.menu_notification),
-                onItemClick = { }
-            ),
             MenuItem(
                 text = stringResource(R.string.menu_logout),
                 onItemClick = {
                     viewModel.logout()
-                    navigateToScreenOnlyIfResumed(navBackStackEntry, navigateToLoginScreen)
+                    navigateToLoginScreen()
                 }
-            ),
-        )
-        val menuTask = listOf(
-            Task(id = 1, title = "Title 1", description = "Description 1", category = ActivityTag.Project.stringId, date = LocalDate.now()),
-            Task(id = 2, title = "Title 2", description = "Description 2", category = ActivityTag.Task.stringId, date = LocalDate.now()),
-            Task(id = 3, title = "Title 3", description = "Description 3", category = ActivityTag.Habit.stringId, date = LocalDate.now()),
-            Task(id = 4, title = "Title 4", description = "Description 4", category = ActivityTag.Project.stringId, date = LocalDate.now()),
+            )
         )
 
-        val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsStateWithLifecycle()
-        val getTasksResponse = viewModel.getTasksResponse.collectAsStateWithLifecycle()
+        val menuTask = getTasksResponse.data?.mapNotNull { taskItem ->
+            try {
+                TaskMapper.fromApi(taskItem)
+            } catch (e: Exception) {
+                null
+            }
+        } ?: emptyList()
 
-        LaunchedEffect(key1 = deleteTaskResponse) {
-            if (deleteTaskResponse == ApiResponse.Success) {
+        HomeScreen(
+            onNotificationClicked = onNotificationClicked,
+            onNewTaskClicked = onNewTaskClicked,
+            onEditTaskClicked = { taskItem ->
+                navigateToEditScreen(taskItem.id)
+            },
+            onDeleteTaskClicked = { taskItem ->
+                viewModel.excludeTask(taskItem)
+            },
+            menuItems = menuItems,
+            menuTask = menuTask,
+            onSelectDayChange = { month, year, day ->
+                viewModel.getUserTasks(month, year, day)
+            },
+            getTasksResponse = getTasksResponse
+        )
+
+        LaunchedEffect(deleteTaskResponse) {
+            if (deleteTaskResponse is ApiResponse.Success) {
                 viewModel.getUserTasks(
-                    month = viewModel.lastMonth,
-                    year = viewModel.lastYear,
-                    day = viewModel.lastDay,
+                    viewModel.lastMonth,
+                    viewModel.lastYear,
+                    viewModel.lastDay,
                     force = true
                 )
             }
         }
-
-        HomeScreen(
-            onNotificationClicked = { onNotificationClicked() },
-            onNewTaskClicked = { onNewTaskClicked() },
-            onEditTaskClicked = {
-                navigateToEditScreen(it.id)
-            },
-            onDeleteTaskClicked = {
-                viewModel.excludeTask(it)
-                viewModel.getUserTasks(
-                    month = viewModel.lastMonth,
-                    year = viewModel.lastYear,
-                    day = viewModel.lastDay,
-                    force = true
-                )
-            },
-            menuItems = menuItems,
-
-            onSelectDayChange = { month, year, day ->
-                viewModel.getUserTasks(month, year, day)
-            },
-            getTasksResponse = getTasksResponse.value,
-            menuTask = menuTask,
-        )
-
     }
 }
-
 
 
 fun NavGraphBuilder.addTaskScreenRoute(
@@ -571,7 +554,7 @@ private fun NavBackStackEntry.lifecycleIsresumed() =
 
 private fun navigateToScreenOnlyIfResumed(
     navBackStackEntry: NavBackStackEntry,
-    navigateToHomeScreen: () -> Unit
+    navigateToHomeScreen: () -> Unit,
 ) {
     if (navBackStackEntry.lifecycleIsresumed()) {
         navigateToHomeScreen()

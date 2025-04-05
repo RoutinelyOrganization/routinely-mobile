@@ -82,7 +82,7 @@
     <string name="text_tag_bill">Bill</string>
     <string name="text_tag_project">Project</string>
     <string name="text_tag_habit">Habit</string>
-    <string name="text_tag_activity">Activity</string>
+    <string name="text_tag_task">Task</string>
     <string name="api_tag_bill">bill</string>
     <string name="label_category_dropdown">Categories</string>
     <string name="label_tag_dropdown">Tags</string>
@@ -124,4 +124,9 @@
     <string name="reset_password_success">Password reset completed successfully</string>
     <string name="api_validate_code_invalid">The verification code you entered is not valid. Check the code and try again.</string>
     <string name="filter_task">All activities</string>
+    <string name="category_leisure_text">Leisure</string>
+    <string name="category_productivity_text">Productivity</string>
+    <string name="category_several_text">Several</string>
+    <string name="invalid_type">Invalid Type</string>
+    <string name="invalid_category">Invalid category.</string>
 </resources>

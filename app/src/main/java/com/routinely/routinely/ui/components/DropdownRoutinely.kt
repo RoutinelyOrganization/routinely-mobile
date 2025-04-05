@@ -1,5 +1,6 @@
 package com.routinely.routinely.ui.components
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,6 +29,9 @@ import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.util.TaskFields
 import com.routinely.routinely.util.TaskPriorities
 import com.routinely.routinely.util.TaskTag
+import com.routinely.routinely.util.TaskCategory
+import com.routinely.routinely.util.ActivityTag
+import com.routinely.routinely.util.TaskCategoryNew
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -214,11 +218,32 @@ fun DropdownRoutinelyPriorities(
 @Preview
 @Composable
 private fun DropdownRoutinelyPreview() {
-    DropdownRoutinely(labelRes = R.string.label_tag_dropdown, onValueChange = {}, list = TaskFields.getAllOptions<TaskTag>())
+    Column {
+        DropdownRoutinely(
+            labelRes = R.string.label_tag_dropdown,
+            onValueChange = {},
+            list = listOf(ActivityTag.Task, ActivityTag.Habit),
+            option = ActivityTag.Task.stringId
+        )
+        
+        DropdownRoutinely(
+            labelRes = R.string.label_category_dropdown,
+            onValueChange = {},
+            list = TaskCategory.toTaskFieldsList(),
+            option = 2
+        )
+    }
 }
 
 @Preview
 @Composable
 private fun DropdownRoutinelyWithColorPreview() {
-    DropdownRoutinelyPriorities(labelRes = R.string.label_priority_dropdown, onValueChange = {}, list = TaskPriorities.getAllTaskPriorities())
+    Column {
+        DropdownRoutinelyPriorities(
+            labelRes = R.string.label_priority_dropdown,
+            onValueChange = {},
+            list = TaskPriorities.getAllTaskPriorities(),
+            option = TaskPriorities.High.stringId
+        )
+    }
 }

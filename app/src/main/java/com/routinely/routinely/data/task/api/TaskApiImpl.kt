@@ -32,25 +32,26 @@ internal class TaskApiImpl(
 ) : TaskApi {
     override suspend fun addTask(taskRequest: TaskRequest): ApiResponse {
         return try {
-            client.post(HttpRoutes.TASK) {
+            val response = client.post(HttpRoutes.TASK) {
                 setBody(taskRequest)
                 contentType(ContentType.Application.Json)
-            }.taskToApiResponse()
-        } catch(e: RedirectResponseException){
-            // 3xx - responses
+            }
+            response.taskToApiResponse()
+        } catch (e: RedirectResponseException) {
             handleErrorApiErrorResponse()
-        } catch(e: ClientRequestException){
-            // 4xx - responses
+        } catch (e: ClientRequestException) {
             handleErrorApiErrorResponse()
-        } catch(e: ServerResponseException){
-            // 5xx - responses
+        } catch (e: ServerResponseException) {
             handleErrorApiErrorResponse()
-        } catch(e: Exception){
+        } catch (e: Exception) {
             handleErrorApiErrorResponse()
         }
     }
 
-    override suspend fun getMonthTasks(month: Int, year: Int): Flow<ApiResponseWithData<List<TaskItem>>> = flow {
+    override suspend fun getMonthTasks(
+        month: Int,
+        year: Int,
+    ): Flow<ApiResponseWithData<List<TaskItem>>> = flow {
         emit(ApiResponseWithData.Loading())
         try {
             emit(
@@ -61,7 +62,7 @@ internal class TaskApiImpl(
                     }
                 }.toTaskItemList()
             )
-        } catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             emit(ApiResponseWithData.Error())
         }
@@ -74,7 +75,7 @@ internal class TaskApiImpl(
                     appendPathSegments(taskId.toString())
                 }
             }.toTaskItem()
-        } catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             null
         }
@@ -87,16 +88,16 @@ internal class TaskApiImpl(
                     appendPathSegments(taskId.toString())
                 }
             }.excludeToApiResponse()
-        } catch(e: RedirectResponseException){
-            // 3xx - responses
+        } catch (e: RedirectResponseException) {
+
             handleErrorApiErrorResponse()
-        } catch(e: ClientRequestException){
-            // 4xx - responses
+        } catch (e: ClientRequestException) {
+
             handleErrorApiErrorResponse()
-        } catch(e: ServerResponseException){
-            // 5xx - responses
+        } catch (e: ServerResponseException) {
+
             handleErrorApiErrorResponse()
-        } catch(e: Exception){
+        } catch (e: Exception) {
             handleErrorApiErrorResponse()
         }
     }
@@ -112,16 +113,16 @@ internal class TaskApiImpl(
             }
             val test = response.taskUpdateToApiResponse()
             return test
-        } catch(e: RedirectResponseException){
-            // 3xx - responses
+        } catch (e: RedirectResponseException) {
+
             handleErrorApiErrorResponse()
-        } catch(e: ClientRequestException){
-            // 4xx - responses
+        } catch (e: ClientRequestException) {
+
             handleErrorApiErrorResponse()
-        } catch(e: ServerResponseException){
-            // 5xx - responses
+        } catch (e: ServerResponseException) {
+
             handleErrorApiErrorResponse()
-        } catch(e: Exception){
+        } catch (e: Exception) {
             handleErrorApiErrorResponse()
         }
     }

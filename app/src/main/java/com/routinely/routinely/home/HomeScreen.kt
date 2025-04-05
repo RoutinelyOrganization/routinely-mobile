@@ -1,12 +1,13 @@
 package com.routinely.routinely.home
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -17,25 +18,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kizitonwose.calendar.compose.weekcalendar.rememberWeekCalendarState
 import com.routinely.routinely.R
 import com.routinely.routinely.data.auth.model.ApiResponseWithData
 import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.CalendarRoutinely
 import com.routinely.routinely.ui.components.CardTask
-import com.routinely.routinely.ui.components.DropdownTaskFilter
+import com.routinely.routinely.ui.components.DropdownActivityFilter
 import com.routinely.routinely.ui.components.Task
 import com.routinely.routinely.ui.components.TaskAlertDialog
 import com.routinely.routinely.ui.components.TopAppBarRoutinely
-import com.routinely.routinely.ui.theme.GrayRoutinely
 import com.routinely.routinely.util.ActivityTag
 import com.routinely.routinely.util.BottomNavItems
 import com.routinely.routinely.util.MenuItem
-import com.routinely.routinely.util.TaskFields
 import com.routinely.routinely.util.TaskItem
 import java.time.LocalDate
 
@@ -69,35 +66,46 @@ fun HomeScreen(
 
     var expanded by remember { mutableStateOf(false) }
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
-    val temporaryDeleteId by remember { mutableStateOf<TaskItem?>(null) }
-    var selectedActivityTag by remember { mutableIntStateOf(ActivityTag.AllActivity.stringId) }
+    var temporaryDeleteId by remember { mutableStateOf<TaskItem?>(null) }
+    var selectedActivityTag by remember { mutableIntStateOf(ActivityTag.Task.stringId) }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
 
     val taskSelections by rememberSaveable(stateSaver = snapshotStateMapSaver()) {
         mutableStateOf(SnapshotStateMap<Int, Boolean>())
     }
-    val originalCategories by rememberSaveable(stateSaver = snapshotStateMapSaver()) {
-        mutableStateOf(SnapshotStateMap<Int, Int>())
+
+    val tasks = remember { mutableStateListOf<Task>() }
+
+    LaunchedEffect(getTasksResponse) {
+        if (getTasksResponse is ApiResponseWithData.Success) {
+            tasks.clear()
+            getTasksResponse.data?.let { taskItems ->
+                tasks.addAll(taskItems.mapNotNull { taskItem ->
+                    try {
+                        Task.fromApi(
+                            id = taskItem.id,
+                            title = taskItem.name,
+                            description = taskItem.description ?: "",
+                            category = taskItem.category,
+                            date = LocalDate.parse(taskItem.date.substring(0, 10)),
+                            type = taskItem.type
+                        )
+                    } catch (e: Exception) {
+                        null
+                    }
+                })
+            }
+        }
     }
 
-    val tasks = remember { mutableStateListOf<Task>().apply { addAll(menuTask) } }
-    menuTask.forEach { task ->
-        if (!taskSelections.containsKey(task.id)) {
-            taskSelections[task.id] = task.isSelected
-        }
-        if (!originalCategories.containsKey(task.id)) {
-            originalCategories[task.id] = task.category
-        }
-    }
-
-    val filteredTasks = menuTask.filter { task ->
-        val matchesCategory = when (selectedActivityTag) {
-            ActivityTag.AllActivity.stringId -> task.category != ActivityTag.Completed.stringId
-            ActivityTag.Completed.stringId -> task.category == ActivityTag.Completed.stringId
-            else -> task.category == selectedActivityTag
+    val filteredTasks = tasks.filter { task ->
+        val matchesType = when (selectedActivityTag) {
+            ActivityTag.Task.stringId -> task.type.value == "task"
+            ActivityTag.Habit.stringId -> task.type.value == "habit"
+            else -> true
         }
         val matchesDate = selectedDate?.let { task.date == it } ?: true
-        matchesCategory && matchesDate
+        matchesType && matchesDate
     }
 
     Scaffold(
@@ -128,78 +136,62 @@ fun HomeScreen(
                     state = weekCalendarState,
                     onDateSelected = { newDate ->
                         selectedDate = newDate
+                        onSelectDayChange(
+                            newDate.monthValue,
+                            newDate.year,
+                            newDate.dayOfMonth
+                        )
                     }
                 )
-                DropdownTaskFilter(
+                DropdownActivityFilter(
                     modifier = Modifier.padding(top = 9.dp),
-                    labelRes = selectedActivityTag,
-                    onValueChange = { newLabelRes ->
-                        selectedActivityTag = newLabelRes
+                    labelRes = R.string.label_tag_dropdown,
+                    onValueChange = { stringId ->
+                        selectedActivityTag = stringId
                     },
-                    list = TaskFields.getAllOptions<ActivityTag>(),
+                    list = listOf(ActivityTag.Task, ActivityTag.Habit),
+                    option = selectedActivityTag
                 )
-
-                if (filteredTasks.isEmpty()) {
-                    Text(
-                        text = "Você ainda não tem atividades para hoje",
-                        modifier = Modifier.padding(top = 32.dp, ),
-                        fontSize = 14.sp,
-                        color = Color.Gray
-                    )
-                }
 
                 LazyColumn(
                     modifier = Modifier
+
                 ) {
                     items(filteredTasks) { task ->
                         val isSelected = taskSelections[task.id] ?: false
-                        val originalCategory = originalCategories[task.id] ?: task.category
-
-                        if (isSelected) {
-                            task.category = ActivityTag.Completed.stringId
-                        } else {
-                            task.category = originalCategory
+                        val taskType = when (task.type.value) {
+                            "task" -> ActivityTag.Task.stringId
+                            "habit" -> ActivityTag.Habit.stringId
+                            else -> ActivityTag.Task.stringId
                         }
-                        val shouldDisplay = when (selectedActivityTag) {
-                            ActivityTag.AllActivity.stringId -> true
-                            ActivityTag.Completed.stringId -> task.category == ActivityTag.Completed.stringId
-                            else -> task.category == selectedActivityTag
-                        }
-                        if (shouldDisplay) {
-                            CardTask(
-                                title = task.title,
-                                description = task.description,
-                                category = task.category,
-                                originalCategory = if (task.category == ActivityTag.Completed.stringId) originalCategory.toString() else null,
-                                isSelected = isSelected,
-                                onSelected = { selected ->
-                                    taskSelections[task.id] = selected
-                                    if (selected) {
-                                        tasks.find { it.id == task.id }?.category = ActivityTag.Completed.stringId.toInt()
-                                    } else {
-                                        tasks.find { it.id == task.id}?.category = originalCategory
-                                    }
-                                }
-                            )
-                        }
+                        CardTask(
+                            title = task.title,
+                            description = task.description,
+                            taskType = taskType,
+                            category = task.category.id,
+                            isSelected = isSelected,
+                            onSelected = { selected ->
+                                taskSelections[task.id] = selected
+                            }
+                        )
                     }
                 }
+            }
 
-                if (showDeleteDialog) {
-                    TaskAlertDialog(
-                        textRes = R.string.delete_task_confirmation,
-                        onConfirm = {
-                            showDeleteDialog = false
-                            temporaryDeleteId?.let { onDeleteTaskClicked(it) }
-                        },
-                        onCancel = {
-                            showDeleteDialog = false
-                        },
-                        onDismissRequest = {
-                            showDeleteDialog = false
-                        }
-                    )
-                }
+            if (showDeleteDialog) {
+                TaskAlertDialog(
+                    textRes = R.string.delete_task_confirmation,
+                    onConfirm = {
+                        showDeleteDialog = false
+                        temporaryDeleteId?.let { onDeleteTaskClicked(it) }
+                    },
+                    onCancel = {
+                        showDeleteDialog = false
+                    },
+                    onDismissRequest = {
+                        showDeleteDialog = false
+                    }
+                )
             }
         }
     )
