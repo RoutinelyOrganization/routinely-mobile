@@ -1,7 +1,6 @@
 package com.routinely.routinely.home
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -66,7 +65,7 @@ fun HomeScreen(
 
     var expanded by remember { mutableStateOf(false) }
     var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
-    var temporaryDeleteId by remember { mutableStateOf<TaskItem?>(null) }
+    val temporaryDeleteId by remember { mutableStateOf<TaskItem?>(null) }
     var selectedActivityTag by remember { mutableIntStateOf(ActivityTag.Task.stringId) }
     var selectedDate by remember { mutableStateOf<LocalDate?>(null) }
 

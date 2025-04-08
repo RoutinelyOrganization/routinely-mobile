@@ -225,12 +225,11 @@ fun getCategoryName(category: Int): String {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun CardTaskPreview() {
     CardTask(
-        title = "Asa sauaygsdyu",
+        title = "Titulo",
         description = "Description",
         isSelected = true,
         category = 4,

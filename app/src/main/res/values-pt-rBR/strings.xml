@@ -125,4 +125,6 @@
     <string name="category_leisure_text">Lazer</string>
     <string name="category_productivity_text">Produtividade</string>
     <string name="category_several_text">Diversos</string>
+    <string name="invalid_type">Tipo invalido.</string>
+    <string name="invalid_category">Categoria invalida.</string>
 </resources>

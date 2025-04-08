@@ -1,6 +1,5 @@
 package com.routinely.routinely.navigation
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -44,13 +43,10 @@ import com.routinely.routinely.task.AddTaskViewModel
 import com.routinely.routinely.task.EditTaskScreen
 import com.routinely.routinely.task.EditTaskViewModel
 import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
-import com.routinely.routinely.ui.components.Task
-import com.routinely.routinely.util.ActivityTag
 import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskItem
 import com.routinely.routinely.util.TaskMapper
 import org.koin.androidx.compose.koinViewModel
-import java.time.LocalDate
 
 
 @Composable
@@ -339,7 +335,7 @@ fun NavGraphBuilder.homeScreenRoute(
     navigateToLoginScreen: () -> Unit,
     navigateToEditScreen: (Int) -> Unit,
 ) {
-    composable(route = Screen.HomeScreen.route) { navBackStackEntry ->
+    composable(route = Screen.HomeScreen.route) { _ ->
         val viewModel: HomeViewModel = koinViewModel()
         val getTasksResponse by viewModel.getTasksResponse.collectAsStateWithLifecycle()
         val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsState()
