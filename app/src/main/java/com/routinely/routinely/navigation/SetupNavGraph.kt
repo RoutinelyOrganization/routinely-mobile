@@ -335,7 +335,7 @@ fun NavGraphBuilder.homeScreenRoute(
     navigateToLoginScreen: () -> Unit,
     navigateToEditScreen: (Int) -> Unit,
 ) {
-    composable(route = Screen.HomeScreen.route) { navBackStackEntry ->
+    composable(route = Screen.HomeScreen.route) { _ ->
         val viewModel: HomeViewModel = koinViewModel()
         val getTasksResponse by viewModel.getTasksResponse.collectAsStateWithLifecycle()
         val deleteTaskResponse by viewModel.deleteTaskResponse.collectAsState()

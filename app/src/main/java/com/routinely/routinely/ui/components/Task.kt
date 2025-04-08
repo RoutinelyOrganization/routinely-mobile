@@ -12,7 +12,7 @@ data class Task(
     val category: TaskCategory,
     val isSelected: Boolean,
     val date: LocalDate,
-    val type: TaskType,
+    val type: TaskType
 ) {
     companion object {
         private fun create(
@@ -22,7 +22,7 @@ data class Task(
             category: TaskCategory,
             date: LocalDate,
             type: TaskType = TaskType.Task,
-            isSelected: Boolean = false,
+            isSelected: Boolean = false
         ): Task {
             return Task(
                 id = id,
@@ -42,7 +42,7 @@ data class Task(
             category: String,
             date: LocalDate,
             type: String,
-            isSelected: Boolean = false,
+            isSelected: Boolean = false
         ): Task {
             return create(
                 id = id,
@@ -54,22 +54,5 @@ data class Task(
                 isSelected = isSelected
             )
         }
-    }
-
-    fun copyWithSelection(isSelected: Boolean): Task {
-        return copy(isSelected = isSelected)
-    }
-
-    fun toApiModel(): TaskItem {
-        return TaskItem(
-            id = id,
-            name = title,
-            description = description,
-            category = category.name,
-            date = date.toString(),
-            type = type.value,
-            finallyDate = null,
-            weekDays = emptyList()
-        )
     }
 }

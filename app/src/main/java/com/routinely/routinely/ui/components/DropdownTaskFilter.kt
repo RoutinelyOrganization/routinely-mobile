@@ -124,5 +124,4 @@ private fun TaskFilterPreview() {
             object : TaskFields(ActivityTag.Habit.stringId, "Hábito") {}
         )
     )
-
 }
