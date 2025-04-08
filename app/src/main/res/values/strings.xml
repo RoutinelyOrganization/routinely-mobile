@@ -95,7 +95,6 @@
     <string name="text_tag_activities">All activities</string>
     <string name="title_edit_task">Edit Task</string>
     <string name="continue_with_email_button">Continue with email and password</string>
-    <string name="create_account_button">Create Account</string>
     <string name="already_have_account">Already have an account?</string>
     <string name="login">Login</string>
     <string name="confirm">Confirm</string>
