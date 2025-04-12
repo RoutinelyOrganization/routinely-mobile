@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.Calendar
+import timber.log.Timber
 
 class HomeViewModel(
     private val getUserTasksFromMonthUseCase: GetUserTasksFromMonthUseCase,

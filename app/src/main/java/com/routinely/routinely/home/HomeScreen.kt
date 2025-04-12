@@ -72,9 +72,6 @@ fun HomeScreen(
     val taskSelections by rememberSaveable(stateSaver = snapshotStateMapSaver()) {
         mutableStateOf(SnapshotStateMap<Int, Boolean>())
     }
-    val originalCategories by rememberSaveable(stateSaver = snapshotStateMapSaver()) {
-        mutableStateOf(SnapshotStateMap<Int, Int>())
-    }
 
     val tasks = remember { mutableStateListOf<Task>() }
 
