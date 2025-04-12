@@ -26,7 +26,7 @@ fun CreateAccountButton(
         shape = MaterialTheme.shapes.small,
     ) {
         Text(
-            text = stringResource(id = R.string.create_account_button), color = Color.White
+            text = stringResource(id = R.string.title_create_account), color = Color.White
         )
     }
 }
