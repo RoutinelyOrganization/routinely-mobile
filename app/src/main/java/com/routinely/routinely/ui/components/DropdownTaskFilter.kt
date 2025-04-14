@@ -1,6 +1,5 @@
 package com.routinely.routinely.ui.components
 
-
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenuItem
@@ -19,8 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,31 +27,28 @@ import com.routinely.routinely.ui.theme.PurpleRoutinely
 import com.routinely.routinely.ui.theme.lightGray
 import com.routinely.routinely.util.ActivityTag
 import com.routinely.routinely.util.TaskFields
-import com.routinely.routinely.util.TaskTag
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownTaskFilter(
-    labelRes: Int,
+    label: String,
     onValueChange: (Int) -> Unit,
     list: List<TaskFields>,
     modifier: Modifier = Modifier,
     option: Int? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     val mapStringToId: Map<String, Int> = list.associate { tag ->
-        context.getString(tag.stringId) to tag.stringId
+        tag.apiString to tag.stringId
     }
 
-    val labelResAsString = stringResource(id = labelRes)
-    var selectedOptionText by remember { mutableStateOf(labelResAsString) }
+    var selectedOptionText by remember { mutableStateOf("") }
 
-    option?.let {
-        selectedOptionText = stringResource(id = it)
+    selectedOptionText = when {
+        option != null && option > 0 -> list.find { it.stringId == option }?.apiString ?: ""
+        else -> label
     }
-
 
     ExposedDropdownMenuBox(
         modifier = modifier
@@ -72,7 +66,7 @@ fun DropdownTaskFilter(
             onValueChange = { },
             label = {
                 Text(
-                    text = labelResAsString,
+                    text = label,
                     style = TextStyle(color = PurpleRoutinely),
                     fontSize = 16.sp,
                 )
@@ -95,20 +89,7 @@ fun DropdownTaskFilter(
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        labelResAsString,
-                        color = Color.Blue
-                    )
-                },
-                onClick = { },
-                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                enabled = false,
-            )
-
             mapStringToId.forEach { (string, id) ->
-
                 DropdownMenuItem(
                     text = {
                         Text(
@@ -129,17 +110,18 @@ fun DropdownTaskFilter(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-private fun TaskFilterRoutinelyPreview() {
+private fun TaskFilterPreview() {
     var selectedTasktag by remember { mutableIntStateOf(ActivityTag.Task.stringId) }
     DropdownTaskFilter(
-        labelRes = selectedTasktag,
+        label = "Tarefa",
         onValueChange = { newTask ->
             selectedTasktag = newTask
         },
-        list = TaskFields.getAllOptions<TaskTag>()
+        list = listOf(
+            object : TaskFields(ActivityTag.Task.stringId, "Tarefa") {},
+            object : TaskFields(ActivityTag.Habit.stringId, "Hábito") {}
+        )
     )
-
 }

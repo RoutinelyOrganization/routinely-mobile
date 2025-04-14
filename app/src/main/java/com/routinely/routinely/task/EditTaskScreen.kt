@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.routinely.routinely.R
@@ -38,8 +39,7 @@ import com.routinely.routinely.ui.components.BottomAppBarRoutinely
 import com.routinely.routinely.ui.components.ConfirmTaskAlertDialog
 import com.routinely.routinely.ui.components.DatePickerDialogRoutinely
 import com.routinely.routinely.ui.components.DescriptionTextField
-import com.routinely.routinely.ui.components.DropdownRoutinelyPriorities
-import com.routinely.routinely.ui.components.DropdownTaskFilter
+import com.routinely.routinely.ui.components.DropdownActivityFilter
 import com.routinely.routinely.ui.components.IndeterminateCircularIndicator
 import com.routinely.routinely.ui.components.RoutinelyTaskButton
 import com.routinely.routinely.ui.components.TaskAlertDialog
@@ -51,10 +51,8 @@ import com.routinely.routinely.ui.theme.RedRoutinely
 import com.routinely.routinely.util.BottomNavItems
 import com.routinely.routinely.util.MenuItem
 import com.routinely.routinely.util.TaskCategory
-import com.routinely.routinely.util.TaskFields
+import com.routinely.routinely.util.TaskCategoryNew
 import com.routinely.routinely.util.TaskItem
-import com.routinely.routinely.util.TaskPriorities
-import com.routinely.routinely.util.TaskTag
 import com.routinely.routinely.util.validators.DateTimeInputValid
 import com.routinely.routinely.util.validators.DescriptionInputValid
 import com.routinely.routinely.util.validators.DropdownInputValid
@@ -94,14 +92,13 @@ fun EditTaskScreen(
     var taskTime by rememberSaveable { mutableStateOf("") }
     var taskTimeState by rememberSaveable { mutableStateOf<DateTimeInputValid>(DateTimeInputValid.Empty) }
 
-    var dropdownPriority by rememberSaveable { mutableStateOf(initialTask.priority) }
     var dropdownPriorityState by rememberSaveable {
         mutableStateOf<DropdownInputValid>(
             DropdownInputValid.Empty
         )
     }
 
-    var dropdownTags by rememberSaveable { mutableStateOf(initialTask.tag) }
+    val dropdownTags by rememberSaveable { mutableStateOf(initialTask.type) }
     var dropdownTagsState by rememberSaveable {
         mutableStateOf<DropdownInputValid>(
             DropdownInputValid.Empty
@@ -115,7 +112,7 @@ fun EditTaskScreen(
         )
     }
 
-    var taskDescription by rememberSaveable { mutableStateOf(initialTask.description) }
+    var taskDescription by rememberSaveable { mutableStateOf(initialTask.description ?: "") }
     var taskDescriptionState by rememberSaveable {
         mutableStateOf<DescriptionInputValid>(
             DescriptionInputValid.Empty
@@ -129,13 +126,14 @@ fun EditTaskScreen(
     var hasChanges by remember { mutableStateOf(false) }
     var taskId by remember { mutableStateOf(0) }
 
-    val hourFormatter = DateTimeFormatter.ISO_DATE_TIME
-
     initialTask.let {
+
         taskNameState = taskNameStateValidation(it.name)
         taskDateState = taskDateStateValidation(it.date)
 
-        val dateTime = LocalDateTime.parse(it.hour, hourFormatter)
+        val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        val dateTime = LocalDateTime.parse(initialTask.date, dateTimeFormatter)
+
         val hour = dateTime.hour.toString()
         var minute = dateTime.minute.toString()
         if(minute.length == 1) {
@@ -150,7 +148,7 @@ fun EditTaskScreen(
 
         dropdownCategoryState = DropdownInputValid.Valid
 
-        taskDescriptionState = taskDescriptionStateValidation(it.description)
+        taskDescriptionState = taskDescriptionStateValidation(it.description ?: "")
 
         taskId = it.id
     }
@@ -237,46 +235,23 @@ fun EditTaskScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
 
-                    DropdownRoutinelyPriorities(
-                        labelRes = R.string.label_priority_dropdown,
-                        onValueChange = { stringId ->
-                            dropdownPriority =
-                                TaskFields.getTaskFieldByStringId<TaskPriorities>(stringId = stringId)
-                            dropdownPriorityState = DropdownInputValid.Valid
-                            hasChanges = true
-                        },
-                        list = TaskPriorities.getAllTaskPriorities(),
-                        option = dropdownPriority.stringId
-                    )
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        DropdownTaskFilter(
+                        DropdownActivityFilter(
                             labelRes = R.string.label_category_dropdown,
                             onValueChange = { stringId ->
-                                dropdownCategory =
-                                    TaskFields.getTaskFieldByStringId<TaskCategory>(stringId = stringId)
+                                dropdownCategory = TaskCategory.fromId(stringId).toString()
                                 dropdownCategoryState = DropdownInputValid.Valid
                                 hasChanges = true
                             },
-                            list = TaskFields.getAllOptions<TaskCategory>(),
+                            list = TaskCategory.toTaskFieldsList(),
                             modifier = Modifier.weight(1f),
-                            option = dropdownCategory.stringId
+                            option = TaskCategory.fromString(dropdownCategory).id
                         )
-                        DropdownTaskFilter(
-                            labelRes = R.string.label_tag_dropdown,
-                            onValueChange = { stringId ->
-                                dropdownTags =
-                                    TaskFields.getTaskFieldByStringId<TaskTag>(stringId = stringId)
-                                dropdownTagsState = DropdownInputValid.Valid
-                                hasChanges = true
-                            },
-                            list = TaskFields.getAllOptions<TaskTag>(),
-                            modifier = Modifier.weight(1f),
-                            option = dropdownTags.stringId
-                        )
+
                     }
                     DescriptionTextField(
                         value = taskDescription,
@@ -334,12 +309,12 @@ fun EditTaskScreen(
                                         taskId,
                                         TaskRequest(
                                             name = taskName,
-                                            date = taskDate,
-                                            priority = dropdownPriority.apiString,
                                             description = taskDescription,
-                                            hour = taskTime,
-                                            tag = dropdownTags.apiString,
-                                            category = dropdownCategory.apiString
+                                            date = "$taskDate $taskTime",
+                                            category = dropdownCategory,
+                                            finallyDate = "$taskDate $taskTime",
+                                            weekDays = listOf("Monday"),
+                                            type = dropdownTags,
                                         )
                                     )
                                 },
@@ -450,3 +425,39 @@ fun EditTaskScreen(
         }
     }
 }
+
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun EditTaskScreenPreview() {
+    val initialTask = TaskItem(
+        id = 1,
+        name = "Tarefa de Exemplo",
+        date = "2025-04-01 14:30",
+        type = "habit",
+        category = TaskCategoryNew.Career.toString(),
+        description = "Descrição da tarefa",
+        finallyDate = "2024-04-01 15:30",
+        weekDays = listOf("Monday", "Wednesday")
+    )
+
+    EditTaskScreen(
+        onBackButtonPressed = {  },
+        onNotificationClicked = {  },
+        onHomeButtonPressed = {  },
+        taskNameStateValidation = { TaskNameInputValid.Valid },
+        taskDateStateValidation = { DateTimeInputValid.Valid },
+        taskTimeStateValidation = { DateTimeInputValid.Valid },
+        taskDescriptionStateValidation = { DescriptionInputValid.Valid },
+        menuItems = listOf(
+            MenuItem("Opção 1", { /* Nada a fazer */ }),
+            MenuItem("Opção 2", { /* Nada a fazer */ })
+        ),
+        editTaskResult = ApiResponse.Empty,
+        initialTask = initialTask,
+        onSaveChanges = { _, _ -> /* Nada a fazer */ },
+        onDeleteTask = { /* Nada a fazer */ },
+        onDuplicateTask = { true }
+    )
+}
+

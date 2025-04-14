@@ -1,14 +1,16 @@
 package com.routinely.routinely.util
 
 import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-sealed class TaskFields(var stringId: Int, val apiString: String) : Parcelable {
+@Parcelize
+open class TaskFields(val stringId: Int, val apiString: String) : Parcelable {
     companion object {
         /**
          * Return all stringId from subclass
          */
         inline fun <reified T : TaskFields> allStringIds(): List<Int> {
-            return T::class.sealedSubclasses.map { it.objectInstance!!.stringId }
+            return T::class.sealedSubclasses.map { it.objectInstance?.stringId ?: 0 }
         }
 
         /**
@@ -17,7 +19,8 @@ sealed class TaskFields(var stringId: Int, val apiString: String) : Parcelable {
         inline fun <reified T : TaskFields> getStringIdByApiString(apiString: String): Int? {
             return T::class.sealedSubclasses
                 .mapNotNull { it.objectInstance }
-                .find { it.apiString == apiString }?.stringId
+                .find { it.apiString == apiString }
+                ?.stringId
         }
 
         /**
@@ -26,15 +29,15 @@ sealed class TaskFields(var stringId: Int, val apiString: String) : Parcelable {
         inline fun <reified T : TaskFields> getTaskFieldByStringId(stringId: Int): T {
             return T::class.sealedSubclasses
                 .mapNotNull { it.objectInstance }
-                .find { it.stringId == stringId }!!
+                .find { it.stringId == stringId }
+                ?: throw IllegalArgumentException("No TaskField found with stringId: $stringId")
         }
 
         /**
          * Get all options of T : TaskFields
          */
         inline fun <reified T : TaskFields> getAllOptions(): List<T> {
-            return T::class.sealedSubclasses
-                .mapNotNull { it.objectInstance }
+            return T::class.sealedSubclasses.mapNotNull { it.objectInstance }
         }
     }
 }

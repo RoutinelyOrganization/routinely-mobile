@@ -1,13 +1,11 @@
 package com.routinely.routinely.task
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.routinely.routinely.R
+import com.routinely.routinely.core.useCase.LogoutUseCase
 import com.routinely.routinely.data.auth.model.ApiResponse
 import com.routinely.routinely.data.auth.model.TaskRequest
-import com.routinely.routinely.core.Session
-import com.routinely.routinely.core.useCase.LogoutUseCase
 import com.routinely.routinely.data.task.api.TaskApi
 import com.routinely.routinely.task.data.GetTaskByIdUseCase
 import com.routinely.routinely.util.TaskItem
@@ -35,12 +33,12 @@ class EditTaskViewModel(
     fun saveTask(taskId: Int, newTask: TaskRequest) {
         val newTaskData = TaskRequest(
             name = newTask.name,
-            date = newTask.date,
-            hour = newTask.hour,
             description = newTask.description,
-            priority = newTask.priority,
+            date = newTask.date,
             category = newTask.category,
-            tag = newTask.tag,
+            finallyDate = newTask.finallyDate,
+            weekDays = newTask.weekDays,
+            type = newTask.type,
         )
 
         viewModelScope.launch {
@@ -67,17 +65,7 @@ class EditTaskViewModel(
     fun duplicateTask(): Boolean {
         if(task!!.name.contains("(5)")) return false
 
-        val hourFormatter = DateTimeFormatter.ISO_DATE_TIME
-
-        val dateTime = LocalDateTime.parse(task!!.hour, hourFormatter)
-        val hour = dateTime.hour.toString()
-        var minute = dateTime.minute.toString()
-        if(minute.length == 1) {
-            minute = "0$minute"
-        }
-
         val name = duplicateItem(task!!.name)
-
 
         viewModelScope.launch {
             _apiResponse.value = ApiResponse.Loading
@@ -86,11 +74,11 @@ class EditTaskViewModel(
                     TaskRequest(
                         name = name,
                         date = task!!.date,
-                        hour = "${hour}:${minute}",
-                        description = task!!.description,
-                        priority = task!!.priority.apiString,
-                        category = task!!.category.apiString,
-                        tag = task!!.tag.apiString,
+                        description = task!!.description ?: "Sem descrição",
+                        category = task!!.category,
+                        finallyDate = task!!.finallyDate ?: "Sem final de data",
+                        weekDays = task!!.weekDays,
+                        type = task!!.type,
                     )
                 )
             } catch (e: Exception) {
@@ -99,7 +87,6 @@ class EditTaskViewModel(
         }
         return true
     }
-
 
     fun getTaskById(taskId: Int): TaskItem {
         return runBlocking {

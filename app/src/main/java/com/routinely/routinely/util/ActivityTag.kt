@@ -1,23 +1,24 @@
 package com.routinely.routinely.util
 
+import android.os.Parcelable
 import com.routinely.routinely.R
 import kotlinx.parcelize.Parcelize
 
 sealed class ActivityTag(stringId: Int, apiString: String) : TaskFields(stringId, apiString) {
 
     @Parcelize
-    data object Task : ActivityTag(R.string.text_tag_task, "Task")
+    data object Task : ActivityTag(R.string.text_tag_task, "Tarefa"), Parcelable
+
     @Parcelize
-    data object Habit : ActivityTag(R.string.text_tag_habit, "Habit")
-    @Parcelize
-    data object Project : ActivityTag(R.string.text_tag_project, "Project")
+    data object Habit : ActivityTag(R.string.text_tag_habit, "Hábito"), Parcelable
 
-}
-
-fun ActivityTag.toStringId(): Int {
-    return this.stringId
-}
-
-fun fromStringId(stringId: Int): ActivityTag {
-    return TaskFields.getTaskFieldByStringId<ActivityTag>(stringId)
+    companion object {
+        fun fromId(id: Int): ActivityTag? {
+            return when (id) {
+                Task.stringId -> Task
+                Habit.stringId -> Habit
+                else -> null
+            }
+        }
+    }
 }

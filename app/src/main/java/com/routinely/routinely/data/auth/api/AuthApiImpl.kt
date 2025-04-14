@@ -27,6 +27,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import timber.log.Timber
 
 internal class AuthApiImpl(
     private val client: HttpClient
@@ -51,9 +52,9 @@ internal class AuthApiImpl(
                 contentType(ContentType.Application.Json)
             }.toSignInResult()
         }  catch(e: ResponseException){
-            handleSignInErrorResponse(e.response.status)
+            handleSignInError(e.response.status)
         } catch(e: Exception){
-            handleSignInErrorResponse(HttpStatusCode(900, e.message ?: "Unknown Exception"))
+            handleSignInError(HttpStatusCode(900, e.message ?: "Unknown Exception"))
         }
     }
 
@@ -104,27 +105,25 @@ internal class AuthApiImpl(
         }
     }
 
-    private fun handleSignInErrorResponse(httpStatusCode: HttpStatusCode): SignInResult {
-        println("Error SignIn: ${httpStatusCode.description}")
-        return SignInResult.DefaultError
+    private fun handleSignInError(httpStatusCode: HttpStatusCode): SignInResult {
+        return when (httpStatusCode) {
+            HttpStatusCode.Unauthorized -> SignInResult.DefaultError
+            else -> SignInResult.DefaultError
+        }
     }
     private fun handleCreateAccountErrorResponse(httpStatusCode: HttpStatusCode): CreateAccountResult {
-        println("Error SignIn: ${httpStatusCode.description}")
         return CreateAccountResult.Error(R.string.api_unexpected_error)
     }
 
     private fun handleForgotPasswordError(httpStatusCode: HttpStatusCode): ForgotPasswordResult {
-        println("Error: ${httpStatusCode.description}")
         return ForgotPasswordResult.DefaultError
     }
 
     private fun handleValidateCodeError(httpStatusCode: HttpStatusCode): ValidateCodeResult {
-        println("Error: ${httpStatusCode.description}")
         return ValidateCodeResult.DefaultError
     }
 
     private fun handleCreateNewPasswordError(httpStatusCode: HttpStatusCode): CreateNewPasswordResult {
-        println("Error: ${httpStatusCode.description}")
         return CreateNewPasswordResult.DefaultError
     }
 }
